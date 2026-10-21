@@ -1,0 +1,354 @@
+@import 'tailwindcss';
+
+/* ================================================================
+   BEAVIE DESIGN TOKENS
+   Single source for colour, type and motion. Tailwind generates
+   utilities from these (bg-forest, text-espresso, font-display...)
+   and the SVG artwork reads the same CSS variables.
+   ================================================================ */
+@theme {
+  /* Brand palette */
+  --color-ivory: #f6f0e6; /* primary background */
+  --color-forest: #23483c; /* principal contrast, text accents, primary buttons */
+  --color-gold: #b79a63; /* fine borders and ornament only, never body text */
+  --color-espresso: #29241f; /* body text */
+  --color-sage: #a6b5a0; /* soft botanical fills */
+
+  /* Derived tints (kept in the same warm family) */
+  --color-ivory-deep: #eee5d4;
+  --color-forest-deep: #1b392f;
+  --color-espresso-soft: #574e44; /* secondary text, 7.4:1 on ivory */
+  --color-sage-soft: #dfe5d8;
+  --color-mist: #d9e2d9;
+  --color-sand: #e7dfd2;
+
+  /* Typography */
+  --font-display: 'Cormorant Garamond', 'Iowan Old Style', Georgia, serif;
+  --font-sans: 'Outfit Variable', 'Segoe UI', system-ui, sans-serif;
+
+  /* Motion */
+  --ease-batik: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-reveal: 900ms;
+  --duration-ui: 350ms;
+}
+
+/* Z-index scale: nav 40, mobile menu 45, grain 50. The modal uses the native top layer. */
+:root {
+  --z-nav: 40;
+  --z-menu: 45;
+  --z-grain: 50;
+  --nav-h: 4rem;
+}
+@media (min-width: 1024px) {
+  :root {
+    --nav-h: 4.5rem;
+  }
+}
+
+/* ---------------- Base ---------------- */
+@layer base {
+  html {
+    scrollbar-gutter: stable;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    background: var(--color-ivory);
+    color: var(--color-espresso);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: clip;
+  }
+  /* Paper grain: one fixed, non-interactive layer (no repaint on scroll). */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-grain);
+    pointer-events: none;
+    opacity: 0.07;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .16 0 0 0 0 .14 0 0 0 0 .12 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  ::selection {
+    background: var(--color-forest);
+    color: var(--color-ivory);
+  }
+  section[id] {
+    scroll-margin-top: var(--nav-h);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-forest);
+    outline-offset: 3px;
+  }
+  .on-dark :focus-visible {
+    outline-color: var(--color-ivory);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* ---------------- Type scale ----------------
+   display  hero headline
+   h2       section titles
+   h3       sub-titles and product names
+   lead     intro paragraphs
+   label    small caps labels (families, metadata)
+   price    prices
+------------------------------------------------ */
+@layer components {
+  .type-display {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(3.1rem, 1.6rem + 6.4vw, 7.25rem);
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+  }
+  .type-h2 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(2.35rem, 1.5rem + 3.2vw, 4.25rem);
+    line-height: 1.04;
+    letter-spacing: -0.015em;
+  }
+  .type-h3 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(1.4rem, 1.2rem + 0.7vw, 1.85rem);
+    line-height: 1.1;
+  }
+  .type-lead {
+    font-size: clamp(1.05rem, 1rem + 0.3vw, 1.2rem);
+    line-height: 1.6;
+    color: var(--color-espresso-soft);
+  }
+  .type-label {
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  .type-eyebrow {
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-forest);
+  }
+  .type-price {
+    font-size: 0.95rem;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------------- Buttons (shape rule: interactive = pill) ---------------- */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    min-height: 3rem;
+    padding: 0 1.6rem;
+    border-radius: 999px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    white-space: nowrap;
+    transition:
+      background-color var(--duration-ui) var(--ease-batik),
+      color var(--duration-ui) var(--ease-batik),
+      border-color var(--duration-ui) var(--ease-batik),
+      transform 150ms var(--ease-batik);
+  }
+  .btn:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+  .btn svg {
+    transition: transform var(--duration-ui) var(--ease-batik);
+  }
+  .btn:hover:not(:disabled) svg {
+    transform: translateX(3px);
+  }
+  .btn-primary {
+    background: var(--color-forest);
+    color: var(--color-ivory);
+  }
+  .btn-primary:hover:not(:disabled) {
+    background: var(--color-forest-deep);
+  }
+  .btn-outline {
+    border: 1px solid var(--color-forest);
+    color: var(--color-forest);
+  }
+  .btn-outline:hover:not(:disabled) {
+    background: var(--color-forest);
+    color: var(--color-ivory);
+  }
+  .btn-small {
+    min-height: 2.75rem;
+    padding: 0 1.1rem;
+    font-size: 0.85rem;
+  }
+  .btn:disabled {
+    cursor: not-allowed;
+    background: transparent;
+    color: var(--color-espresso-soft);
+    border: 1px dashed var(--color-espresso-soft);
+  }
+
+  .link-underline {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size var(--duration-ui) var(--ease-batik);
+  }
+  .link-underline:hover,
+  .link-underline[aria-current='true'] {
+    background-size: 100% 1px;
+  }
+}
+
+/* ================================================================
+   MOTION
+   Everything below runs only when the visitor has not asked for
+   reduced motion, and only once JS has marked <html class="js">,
+   so content is never hidden without a way to reveal it.
+   ================================================================ */
+@media (prefers-reduced-motion: no-preference) {
+  /* Scroll reveal */
+  .js .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition:
+      opacity var(--duration-reveal) var(--ease-batik),
+      transform var(--duration-reveal) var(--ease-batik);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+  .js .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Botanical line drawing */
+  .js .batik-draw .draw {
+    stroke-dasharray: 1 1;
+    stroke-dashoffset: 1;
+  }
+  .js .batik-draw .fade {
+    opacity: 0;
+  }
+  .js .is-visible .batik-draw .draw,
+  .js .batik-draw.is-visible .draw {
+    animation: batik-draw 1.8s var(--ease-batik) forwards;
+    animation-delay: calc(var(--d, 0ms) * var(--draw-pace, 1));
+  }
+  .js .is-visible .batik-draw .fade,
+  .js .batik-draw.is-visible .fade {
+    animation: batik-fade 1.2s var(--ease-batik) forwards;
+    animation-delay: calc(var(--d, 0ms) * var(--draw-pace, 1) + 300ms);
+  }
+
+  /* Hero entrance */
+  .hero-enter {
+    animation: hero-rise 1.1s var(--ease-batik) both;
+    animation-delay: var(--enter-delay, 0ms);
+  }
+
+  /* Modal */
+  .modal[open] {
+    animation: modal-in 450ms var(--ease-batik) both;
+  }
+  .modal[open]::backdrop {
+    animation: backdrop-in 450ms var(--ease-batik) both;
+  }
+  .modal.is-closing {
+    animation: modal-out 260ms ease-in both;
+  }
+  .modal.is-closing::backdrop {
+    animation: backdrop-out 260ms ease-in both;
+  }
+
+  /* Results list in the finder */
+  .finder-item {
+    animation: hero-rise 600ms var(--ease-batik) both;
+    animation-delay: calc(var(--i, 0) * 50ms);
+  }
+}
+
+@keyframes batik-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes batik-fade {
+  to {
+    opacity: 1;
+  }
+}
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes modal-out {
+  to {
+    opacity: 0;
+    transform: translateY(16px) scale(0.99);
+  }
+}
+@keyframes backdrop-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes backdrop-out {
+  to {
+    opacity: 0;
+  }
+}
+
+/* Native dialog base */
+.modal {
+  background: transparent;
+  padding: 0;
+  border: 0;
+  max-width: none;
+  max-height: none;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  color: inherit;
+}
+.modal::backdrop {
+  background: rgb(41 36 31 / 0.55);
+}
+@media (min-width: 768px) {
+  .modal {
+    width: min(68rem, calc(100% - 3rem));
+    height: auto;
+    max-height: min(52rem, calc(100dvh - 3rem));
+    margin: auto;
+  }
+}
