@@ -9,6 +9,8 @@ gsap.registerPlugin(ScrollTrigger)
 
 /** Where the cinematic sequence runs. Elsewhere the scenes simply stack. */
 const CINEMATIC = '(min-width: 1024px) and (min-height: 560px) and (prefers-reduced-motion: no-preference)'
+/** Phones and tablets get lighter, unpinned scroll effects. */
+const LIGHT = '(max-width: 1023px) and (prefers-reduced-motion: no-preference)'
 
 /** Box of `el` relative to `ancestor`, ignoring CSS transforms. */
 function boxWithin(el, ancestor) {
@@ -36,8 +38,12 @@ function boxWithin(el, ancestor) {
  *              rises in on the right
  *   0.72-1.00  hold, then the stage releases into the collection
  *
+ * On phones and tablets nothing is pinned: the hero copy, bottle and
+ * bouquet drift apart as the hero scrolls away, and the heritage cloth
+ * wipes in as it arrives.
+ *
  * Everything is reverted (inline styles removed, class dropped) when
- * the media query stops matching, e.g. resizing to mobile.
+ * a media query stops matching, e.g. resizing to mobile.
  */
 export default function ScrollExperience() {
   const rootRef = useRef(null)
@@ -120,6 +126,26 @@ export default function ScrollExperience() {
         document.removeEventListener('click', onClick)
         root.classList.remove('is-cinematic')
       }
+    })
+
+    // Phones and tablets: lighter scrubbed effects on normal scrolling, no pinning.
+    mm.add(LIGHT, () => {
+      const q = gsap.utils.selector(root)
+      const hero = root.querySelector('.scene-hero')
+      const heritage = root.querySelector('.scene-heritage')
+
+      // Hero scrolls away: copy lifts and fades, bottle grows, bouquet swells at its own pace
+      gsap
+        .timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: 0.6 } })
+        .to(q('.hero-copy'), { y: -60, autoAlpha: 0.15 }, 0)
+        .to(q('.hb-tilt'), { scale: 1.12, yPercent: -6, transformOrigin: '50% 90%' }, 0)
+        .fromTo(q('.layer-back'), { scale: 1 }, { scale: 1.18, yPercent: -14, rotation: -4 }, 0)
+
+      // Our Story arrives: the batik cloth wipes in from the left and settles from a slow zoom
+      gsap
+        .timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: heritage, start: 'top 90%', end: 'top 30%', scrub: 0.6 } })
+        .fromTo(q('.heritage-textile'), { clipPath: 'inset(0% 100% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', ease: 'power2.out' }, 0)
+        .fromTo(q('.heritage-textile img'), { scale: 1.25 }, { scale: 1 }, 0)
     })
 
     return () => mm.revert()
