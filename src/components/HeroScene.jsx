@@ -22,7 +22,8 @@ export default function HeroScene() {
         aria-hidden="true"
       />
 
-      <div className="relative mx-auto grid h-full max-w-[1440px] grid-cols-1 px-5 pt-[calc(var(--nav-h)+2.5rem)] md:px-8 lg:grid-cols-12 lg:px-12 lg:pt-[var(--nav-h)]">
+      {/* On desktop this container is static, so the stage below positions against the full-width hero. */}
+      <div className="relative mx-auto grid h-full max-w-[1440px] grid-cols-1 px-5 pt-[calc(var(--nav-h)+2.5rem)] md:px-8 lg:static lg:grid-cols-12 lg:px-12 lg:pt-[var(--nav-h)]">
         <div className="hero-copy relative z-10 lg:col-span-5 lg:self-center lg:pb-10">
           <p className="type-eyebrow hero-enter" style={{ '--enter-delay': '60ms' }}>
             {h.eyebrow}
@@ -46,19 +47,24 @@ export default function HeroScene() {
           </div>
         </div>
 
-        <div className="hero-visual relative mt-4 h-[min(62vh,28rem)] sm:h-[min(70vh,38rem)] lg:col-span-7 lg:mt-0 lg:h-full">
-          {/* Back layer: the painted batik bouquet behind the bottle */}
-          <div className="layer-back pointer-events-none absolute bottom-[18%] left-1/2 w-[min(100%,35rem)] -translate-x-[42%] lg:bottom-[14%] lg:w-[min(104%,52rem,92dvh)] lg:-translate-x-[42%]">
-            <img
-              src={pack.bouquet.src}
-              srcSet={pack.bouquet.srcSet}
-              sizes="(min-width: 1024px) 52rem, 100vw"
-              alt=""
-              width="1200"
-              height="800"
-              decoding="async"
-              className="hero-fade-enter w-full"
-            />
+        {/* Right-hand stage. On desktop it spans 44%-100% of the hero, so its centre sits at 72%. */}
+        <div className="hero-visual relative mt-2 h-[min(56vh,22rem)] sm:h-[min(64vh,34rem)] lg:absolute lg:inset-y-0 lg:left-[44%] lg:right-0 lg:mt-0 lg:h-auto">
+          {/* Back layer: the painted batik bouquet, its visual centre at 50% / 52% of the stage
+              (the artwork is centred in its file, so the box centre is the flowers' centre).
+              The outer wrapper owns the position; the scroll sequence moves .layer-back inside it. */}
+          <div className="pointer-events-none absolute left-1/2 top-[52%] w-[min(100%,36rem)] -translate-x-1/2 -translate-y-1/2 lg:w-[min(96%,850px,calc((100dvh-var(--nav-h)*2-2rem)*1.5))]">
+            <div className="layer-back">
+              <img
+                src={pack.bouquet.src}
+                srcSet={pack.bouquet.srcSet}
+                sizes="(min-width: 1024px) min(54vw, 850px), 100vw"
+                alt=""
+                width="1200"
+                height="800"
+                decoding="async"
+                className="hero-fade-enter aspect-[3/2] h-auto w-full object-contain"
+              />
+            </div>
           </div>
 
           <HeroBottle />

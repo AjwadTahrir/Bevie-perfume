@@ -15,7 +15,7 @@ import { heroProduct } from '../data/perfumes'
  */
 export default function HeroBottle() {
   return (
-    <div className="hb-move pointer-events-none absolute inset-x-0 bottom-[10%] flex h-[56%] justify-center lg:bottom-[12%] lg:h-[52%]">
+    <div className="hb-move pointer-events-none absolute inset-x-0 bottom-[10%] flex h-[56%] justify-center lg:bottom-auto lg:top-[calc(55%-min(21%,14vw))] lg:h-[min(42%,28vw)]">
       <div className="relative h-full">
         <span
           className="absolute bottom-[5%] left-1/2 h-[6%] w-[58%] -translate-x-1/2 rounded-[50%] bg-brown-deep/50 blur-[10px]"
