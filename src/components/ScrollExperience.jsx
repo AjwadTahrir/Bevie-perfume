@@ -8,7 +8,7 @@ import { sections } from '../config/brand'
 gsap.registerPlugin(ScrollTrigger)
 
 /** Where the cinematic sequence runs. Elsewhere the scenes simply stack. */
-const CINEMATIC = '(min-width: 1024px) and (min-height: 700px) and (prefers-reduced-motion: no-preference)'
+const CINEMATIC = '(min-width: 1024px) and (min-height: 560px) and (prefers-reduced-motion: no-preference)'
 
 /** Box of `el` relative to `ancestor`, ignoring CSS transforms. */
 function boxWithin(el, ancestor) {

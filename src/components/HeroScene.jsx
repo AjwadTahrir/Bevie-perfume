@@ -48,11 +48,11 @@ export default function HeroScene() {
 
         <div className="hero-visual relative mt-4 h-[min(62vh,28rem)] sm:h-[min(70vh,38rem)] lg:col-span-7 lg:mt-0 lg:h-full">
           {/* Back layer: the painted batik bouquet behind the bottle */}
-          <div className="layer-back pointer-events-none absolute bottom-[15%] left-1/2 w-[min(112%,40rem)] -translate-x-[42%] lg:bottom-[9%] lg:w-[min(118%,60rem)] lg:-translate-x-[42%]">
+          <div className="layer-back pointer-events-none absolute bottom-[18%] left-1/2 w-[min(100%,35rem)] -translate-x-[42%] lg:bottom-[14%] lg:w-[min(104%,52rem,92dvh)] lg:-translate-x-[42%]">
             <img
               src={pack.bouquet.src}
               srcSet={pack.bouquet.srcSet}
-              sizes="(min-width: 1024px) 60rem, 112vw"
+              sizes="(min-width: 1024px) 52rem, 100vw"
               alt=""
               width="1200"
               height="800"

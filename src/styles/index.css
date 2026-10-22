@@ -282,6 +282,20 @@
 .scroll-exp.is-cinematic {
   height: 320vh;
 }
+/* Short laptop windows (display scaling, browser toolbars): tighter type so
+   the hero and heritage text fit inside the pinned stage. */
+@media (min-width: 1024px) and (max-height: 760px) {
+  .scroll-exp .type-display {
+    font-size: clamp(2.6rem, 1.2rem + 3.2vw, 4.4rem);
+  }
+  .scroll-exp .type-h2 {
+    font-size: clamp(2rem, 1.3rem + 1.8vw, 3rem);
+  }
+  .scroll-exp .type-lead {
+    font-size: 0.98rem;
+    line-height: 1.6;
+  }
+}
 .is-cinematic .scroll-stage {
   position: sticky;
   top: 0;

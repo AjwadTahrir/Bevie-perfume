@@ -10,8 +10,8 @@ import { copy } from '../config/content'
  * Editorial split: draped batik cloth on the left; on the right the
  * story, a hairline divider and a painted batik phoenix. In the
  * cinematic sequence the cloth wipes in from the left and the hero
- * bottle comes to rest on it. "Discover our story" expands the longer
- * story in place.
+ * bottle comes to rest on it. "Discover our story" swaps the intro
+ * for the longer story in place.
  */
 export default function HeritageScene() {
   const s = copy.heritage
@@ -49,8 +49,16 @@ export default function HeritageScene() {
               {s.title[1]}
             </h2>
           </Reveal>
+          {/* The full story takes the intro's place, so the panel barely grows and still fits short screens. */}
           <Reveal className="heritage-item" delay={160}>
-            <p className="type-lead mt-6">{s.intro}</p>
+            <p className="type-lead mt-6" hidden={open}>
+              {s.intro}
+            </p>
+            <div id={storyId} hidden={!open} className="type-lead mt-6 space-y-3 border-l border-ochre/70 pl-5">
+              {s.story.map((p) => (
+                <p key={p}>{p}</p>
+              ))}
+            </div>
           </Reveal>
           <Reveal className="heritage-item" delay={240}>
             <button
@@ -63,11 +71,6 @@ export default function HeritageScene() {
               {open ? s.linkOpen : s.link}
               <ArrowRight size={15} strokeWidth={1.5} aria-hidden="true" className={open ? 'rotate-90' : ''} />
             </button>
-            <div id={storyId} hidden={!open} className="mt-4 space-y-4 border-l border-ochre/70 pl-5 text-[0.98rem] leading-relaxed">
-              {s.story.map((p) => (
-                <p key={p}>{p}</p>
-              ))}
-            </div>
           </Reveal>
         </div>
 
