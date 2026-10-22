@@ -329,6 +329,46 @@
 .is-cinematic .reveal {
   transition: none !important;
 }
+/* Phones and tablets: both scenes stacked to fit one tall screen. */
+@media (max-width: 1023px) {
+  /* Hero: copy on top, the bottle and bouquet fill the rest. */
+  .is-cinematic .scene-hero > .grid {
+    grid-template-rows: auto minmax(0, 1fr);
+    padding-top: calc(var(--nav-h) + 1.75rem);
+  }
+  .is-cinematic .scene-hero .hero-visual {
+    height: auto;
+    min-height: 0;
+  }
+  /* Heritage: the cloth is a band across the top, the story below it. */
+  .is-cinematic .scene-heritage {
+    padding-top: var(--nav-h);
+    grid-template-rows: 33% minmax(0, 1fr);
+  }
+  .is-cinematic .heritage-textile {
+    height: auto;
+  }
+  .is-cinematic .heritage-panel {
+    padding-top: 1.75rem;
+    padding-bottom: 1.25rem;
+    align-items: flex-start;
+  }
+  .is-cinematic .scene-heritage .type-h2 {
+    font-size: clamp(2rem, 1.4rem + 2.6vw, 2.8rem);
+  }
+  .is-cinematic .scene-heritage .type-lead {
+    font-size: 0.98rem;
+    line-height: 1.6;
+  }
+}
+@media (max-width: 1023px) and (max-height: 800px) {
+  .is-cinematic .scene-heritage {
+    grid-template-rows: 29% minmax(0, 1fr);
+  }
+  .is-cinematic .heritage-panel {
+    padding-top: 1.25rem;
+  }
+}
 
 /* Scroll cue: a small mouse outline whose wheel dot tracks scroll progress */
 .scroll-cue-mouse {

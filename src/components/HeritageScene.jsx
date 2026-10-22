@@ -37,7 +37,7 @@ export default function HeritageScene() {
         />
       </div>
 
-      <div className="relative flex items-center gap-10 px-5 py-20 md:px-12 lg:pb-6 lg:pl-14 lg:pt-[var(--nav-h)] xl:gap-12 xl:pl-20">
+      <div className="heritage-panel relative flex items-center gap-10 px-5 py-20 md:px-12 lg:pb-6 lg:pl-14 lg:pt-[var(--nav-h)] xl:gap-12 xl:pl-20">
         <div className="relative z-10 min-w-0 max-w-[27rem] flex-1 xl:w-[24rem] xl:flex-none">
           <Reveal className="heritage-item">
             <p className="type-eyebrow">{s.eyebrow}</p>
