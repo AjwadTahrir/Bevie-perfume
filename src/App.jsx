@@ -1,10 +1,9 @@
 import { useCallback, useState } from 'react'
 import Navbar from './components/Navbar'
-import Hero from './components/Hero'
-import BrandStory from './components/BrandStory'
+import ScrollExperience from './components/ScrollExperience'
 import Collection from './components/Collection'
+import CallToAction from './components/CallToAction'
 import FragranceFinder from './components/FragranceFinder'
-import BrandPhilosophy from './components/BrandPhilosophy'
 import ContactSection from './components/ContactSection'
 import Footer from './components/Footer'
 import PerfumeModal from './components/PerfumeModal'
@@ -17,11 +16,10 @@ export default function App() {
     <>
       <Navbar />
       <main id="main">
-        <Hero />
-        <BrandStory />
+        <ScrollExperience />
         <Collection onSelect={setSelected} />
+        <CallToAction />
         <FragranceFinder onSelect={setSelected} />
-        <BrandPhilosophy />
         <ContactSection />
       </main>
       <Footer />

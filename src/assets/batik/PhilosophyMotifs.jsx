@@ -9,7 +9,7 @@ import { flower, leaf, bud, spiral, seedCluster, ring, petalDots } from './geome
  *   character     | a tendril that turns its own way
  */
 
-const S = { stroke: 'var(--color-forest)', strokeWidth: 1.5 }
+const S = { stroke: 'var(--color-brown)', strokeWidth: 1.5 }
 
 const heritage = {
   stem: 'M120 250 C118 210 124 170 120 120',
@@ -56,10 +56,10 @@ const character = {
 function Leaf({ l }) {
   return (
     <g>
-      <path d={l.outline} fill="var(--color-ivory)" {...S} pathLength="1" className="draw" />
+      <path d={l.outline} fill="var(--color-teal-soft)" {...S} pathLength="1" className="draw" />
       <path d={l.midrib} {...S} strokeWidth="1.1" pathLength="1" className="draw" />
       {l.veins.map((v, i) => <path key={i} d={v} {...S} strokeWidth="1" pathLength="1" className="draw" />)}
-      <g fill="var(--color-gold)" className="fade">
+      <g fill="var(--color-ochre)" className="fade">
         {l.dots.map(([x, y], i) => <circle key={i} cx={x} cy={y} r="1.8" />)}
       </g>
     </g>
@@ -70,16 +70,16 @@ function Heritage() {
   const h = heritage
   return (
     <>
-      <g fill="var(--color-gold)" className="fade">
+      <g fill="var(--color-ochre)" className="fade">
         {h.ground.map(([x, y], i) => <circle key={i} cx={x} cy={y} r="1.6" />)}
       </g>
       {h.roots.map((d, i) => <path key={i} d={d} {...S} strokeWidth="1.2" pathLength="1" className="draw" />)}
       <path d={h.stem} {...S} pathLength="1" className="draw" />
       {h.leaves.map((l, i) => <Leaf key={i} l={l} />)}
-      {h.bud.sepals.map((d, i) => <path key={i} d={d} fill="var(--color-sage-soft)" {...S} pathLength="1" className="draw" />)}
-      <path d={h.bud.outline} fill="var(--color-ivory)" {...S} pathLength="1" className="draw" />
+      {h.bud.sepals.map((d, i) => <path key={i} d={d} fill="var(--color-teal)" {...S} pathLength="1" className="draw" />)}
+      <path d={h.bud.outline} fill="var(--color-rust-soft)" {...S} pathLength="1" className="draw" />
       <path d={h.bud.fold} {...S} strokeWidth="1.1" pathLength="1" className="draw" />
-      <g fill="var(--color-gold)" className="fade">
+      <g fill="var(--color-ochre)" className="fade">
         <circle cx="120" cy="30" r="2.4" />
         <circle cx="108" cy="22" r="1.5" />
         <circle cx="132" cy="22" r="1.5" />
@@ -95,15 +95,15 @@ function Individuality() {
       <path d={v.stem} {...S} pathLength="1" className="draw" />
       <Leaf l={v.leaf} />
       <Leaf l={v.leaf2} />
-      {v.f.petals.map((d, i) => <path key={i} d={d} fill="var(--color-ivory)" {...S} pathLength="1" className="draw" />)}
-      {v.f.inners.map((d, i) => <path key={i} d={d} fill="var(--color-sage-soft)" {...S} strokeWidth="1" pathLength="1" className="draw" />)}
-      <g fill="var(--color-gold)" className="fade">
+      {v.f.petals.map((d, i) => <path key={i} d={d} fill="var(--color-cream-light)" {...S} pathLength="1" className="draw" />)}
+      {v.f.inners.map((d, i) => <path key={i} d={d} fill="var(--color-rust)" {...S} strokeWidth="1" pathLength="1" className="draw" />)}
+      <g fill="var(--color-ochre)" className="fade">
         {v.axis.map(([x, y], i) => <circle key={i} cx={x} cy={y} r="2" />)}
         {v.f.dots.map(([x, y], i) => <circle key={`d${i}`} cx={x} cy={y} r="1.6" />)}
       </g>
       <g className="fade">
-        <circle cx="120" cy="110" r="13" fill="var(--color-forest)" />
-        {v.ring.map(([x, y], i) => <circle key={i} cx={x} cy={y} r="1.5" fill="var(--color-ivory)" />)}
+        <circle cx="120" cy="110" r="13" fill="var(--color-brown)" />
+        {v.ring.map(([x, y], i) => <circle key={i} cx={x} cy={y} r="1.5" fill="var(--color-cream)" />)}
       </g>
     </>
   )
@@ -115,7 +115,7 @@ function Character() {
     <>
       <path d={c.path} {...S} pathLength="1" className="draw" />
       {c.leaves.map((l, i) => <Leaf key={i} l={l} />)}
-      <g fill="var(--color-gold)" className="fade">
+      <g fill="var(--color-ochre)" className="fade">
         {c.seeds.map(([x, y, r], i) => <circle key={i} cx={x} cy={y} r={r} />)}
       </g>
     </>

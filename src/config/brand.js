@@ -41,7 +41,7 @@ export const brand = {
    * ("Placeholder catalogue", "Demonstration families").
    * Set to false once the real product data has been entered.
    */
-  showPlaceholderNotices: true,
+  showPlaceholderNotices: false,
 
   currency: 'MYR',
   locale: 'en-MY',
@@ -52,6 +52,5 @@ export const sections = {
   story: 'our-story',
   collection: 'collection',
   finder: 'find-your-scent',
-  philosophy: 'philosophy',
   contact: 'contact',
 }

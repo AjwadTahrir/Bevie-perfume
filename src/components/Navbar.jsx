@@ -1,16 +1,28 @@
 import { useEffect, useRef, useState } from 'react'
-import { Menu, X, ArrowRight } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
 import { brand, sections } from '../config/brand'
 
+// No journal, search or cart exist yet, so they are not offered.
 const links = [
-  { href: `#${sections.story}`, label: 'Our Story' },
-  { href: `#${sections.finder}`, label: 'Find Your Scent' },
-  { href: `#${sections.contact}`, label: 'Contact' },
+  { href: '#page-top', key: 'home', label: 'Home' },
+  { href: `#${sections.story}`, key: 'our-story', label: 'Our Story' },
+  { href: `#${sections.collection}`, key: 'collection', label: 'Collection' },
+  { href: `#${sections.finder}`, key: 'find-your-scent', label: 'Find Your Scent' },
 ]
+
+function Wordmark({ className = '' }) {
+  return (
+    <span className={`flex flex-col leading-none ${className}`}>
+      <span className="font-display text-[1.6rem] font-semibold tracking-[0.34em] lg:text-[1.8rem]">{brand.wordmark}</span>
+      <span className="mt-1.5 pl-[0.15em] text-[0.56rem] font-medium tracking-[0.62em]">PERFUME</span>
+    </span>
+  )
+}
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
+  const [active, setActive] = useState('home')
   const toggleRef = useRef(null)
   const panelRef = useRef(null)
 
@@ -20,6 +32,26 @@ export default function Navbar() {
     if (!sentinel) return
     const io = new IntersectionObserver(([entry]) => setScrolled(!entry.isIntersecting))
     io.observe(sentinel)
+    return () => io.disconnect()
+  }, [])
+
+  // Active link: whichever [data-nav] element crosses the middle of the viewport.
+  // While the cinematic stage is pinned, its scenes are always on screen, so the
+  // scroll-track markers stand in for them (see ScrollExperience).
+  useEffect(() => {
+    const visible = new Set()
+    const pick = () => {
+      const valid = [...visible].filter((el) => (el.classList.contains('nav-marker') ? true : !el.closest('.is-cinematic')))
+      if (valid.length) setActive(valid[valid.length - 1].dataset.nav)
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => (e.isIntersecting ? visible.add(e.target) : visible.delete(e.target)))
+        pick()
+      },
+      { rootMargin: '-50% 0px -50% 0px' },
+    )
+    document.querySelectorAll('[data-nav]').forEach((el) => io.observe(el))
     return () => io.disconnect()
   }, [])
 
@@ -52,41 +84,48 @@ export default function Navbar() {
   return (
     <header
       className={`fixed inset-x-0 top-0 transition-[background-color,border-color] duration-500 ease-[var(--ease-batik)] ${
-        solid ? 'border-b border-gold/40 bg-ivory/95 backdrop-blur-sm' : 'border-b border-transparent bg-transparent'
+        solid ? 'border-b border-brown/15 bg-cream/95 backdrop-blur-sm' : 'border-b border-transparent bg-transparent'
       }`}
       style={{ zIndex: 'var(--z-nav)' }}
     >
       <a
         href="#main"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:bg-forest focus:px-4 focus:py-2 focus:text-ivory"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:bg-brown focus:px-4 focus:py-2 focus:text-cream"
       >
         Skip to content
       </a>
-      <nav aria-label="Main" className="mx-auto flex h-[var(--nav-h)] max-w-[1400px] items-center justify-between px-5 md:px-8 lg:px-12">
-        <a href="#page-top" className="font-display text-[1.45rem] font-semibold tracking-[0.32em] text-forest" aria-label={`${brand.name}, back to top`}>
-          {brand.wordmark}
+      <nav aria-label="Main" className="mx-auto grid h-[var(--nav-h)] max-w-[1440px] grid-cols-[1fr_auto] items-center px-5 md:px-8 lg:grid-cols-[1fr_auto_1fr] lg:px-12">
+        <a href="#page-top" className="justify-self-start text-brown" aria-label={`${brand.name}, back to top`}>
+          <Wordmark />
         </a>
 
-        <div className="hidden items-center gap-10 lg:flex">
-          <ul className="flex items-center gap-9 text-[0.95rem]">
-            {links.map((l) => (
-              <li key={l.href}>
-                <a href={l.href} className="link-underline py-1 text-espresso hover:text-forest">
-                  {l.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-          <a href={`#${sections.collection}`} className="btn btn-primary btn-small">
-            Explore Collection
-            <ArrowRight size={16} strokeWidth={1.5} aria-hidden="true" />
+        <ul className="hidden items-center lg:flex">
+          {links.map((l, i) => (
+            <li key={l.href} className="flex items-center">
+              {i > 0 && <span className="mx-6 size-[3px] rounded-full bg-ochre xl:mx-8" aria-hidden="true" />}
+              <a
+                href={l.href}
+                aria-current={active === l.key ? 'true' : undefined}
+                className={`link-underline py-1.5 text-[0.7rem] font-medium uppercase tracking-[0.24em] transition-colors ${
+                  active === l.key ? 'text-rust-deep' : 'text-brown hover:text-rust-deep'
+                }`}
+              >
+                {l.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+
+        <div className="hidden justify-self-end lg:block">
+          <a href={`#${sections.contact}`} className="btn btn-outline btn-small">
+            Contact
           </a>
         </div>
 
         <button
           ref={toggleRef}
           type="button"
-          className="-mr-2 inline-flex size-11 items-center justify-center rounded-full text-forest lg:hidden"
+          className="-mr-2 inline-flex size-11 items-center justify-center justify-self-end text-brown lg:hidden"
           aria-expanded={open}
           aria-controls="mobile-menu"
           aria-label={open ? 'Close menu' : 'Open menu'}
@@ -100,22 +139,23 @@ export default function Navbar() {
         id="mobile-menu"
         ref={panelRef}
         hidden={!open}
-        className="fixed inset-x-0 bottom-0 top-[var(--nav-h)] overflow-y-auto bg-ivory px-5 pb-10 pt-8 md:px-8 lg:hidden"
+        className="fixed inset-x-0 bottom-0 top-[var(--nav-h)] overflow-y-auto bg-cream px-5 pb-10 pt-6 md:px-8 lg:hidden"
         style={{ zIndex: 'var(--z-menu)' }}
       >
         <ul className="flex flex-col">
-          {links.map((l) => (
-            <li key={l.href} className="border-b border-gold/40">
-              <a href={l.href} onClick={() => setOpen(false)} className="block py-5 font-display text-4xl text-forest">
+          {[...links, { href: `#${sections.contact}`, key: 'contact', label: 'Contact' }].map((l) => (
+            <li key={l.href} className="border-b border-brown/15">
+              <a
+                href={l.href}
+                onClick={() => setOpen(false)}
+                aria-current={active === l.key ? 'true' : undefined}
+                className={`block py-5 font-display text-4xl ${active === l.key ? 'text-rust-deep' : 'text-brown'}`}
+              >
                 {l.label}
               </a>
             </li>
           ))}
         </ul>
-        <a href={`#${sections.collection}`} onClick={() => setOpen(false)} className="btn btn-primary mt-10 w-full">
-          Explore Collection
-          <ArrowRight size={16} strokeWidth={1.5} aria-hidden="true" />
-        </a>
       </div>
     </header>
   )

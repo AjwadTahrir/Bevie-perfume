@@ -48,11 +48,11 @@ function Bloom() {
       <g {...stroke} strokeWidth="0.9">
         {bloom.inners.map((d, i) => <path key={i} d={d} style={{ vectorEffect: 'non-scaling-stroke' }} />)}
       </g>
-      <g fill="var(--color-gold)">
+      <g fill="var(--color-ochre)">
         {bloom.dots.map(([x, y], i) => <circle key={i} cx={x} cy={y} r="1.3" />)}
       </g>
       <circle cx="60" cy="60" r="7.5" fill="currentColor" />
-      {bloom.ring.map(([x, y], i) => <circle key={i} cx={x} cy={y} r="0.9" fill="var(--color-ivory)" />)}
+      {bloom.ring.map(([x, y], i) => <circle key={i} cx={x} cy={y} r="0.9" fill="var(--color-cream)" />)}
     </>
   )
 }
@@ -66,7 +66,7 @@ function Sprig() {
           <path d={l.outline} fill="var(--motif-fill, transparent)" style={{ vectorEffect: 'non-scaling-stroke' }} />
           <path d={l.midrib} style={{ vectorEffect: 'non-scaling-stroke' }} />
           {l.veins.map((v, j) => <path key={j} d={v} style={{ vectorEffect: 'non-scaling-stroke' }} />)}
-          {l.dots.map(([x, y], j) => <circle key={j} cx={x} cy={y} r="1" fill="var(--color-gold)" stroke="none" />)}
+          {l.dots.map(([x, y], j) => <circle key={j} cx={x} cy={y} r="1" fill="var(--color-ochre)" stroke="none" />)}
         </g>
       ))}
     </>
@@ -81,7 +81,7 @@ function Seed() {
       <g fill="currentColor">
         {seed.centre.map(([x, y, r], i) => <circle key={i} cx={x} cy={y} r={r} />)}
       </g>
-      <g fill="var(--color-gold)">
+      <g fill="var(--color-ochre)">
         {seed.orbit.map(([x, y], i) => <circle key={i} cx={x} cy={y} r="1.6" />)}
       </g>
       <g {...stroke} strokeWidth="1">
@@ -101,12 +101,12 @@ function Tendril() {
         <path d={tendril.leaf.outline} fill="var(--motif-fill, transparent)" style={{ vectorEffect: 'non-scaling-stroke' }} />
         <path d={tendril.leaf.midrib} style={{ vectorEffect: 'non-scaling-stroke' }} />
       </g>
-      <g fill="var(--color-gold)">
+      <g fill="var(--color-ochre)">
         {tendril.leaf.dots.map(([x, y], i) => <circle key={i} cx={x} cy={y} r="1" />)}
       </g>
-      <circle cx="96" cy="22" r="2.2" fill="var(--color-gold)" />
-      <circle cx="104" cy="30" r="1.4" fill="var(--color-gold)" />
-      <circle cx="90" cy="32" r="1.4" fill="var(--color-gold)" />
+      <circle cx="96" cy="22" r="2.2" fill="var(--color-ochre)" />
+      <circle cx="104" cy="30" r="1.4" fill="var(--color-ochre)" />
+      <circle cx="90" cy="32" r="1.4" fill="var(--color-ochre)" />
     </>
   )
 }

@@ -9,16 +9,16 @@ import { useId } from 'react'
  */
 
 export const LIQUIDS = {
-  sage: { fill: 'var(--color-sage)', opacity: 0.85, tint: 'var(--color-sage-soft)' },
-  amber: { fill: 'var(--color-gold)', opacity: 0.7, tint: 'var(--color-ivory-deep)' },
-  forest: { fill: 'var(--color-forest)', opacity: 0.82, tint: 'var(--color-mist)' },
-  smoke: { fill: 'var(--color-espresso)', opacity: 0.5, tint: 'var(--color-sand)' },
+  sage: { fill: 'var(--color-teal)', opacity: 0.85, tint: 'var(--color-teal-soft)' },
+  amber: { fill: 'var(--color-ochre)', opacity: 0.7, tint: 'var(--color-cream-deep)' },
+  forest: { fill: 'var(--color-brown)', opacity: 0.82, tint: 'var(--color-teal-soft)' },
+  smoke: { fill: 'var(--color-brown)', opacity: 0.5, tint: 'var(--color-ochre-soft)' },
 }
 
 const CAPS = {
-  gold: 'var(--color-gold)',
-  forest: 'var(--color-forest)',
-  espresso: 'var(--color-espresso)',
+  gold: 'var(--color-ochre)',
+  forest: 'var(--color-brown)',
+  espresso: 'var(--color-brown)',
 }
 
 // Each shape: glass body path, liquid top line, neck, cap and label geometry.
@@ -79,36 +79,36 @@ export default function BottleIllustration({ bottle = {}, className = '', title 
         </clipPath>
       </defs>
 
-      <ellipse cx="100" cy="284" rx="62" ry="6" fill="var(--color-espresso)" opacity="0.1" />
+      <ellipse cx="100" cy="284" rx="62" ry="6" fill="var(--color-brown)" opacity="0.1" />
 
       {/* Neck */}
-      <rect {...{ x: shape.neck.x, y: shape.neck.y, width: shape.neck.w, height: shape.neck.h }} fill="var(--color-ivory)" stroke="var(--color-espresso)" strokeWidth="1.4" />
+      <rect {...{ x: shape.neck.x, y: shape.neck.y, width: shape.neck.w, height: shape.neck.h }} fill="var(--color-cream)" stroke="var(--color-brown)" strokeWidth="1.4" />
 
       {/* Glass body with liquid */}
-      <path d={shape.body} fill="var(--color-ivory)" fillOpacity="0.55" />
+      <path d={shape.body} fill="var(--color-cream)" fillOpacity="0.55" />
       <g clipPath={`url(#${clip})`}>
         <rect x="0" y={shape.liquidTop} width="200" height="200" fill={liquid.fill} fillOpacity={liquid.opacity} />
-        <rect x="0" y={shape.liquidTop} width="200" height="3" fill="var(--color-ivory)" fillOpacity="0.45" />
+        <rect x="0" y={shape.liquidTop} width="200" height="3" fill="var(--color-cream)" fillOpacity="0.45" />
       </g>
-      <path d={shape.body} fill="none" stroke="var(--color-espresso)" strokeWidth="1.6" />
-      <path d={shape.highlight} fill="none" stroke="var(--color-ivory)" strokeOpacity="0.75" strokeWidth="4" strokeLinecap="round" />
+      <path d={shape.body} fill="none" stroke="var(--color-brown)" strokeWidth="1.6" />
+      <path d={shape.highlight} fill="none" stroke="var(--color-cream)" strokeOpacity="0.75" strokeWidth="4" strokeLinecap="round" />
 
       {/* Blank label cartouche */}
-      <g fill="var(--color-ivory)" stroke="var(--color-gold)" strokeWidth="1">
+      <g fill="var(--color-cream)" stroke="var(--color-ochre)" strokeWidth="1">
         {label.arch ? (
           <path d={`M${label.x} ${label.y + label.h} V${label.y + label.w / 2} A${label.w / 2} ${label.w / 2} 0 0 1 ${label.x + label.w} ${label.y + label.w / 2} V${label.y + label.h} Z`} />
         ) : (
           <rect x={label.x} y={label.y} width={label.w} height={label.h} />
         )}
       </g>
-      <g fill="var(--color-gold)">
+      <g fill="var(--color-ochre)">
         <circle cx="100" cy={label.y + label.h / 2 + (label.arch ? 6 : 0)} r="2.4" />
         <circle cx="94" cy={label.y + label.h / 2 + (label.arch ? 6 : 0)} r="1.3" />
         <circle cx="106" cy={label.y + label.h / 2 + (label.arch ? 6 : 0)} r="1.3" />
       </g>
 
       {/* Cap */}
-      <g fill={cap} stroke="var(--color-espresso)" strokeWidth="1.4">
+      <g fill={cap} stroke="var(--color-brown)" strokeWidth="1.4">
         {shape.cap}
       </g>
     </svg>

@@ -1,65 +1,59 @@
-import { ArrowUpRight } from 'lucide-react'
-import Motif from '../assets/batik/Motifs'
-import { LIQUIDS } from '../assets/products/BottleIllustration'
+import { pack } from '../assets/pack'
 import ProductVisual from './ProductVisual'
 import { fragranceFamilies } from '../data/perfumes'
 import { formatPrice } from '../lib/format'
 
-const MOTIF_POSITION = {
-  'top-left': '-left-3 -top-3',
-  'top-right': '-right-3 -top-3',
-  'bottom-left': '-left-4 bottom-10',
-  'bottom-right': '-right-4 bottom-10',
-}
+// Two bouquets behind the bottle in a V: one leaning left, its mirror leaning right.
+const SPRAYS = ['left-[34%] rotate-[76deg]', 'left-[66%] -scale-x-100 rotate-[-76deg]']
 
 /**
- * Product card. The whole card is clickable through the stretched
- * "Discover Scent" button, which remains the single focusable control.
+ * Product card in the exhibition row: the bottle stands on the cream
+ * page between two upright painted batik bouquets set in a V, with a soft
+ * contact shadow; the name sits beneath in small capitals. The name
+ * is the card's single focusable control, stretched over the card.
  */
 export default function PerfumeCard({ perfume, onSelect }) {
   const family = fragranceFamilies[perfume.family]?.label ?? 'Family to be confirmed'
-  const tint = LIQUIDS[perfume.bottle?.liquid]?.tint ?? 'var(--color-sage-soft)'
 
   return (
-    <article className="group relative flex h-full flex-col">
-      <div className="relative">
-        <div
-          className="relative aspect-[3/4] overflow-hidden rounded-t-full transition-transform duration-700 ease-[var(--ease-batik)] group-hover:-translate-y-1"
-          style={{ background: tint }}
-        >
-          <div className="absolute inset-[6px] rounded-t-full border border-gold/70" aria-hidden="true" />
-          <ProductVisual
-            perfume={perfume}
-            className="absolute inset-x-[16%] bottom-[5%] h-[74%] w-[68%] transition-transform duration-700 ease-[var(--ease-batik)] group-hover:-translate-y-2 group-hover:scale-[1.03]"
-          />
+    <article className="group relative flex h-full flex-col items-center text-center">
+      <div className="relative aspect-[4/5] w-full">
+        <div className="pointer-events-none absolute inset-0 transition-transform duration-700 ease-[var(--ease-batik)] group-hover:scale-[1.04]">
+          {SPRAYS.map((placement) => (
+            <img
+              key={placement}
+              src={pack.bouquet.src}
+              srcSet={pack.bouquet.srcSet}
+              sizes="(min-width: 1360px) 12vw, (min-width: 640px) 28vw, 55vw"
+              alt=""
+              width="1200"
+              height="800"
+              loading="lazy"
+              decoding="async"
+              className={`absolute top-[46%] w-[96%] max-w-none -translate-x-1/2 -translate-y-1/2 ${placement}`}
+            />
+          ))}
         </div>
-        <Motif
-          name={perfume.motif}
-          className={`pointer-events-none absolute size-16 text-forest [--motif-fill:var(--color-ivory)] md:size-20 ${MOTIF_POSITION[perfume.motifPlacement] || MOTIF_POSITION['top-right']}`}
+        <span className="absolute bottom-[5%] left-1/2 h-[5%] w-[52%] -translate-x-1/2 rounded-[50%] bg-brown-deep/35 blur-[8px]" aria-hidden="true" />
+        <ProductVisual
+          perfume={perfume}
+          className="absolute inset-x-0 bottom-[1%] h-[84%] w-full transition-transform duration-700 ease-[var(--ease-batik)] group-hover:-translate-y-2"
         />
       </div>
 
-      <div className="flex flex-1 flex-col pt-5">
-        <p className="type-label text-espresso-soft">{family}</p>
-        <h3 className="type-h3 mt-2 text-forest">{perfume.name}</h3>
-        <p className="mt-2 line-clamp-3 text-[0.9rem] leading-relaxed text-espresso-soft">{perfume.description}</p>
-
-        <div className="mt-auto flex flex-col gap-3 pt-5 xl:flex-row xl:items-center xl:justify-between">
-          <p className={`type-price ${typeof perfume.price === 'number' ? 'text-espresso' : 'text-espresso-soft'}`}>
-            {formatPrice(perfume.price, 'Price TBA')}
-          </p>
-          <button
-            type="button"
-            onClick={() => onSelect(perfume)}
-            className="btn btn-outline btn-small self-start after:absolute after:inset-0 after:content-[''] xl:self-auto"
-            aria-haspopup="dialog"
-          >
-            Discover Scent
-            <span className="sr-only">: {perfume.name}</span>
-            <ArrowUpRight size={15} strokeWidth={1.5} aria-hidden="true" />
-          </button>
-        </div>
-      </div>
+      <button
+        type="button"
+        onClick={() => onSelect(perfume)}
+        className="mt-3 min-h-11 text-[0.72rem] font-medium uppercase tracking-[0.24em] text-brown transition-colors group-hover:text-rust-deep after:absolute after:inset-0 after:content-['']"
+        aria-haspopup="dialog"
+      >
+        {perfume.name}
+        <span className="sr-only">: view details</span>
+      </button>
+      <p className="-mt-2 text-[0.8rem] text-brown-soft">
+        {family}
+        {typeof perfume.price === 'number' && <> · {formatPrice(perfume.price)}</>}
+      </p>
     </article>
   )
 }

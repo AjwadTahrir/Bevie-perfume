@@ -3,7 +3,7 @@ import { flower, leaf, bud, spiral, seedCluster, ring, petalDots, petalVeins } f
 /**
  * TEXTILE PANEL
  * The richer, denser illustration for the brand story: a cloth-like
- * panel on forest green with a framed border band, a field of small
+ * panel with a framed border band, a field of small
  * florets and two large blooms woven together by leaves and tendrils.
  * Original artwork inspired by batik composition; not a reproduction
  * of any traditional pattern.
@@ -88,53 +88,90 @@ for (let y = BAND + 30; y < H - BAND; y += 60) {
   bandSeeds.push(...seedCluster({ cx: W - BAND / 2 - 4, cy: y, ring: 5, count: 4, size: 1.4 }))
 }
 
-function Bloom({ f, f2, veins, dots, c, size }) {
+/** Colour roles for each cloth tone. */
+const TONES = {
+  // Sogan-style cloth: rust blooms, teal leaves and ochre dots on brown.
+  dark: {
+    ground: 'var(--color-brown)',
+    field: 'var(--color-ochre)',
+    line: 'var(--color-cream)',
+    leaf: ['var(--color-teal)', 'var(--color-brown-deep)'],
+    leafLine: 'var(--color-brown-deep)',
+    leafVein: 'var(--color-teal)',
+    petal: 'var(--color-rust)',
+    petalBack: 'var(--color-brown-deep)',
+    inner: 'var(--color-brown-deep)',
+    accent: 'var(--color-ochre)',
+    dot: 'var(--color-cream)',
+    band: 'var(--color-ochre)',
+    bandDot: 'var(--color-teal)',
+  },
+  // Light cloth: brown line work with rust and teal fills on cream.
+  light: {
+    ground: 'var(--color-cream-deep)',
+    field: 'var(--color-rust)',
+    line: 'var(--color-brown)',
+    leaf: ['var(--color-teal)', 'var(--color-teal-soft)'],
+    leafLine: 'var(--color-brown)',
+    leafVein: 'var(--color-brown)',
+    petal: 'var(--color-rust)',
+    petalBack: 'var(--color-ochre-soft)',
+    inner: 'var(--color-cream)',
+    accent: 'var(--color-ochre)',
+    dot: 'var(--color-cream)',
+    band: 'var(--color-brown)',
+    bandDot: 'var(--color-rust)',
+  },
+}
+
+function Bloom({ t, f, f2, veins, dots, c, size }) {
   return (
     <g>
       {f2 && (
-        <g fill="var(--color-forest-deep)" stroke="var(--color-sage)" strokeWidth="1.2">
+        <g fill={t.petalBack} stroke={t.line} strokeWidth="1.2">
           {f2.petals.map((d, i) => (
             <path key={i} d={d} />
           ))}
         </g>
       )}
-      <g fill="var(--color-forest)" stroke="var(--color-ivory)" strokeWidth="1.5">
+      <g fill={t.petal} stroke={t.line} strokeWidth="1.5">
         {f.petals.map((d, i) => (
           <path key={i} d={d} />
         ))}
       </g>
-      <g fill="var(--color-forest-deep)" stroke="var(--color-sage)" strokeWidth="1">
+      <g fill={t.inner} stroke={t.accent} strokeWidth="1">
         {f.inners.map((d, i) => (
           <path key={i} d={d} />
         ))}
       </g>
-      <g stroke="var(--color-sage)" strokeWidth="0.8" opacity="0.7">
+      <g stroke={t.accent} strokeWidth="0.8" opacity="0.7">
         {veins.map((d, i) => (
           <path key={i} d={d} />
         ))}
       </g>
-      <g fill="var(--color-gold)">
+      <g fill={t.dot}>
         {dots.map(([x, y], i) => (
           <circle key={i} cx={x} cy={y} r="2" />
         ))}
       </g>
-      <circle cx={c.x} cy={c.y} r={size} fill="var(--color-gold)" />
-      <circle cx={c.x} cy={c.y} r={size * 0.72} fill="var(--color-forest)" />
+      <circle cx={c.x} cy={c.y} r={size} fill={t.accent} />
+      <circle cx={c.x} cy={c.y} r={size * 0.72} fill="var(--color-brown)" />
       {ring({ cx: c.x, cy: c.y, radius: size * 0.45, count: 8 }).map(([x, y], i) => (
-        <circle key={i} cx={x} cy={y} r="1.8" fill="var(--color-ivory)" />
+        <circle key={i} cx={x} cy={y} r="1.8" fill="var(--color-cream)" />
       ))}
       {ring({ cx: c.x, cy: c.y, radius: size * 1.45, count: 16 }).map(([x, y], i) => (
-        <circle key={`o${i}`} cx={x} cy={y} r="1.5" fill="var(--color-ivory)" />
+        <circle key={`o${i}`} cx={x} cy={y} r="1.5" fill={t.line} />
       ))}
     </g>
   )
 }
 
-export default function TextilePanel({ className = '' }) {
+export default function TextilePanel({ className = '', tone = 'dark', border = true, preserveAspectRatio = 'xMidYMid slice' }) {
+  const t = TONES[tone] || TONES.dark
   return (
     <svg
       viewBox={`0 0 ${W} ${H}`}
-      preserveAspectRatio="xMidYMid slice"
+      preserveAspectRatio={preserveAspectRatio}
       className={className}
       aria-hidden="true"
       focusable="false"
@@ -142,17 +179,17 @@ export default function TextilePanel({ className = '' }) {
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      <rect width={W} height={H} fill="var(--color-forest)" />
+      <rect width={W} height={H} fill={t.ground} />
 
       {/* Floret field */}
-      <g stroke="var(--color-sage)" strokeWidth="0.8" opacity="0.32">
+      <g stroke={t.field} strokeWidth="0.8" opacity="0.38">
         {florets.flat().map((d, i) => (
           <path key={i} d={d} />
         ))}
       </g>
 
       {/* Stems and tendrils */}
-      <g stroke="var(--color-ivory)" strokeWidth="1.4">
+      <g stroke={t.line} strokeWidth="1.4">
         {stems.map((d, i) => (
           <path key={i} d={d} />
         ))}
@@ -161,17 +198,17 @@ export default function TextilePanel({ className = '' }) {
         ))}
       </g>
 
-      {/* Leaves */}
+      {/* Leaves, alternating two greens of the palette */}
       {leaves.map((l, i) => (
         <g key={i}>
-          <path d={l.outline} fill="var(--color-forest-deep)" stroke="var(--color-ivory)" strokeWidth="1.4" />
-          <path d={l.midrib} stroke="var(--color-sage)" strokeWidth="1.1" />
-          <g stroke="var(--color-sage)" strokeWidth="1">
+          <path d={l.outline} fill={t.leaf[i % 2]} stroke={t.line} strokeWidth="1.4" />
+          <path d={l.midrib} stroke={i % 2 ? t.leafVein : t.leafLine} strokeWidth="1.1" />
+          <g stroke={i % 2 ? t.leafVein : t.leafLine} strokeWidth="1">
             {l.veins.map((v, j) => (
               <path key={j} d={v} />
             ))}
           </g>
-          <g fill="var(--color-gold)">
+          <g fill={t.accent}>
             {l.dots.map(([x, y], j) => (
               <circle key={j} cx={x} cy={y} r="1.8" />
             ))}
@@ -181,34 +218,38 @@ export default function TextilePanel({ className = '' }) {
 
       {/* Buds */}
       {buds.map((b, i) => (
-        <g key={i} stroke="var(--color-ivory)" strokeWidth="1.3">
+        <g key={i} stroke={t.line} strokeWidth="1.3">
           {b.sepals.map((s, j) => (
-            <path key={j} d={s} fill="var(--color-forest-deep)" />
+            <path key={j} d={s} fill={t.leaf[0]} />
           ))}
-          <path d={b.outline} fill="var(--color-forest)" />
-          <path d={b.fold} stroke="var(--color-sage)" />
+          <path d={b.outline} fill={t.petal} />
+          <path d={b.fold} stroke={t.accent} />
         </g>
       ))}
 
-      <Bloom f={A} f2={A2} veins={veinsA} dots={dotsA} c={bloomA} size={30} />
-      <Bloom f={B} veins={veinsB} dots={dotsB} c={bloomB} size={26} />
+      <Bloom t={t} f={A} f2={A2} veins={veinsA} dots={dotsA} c={bloomA} size={30} />
+      <Bloom t={t} f={B} veins={veinsB} dots={dotsB} c={bloomB} size={26} />
 
-      <g fill="var(--color-gold)">
+      <g fill={t.accent}>
         {seeds.map(([x, y, rad], i) => (
           <circle key={i} cx={x} cy={y} r={rad} />
         ))}
       </g>
 
       {/* Border band */}
-      <g stroke="var(--color-gold)" strokeWidth="1.2">
-        <rect x="10" y="10" width={W - 20} height={H - 20} />
-        <rect x={BAND} y={BAND} width={W - BAND * 2} height={H - BAND * 2} />
-      </g>
-      <g fill="var(--color-sage)">
-        {bandSeeds.map(([x, y, rad], i) => (
-          <circle key={i} cx={x} cy={y} r={rad} />
-        ))}
-      </g>
+      {border && (
+        <>
+          <g stroke={t.band} strokeWidth="1.2">
+            <rect x="10" y="10" width={W - 20} height={H - 20} />
+            <rect x={BAND} y={BAND} width={W - BAND * 2} height={H - BAND * 2} />
+          </g>
+          <g fill={t.bandDot}>
+            {bandSeeds.map(([x, y, rad], i) => (
+              <circle key={i} cx={x} cy={y} r={rad} />
+            ))}
+          </g>
+        </>
+      )}
     </svg>
   )
 }

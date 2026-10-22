@@ -181,3 +181,11 @@ export function ring({ cx, cy, radius, count, rotation = 0 }) {
     return [r(cx + radius * Math.cos(a)), r(cy + radius * Math.sin(a))]
   })
 }
+
+/** One half of a pointed leaf (midrib to one edge), for two-tone shading. side: 1 or -1. */
+export function leafHalf({ x, y, angle, length, width, side = 1 }) {
+  const f = frame(x, y, angle)
+  const L = length
+  const W = width * side
+  return `M${p(f(0, 0))} C${p(f(L * 0.25, W))} ${p(f(L * 0.7, W * 0.78))} ${p(f(L, 0))} Q${p(f(L * 0.5, W * 0.06))} ${p(f(0, 0))}Z`
+}

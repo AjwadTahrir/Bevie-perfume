@@ -28,7 +28,7 @@ export default function WhatsAppButton({ message, label, className = '', variant
         <MessageCircle size={18} strokeWidth={1.5} aria-hidden="true" />
         {label}
       </button>
-      <p id={noteId} className="text-sm text-espresso-soft">
+      <p id={noteId} className="text-sm text-brown-soft">
         {import.meta.env.DEV
           ? 'WhatsApp number not configured yet. Add it in src/config/brand.js.'
           : 'WhatsApp ordering opens soon.'}

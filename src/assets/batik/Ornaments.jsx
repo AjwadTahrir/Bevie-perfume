@@ -8,7 +8,7 @@ import { seedCluster } from './geometry'
  */
 
 /** Fine repeating border: a wave with alternating seed dots. */
-export function OrnamentBorder({ className = '', color = 'var(--color-gold)' }) {
+export function OrnamentBorder({ className = '', color = 'var(--color-ochre)' }) {
   const id = useId().replace(/[^a-zA-Z0-9_-]/g, '')
   return (
     <svg className={className} height="28" width="100%" aria-hidden="true" focusable="false">
@@ -34,15 +34,15 @@ export function SeedDivider({ className = '' }) {
   const seeds = seedCluster({ cx: 60, cy: 12, ring: 6, count: 6, size: 1.5 })
   return (
     <div className={`flex items-center gap-4 ${className}`} aria-hidden="true">
-      <span className="h-px flex-1 bg-gold/60" />
+      <span className="h-px flex-1 bg-ochre/60" />
       <svg viewBox="0 0 120 24" width="120" height="24" focusable="false">
-        <path d="M0 12 H40 M80 12 H120" stroke="var(--color-gold)" strokeWidth="1" />
-        <path d="M44 12 L50 6 L56 12 L50 18 Z M64 12 L70 6 L76 12 L70 18 Z" fill="none" stroke="var(--color-gold)" strokeWidth="1" />
+        <path d="M0 12 H40 M80 12 H120" stroke="var(--color-ochre)" strokeWidth="1" />
+        <path d="M44 12 L50 6 L56 12 L50 18 Z M64 12 L70 6 L76 12 L70 18 Z" fill="none" stroke="var(--color-ochre)" strokeWidth="1" />
         {seeds.map(([x, y, r], i) => (
-          <circle key={i} cx={x} cy={y} r={r} fill="var(--color-forest)" />
+          <circle key={i} cx={x} cy={y} r={r} fill="var(--color-brown)" />
         ))}
       </svg>
-      <span className="h-px flex-1 bg-gold/60" />
+      <span className="h-px flex-1 bg-ochre/60" />
     </div>
   )
 }
@@ -52,16 +52,16 @@ export function CornerFlourish({ className = '' }) {
   const seeds = seedCluster({ cx: 22, cy: 22, ring: 6, count: 6, size: 1.6 })
   return (
     <svg viewBox="0 0 120 120" className={className} aria-hidden="true" focusable="false" fill="none" strokeLinecap="round">
-      <path d="M4 116 V40 C4 20 20 4 40 4 H116" stroke="var(--color-gold)" strokeWidth="1" />
-      <path d="M14 116 V46 C14 28 28 14 46 14 H116" stroke="var(--color-gold)" strokeWidth="1" opacity="0.6" />
-      <path d="M40 40 C52 34 64 36 74 44 C64 46 54 46 46 52 C44 46 42 44 40 40 Z" stroke="var(--color-forest)" strokeWidth="1" />
-      <path d="M40 40 C34 52 36 64 44 74 C46 64 46 54 52 46 C46 44 44 42 40 40 Z" stroke="var(--color-forest)" strokeWidth="1" />
-      <path d="M74 44 C84 52 96 52 108 46 M44 74 C52 84 52 96 46 108" stroke="var(--color-forest)" strokeWidth="1" />
+      <path d="M4 116 V40 C4 20 20 4 40 4 H116" stroke="var(--color-ochre)" strokeWidth="1" />
+      <path d="M14 116 V46 C14 28 28 14 46 14 H116" stroke="var(--color-ochre)" strokeWidth="1" opacity="0.6" />
+      <path d="M40 40 C52 34 64 36 74 44 C64 46 54 46 46 52 C44 46 42 44 40 40 Z" stroke="var(--color-brown)" strokeWidth="1" />
+      <path d="M40 40 C34 52 36 64 44 74 C46 64 46 54 52 46 C46 44 44 42 40 40 Z" stroke="var(--color-brown)" strokeWidth="1" />
+      <path d="M74 44 C84 52 96 52 108 46 M44 74 C52 84 52 96 46 108" stroke="var(--color-brown)" strokeWidth="1" />
       {seeds.map(([x, y, r], i) => (
-        <circle key={i} cx={x} cy={y} r={r} fill="var(--color-gold)" />
+        <circle key={i} cx={x} cy={y} r={r} fill="var(--color-ochre)" />
       ))}
-      <circle cx="108" cy="46" r="2" fill="var(--color-gold)" />
-      <circle cx="46" cy="108" r="2" fill="var(--color-gold)" />
+      <circle cx="108" cy="46" r="2" fill="var(--color-ochre)" />
+      <circle cx="46" cy="108" r="2" fill="var(--color-ochre)" />
     </svg>
   )
 }

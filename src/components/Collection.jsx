@@ -1,34 +1,32 @@
 import PerfumeCard from './PerfumeCard'
 import Reveal from './Reveal'
-import { brand, sections } from '../config/brand'
+import { sections } from '../config/brand'
 import { copy } from '../config/content'
-import { perfumes, hasPlaceholderProducts } from '../data/perfumes'
+import { perfumes } from '../data/perfumes'
 
 /**
  * COLLECTION
- * Eight cards from src/data/perfumes.js: two columns on mobile and
- * tablet, four on desktop, with alternate columns dropped slightly
- * for an editorial rhythm (dimensions stay identical).
+ * The eight scents as a curated exhibition: one row of eight on wide
+ * screens, four by two on laptops and tablets, two columns on phones.
+ * Every card shares the same baseline; they rise in with a light
+ * stagger as the cinematic stage releases.
  */
 export default function Collection({ onSelect }) {
+  const c = copy.collection
   return (
-    <section id={sections.collection} aria-labelledby="collection-title" className="bg-ivory pb-28 pt-8 md:pb-36 lg:pb-44">
-      <div className="mx-auto max-w-[1400px] px-5 md:px-8 lg:px-12">
-        <Reveal className="max-w-2xl">
-          <h2 id="collection-title" className="type-h2 text-balance text-forest">
-            {copy.collection.title}
+    <section id={sections.collection} data-nav="collection" aria-labelledby="collection-title" className="overflow-x-clip bg-cream py-24 md:py-32 lg:py-36">
+      <div className="mx-auto max-w-[1440px] px-5 md:px-8 lg:px-12">
+        <Reveal className="mx-auto max-w-2xl text-center">
+          <p className="type-eyebrow">{c.eyebrow}</p>
+          <h2 id="collection-title" className="type-h2 mt-5 text-balance text-brown">
+            {c.title}
           </h2>
-          <p className="type-lead mt-5">{copy.collection.intro}</p>
-          {brand.showPlaceholderNotices && hasPlaceholderProducts && (
-            <p className="mt-5 inline-block border border-dashed border-espresso-soft px-3 py-1.5 text-sm text-espresso-soft">
-              Placeholder catalogue: names, families and details are sample data until the final eight scents are confirmed.
-            </p>
-          )}
+          <p className="type-lead mx-auto mt-5 max-w-md">{c.intro}</p>
         </Reveal>
 
-        <ul className="mt-16 grid grid-cols-2 gap-x-4 gap-y-14 sm:gap-x-6 md:mt-20 md:gap-x-10 md:gap-y-20 lg:grid-cols-4 lg:gap-x-8">
+        <ul className="mt-12 grid grid-cols-2 gap-x-4 gap-y-12 sm:grid-cols-4 sm:gap-x-6 md:mt-14 lg:gap-x-8 wide:grid-cols-8 wide:gap-x-3">
           {perfumes.map((p, i) => (
-            <Reveal as="li" key={p.id} delay={(i % 4) * 90} className={i % 2 === 1 ? 'lg:translate-y-14' : ''}>
+            <Reveal as="li" key={p.id} delay={(i % 8) * 70}>
               <PerfumeCard perfume={p} onSelect={onSelect} />
             </Reveal>
           ))}

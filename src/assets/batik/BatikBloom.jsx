@@ -67,7 +67,7 @@ export default function BatikBloom({ className = '' }) {
       strokeLinejoin="round"
     >
       {/* Stems */}
-      <g stroke="var(--color-forest)" strokeWidth="1.6">
+      <g stroke="var(--color-brown)" strokeWidth="1.6">
         {stems.map((s, i) => (
           <path key={i} d={s} pathLength="1" className="draw" style={next(60)} />
         ))}
@@ -76,15 +76,15 @@ export default function BatikBloom({ className = '' }) {
       {/* Leaves */}
       {leaves.map((l, i) => (
         <g key={i}>
-          <path d={l.outline} fill="var(--color-sage-soft)" className="fade" style={next(70)} />
-          <g stroke="var(--color-forest)" strokeWidth="1.6">
+          <path d={l.outline} fill="var(--color-teal)" className="fade" style={next(70)} />
+          <g stroke="var(--color-brown)" strokeWidth="1.6">
             <path d={l.outline} pathLength="1" className="draw" style={next(0)} />
             <path d={l.midrib} pathLength="1" className="draw" strokeWidth="1.2" style={next(40)} />
             {l.veins.map((v, j) => (
               <path key={j} d={v} pathLength="1" className="draw" strokeWidth="1.1" style={next(20)} />
             ))}
           </g>
-          <g fill="var(--color-gold)" className="fade" style={next(0)}>
+          <g fill="var(--color-ochre)" className="fade" style={next(0)}>
             {l.dots.map(([x, y], j) => (
               <circle key={j} cx={x} cy={y} r="2" />
             ))}
@@ -93,16 +93,16 @@ export default function BatikBloom({ className = '' }) {
       ))}
 
       {/* Bud */}
-      <g stroke="var(--color-forest)" strokeWidth="1.6">
+      <g stroke="var(--color-brown)" strokeWidth="1.6">
         {theBud.sepals.map((s, i) => (
-          <path key={i} d={s} fill="var(--color-sage-soft)" pathLength="1" className="draw" style={next(60)} />
+          <path key={i} d={s} fill="var(--color-teal)" pathLength="1" className="draw" style={next(60)} />
         ))}
-        <path d={theBud.outline} fill="var(--color-ivory)" pathLength="1" className="draw" style={next(60)} />
+        <path d={theBud.outline} fill="var(--color-rust-soft)" pathLength="1" className="draw" style={next(60)} />
         <path d={theBud.fold} pathLength="1" className="draw" strokeWidth="1.2" style={next(60)} />
       </g>
 
       {/* Tendrils */}
-      <g stroke="var(--color-forest)" strokeWidth="1.4">
+      <g stroke="var(--color-brown)" strokeWidth="1.4">
         {tendrils.map((t, i) => (
           <path key={i} d={t} pathLength="1" className="draw" style={next(90)} />
         ))}
@@ -111,15 +111,15 @@ export default function BatikBloom({ className = '' }) {
       {/* Secondary bloom */}
       <g>
         {small.petals.map((pt, i) => (
-          <path key={i} d={pt} fill="var(--color-ivory)" stroke="var(--color-forest)" strokeWidth="1.5" pathLength="1" className="draw" style={next(50)} />
+          <path key={i} d={pt} fill="var(--color-rust)" stroke="var(--color-brown)" strokeWidth="1.5" pathLength="1" className="draw" style={next(50)} />
         ))}
         {small.inners.map((pt, i) => (
-          <path key={i} d={pt} fill="var(--color-sage-soft)" stroke="var(--color-forest)" strokeWidth="1" pathLength="1" className="draw" style={next(30)} />
+          <path key={i} d={pt} fill="var(--color-cream-light)" stroke="var(--color-brown)" strokeWidth="1" pathLength="1" className="draw" style={next(30)} />
         ))}
         <g className="fade" style={next(60)}>
-          <circle cx="150" cy="168" r="14" fill="var(--color-forest)" />
+          <circle cx="150" cy="168" r="14" fill="var(--color-brown)" />
           {smallRing.map(([x, y], i) => (
-            <circle key={i} cx={x} cy={y} r="1.6" fill="var(--color-ivory)" />
+            <circle key={i} cx={x} cy={y} r="1.6" fill="var(--color-cream)" />
           ))}
         </g>
       </g>
@@ -127,9 +127,9 @@ export default function BatikBloom({ className = '' }) {
       {/* Main bloom: back petals */}
       <g>
         {back.petals.map((pt, i) => (
-          <path key={i} d={pt} fill="var(--color-sage-soft)" stroke="var(--color-forest)" strokeWidth="1.5" pathLength="1" className="draw" style={next(70)} />
+          <path key={i} d={pt} fill="var(--color-rust-soft)" stroke="var(--color-brown)" strokeWidth="1.5" pathLength="1" className="draw" style={next(70)} />
         ))}
-        <g fill="var(--color-forest)" className="fade" style={next(0)}>
+        <g fill="var(--color-brown)" className="fade" style={next(0)}>
           {back.dots.map(([x, y], i) => (
             <circle key={i} cx={x} cy={y} r="2" />
           ))}
@@ -139,17 +139,17 @@ export default function BatikBloom({ className = '' }) {
       {/* Main bloom: front petals */}
       <g>
         {front.petals.map((pt, i) => (
-          <path key={i} d={pt} fill="var(--color-ivory)" stroke="var(--color-forest)" strokeWidth="1.7" pathLength="1" className="draw" style={next(90)} />
+          <path key={i} d={pt} fill="var(--color-cream-light)" stroke="var(--color-brown)" strokeWidth="1.7" pathLength="1" className="draw" style={next(90)} />
         ))}
         {front.inners.map((pt, i) => (
-          <path key={i} d={pt} fill="var(--color-sage-soft)" stroke="var(--color-forest)" strokeWidth="1.1" pathLength="1" className="draw" style={next(50)} />
+          <path key={i} d={pt} fill="var(--color-rust)" stroke="var(--color-brown)" strokeWidth="1.1" pathLength="1" className="draw" style={next(50)} />
         ))}
-        <g stroke="var(--color-forest)" strokeWidth="0.9" opacity="0.55">
+        <g stroke="var(--color-brown)" strokeWidth="0.9" opacity="0.55">
           {frontVeins.map((v, i) => (
             <path key={i} d={v} pathLength="1" className="draw" style={next(12)} />
           ))}
         </g>
-        <g fill="var(--color-gold)" className="fade" style={next(60)}>
+        <g fill="var(--color-ochre)" className="fade" style={next(60)}>
           {frontAxisDots.map(([x, y], i) => (
             <circle key={i} cx={x} cy={y} r="2.6" />
           ))}
@@ -162,18 +162,18 @@ export default function BatikBloom({ className = '' }) {
       {/* Bloom centre */}
       <g className="fade" style={next(80)}>
         {outerRing.map(([x, y], i) => (
-          <circle key={i} cx={x} cy={y} r="1.8" fill="var(--color-forest)" />
+          <circle key={i} cx={x} cy={y} r="1.8" fill="var(--color-brown)" />
         ))}
-        <circle cx={C.x} cy={C.y} r="34" fill="var(--color-forest)" />
-        <circle cx={C.x} cy={C.y} r="28" stroke="var(--color-gold)" strokeWidth="1" />
+        <circle cx={C.x} cy={C.y} r="34" fill="var(--color-brown)" />
+        <circle cx={C.x} cy={C.y} r="28" stroke="var(--color-ochre)" strokeWidth="1" />
         {centreRing.map(([x, y], i) => (
-          <circle key={i} cx={x} cy={y} r="2.4" fill="var(--color-ivory)" />
+          <circle key={i} cx={x} cy={y} r="2.4" fill="var(--color-cream)" />
         ))}
-        <circle cx={C.x} cy={C.y} r="5" fill="var(--color-gold)" />
+        <circle cx={C.x} cy={C.y} r="5" fill="var(--color-ochre)" />
       </g>
 
       {/* Seed clusters */}
-      <g fill="var(--color-gold)" className="fade" style={next(100)}>
+      <g fill="var(--color-ochre)" className="fade" style={next(100)}>
         {seeds.map(([x, y, rad], i) => (
           <circle key={i} cx={x} cy={y} r={rad} />
         ))}

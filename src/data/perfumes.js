@@ -1,13 +1,12 @@
 /**
  * THE BEAVIE COLLECTION
  * ---------------------------------------------------------------
- * PLACEHOLDER DATA. The real eight perfumes have not been supplied
- * yet. Every record below is a stand-in, marked with
- * `isPlaceholder: true`. Names, families and descriptions are sample
- * values for layout only. Prices, sizes and notes are deliberately
- * null and show as "to be announced" on the site.
+ * The eight Beavie perfumes. Names, descriptions, notes and bottle
+ * photos come from the BeavieWeb catalogue (scents.js). Prices and
+ * sizes have not been supplied yet, so they are null and show as
+ * "to be announced" on the site.
  *
- * HOW TO REPLACE A PERFUME (one record = one card + its modal)
+ * FIELDS (one record = one card + its modal)
  *   id            unique, url-safe text, e.g. 'melur-noir'
  *   name          the perfume's name as it should appear on the site
  *   family        one key from `fragranceFamilies` below
@@ -16,150 +15,221 @@
  *   size          e.g. '50 ml Eau de Parfum' (or null)
  *   notes         { top: [...], heart: [...], base: [...] } arrays of
  *                 strings, or null for any tier that is unknown
- *   image         optional product photo: put the file in
- *                 src/assets/products/, import it at the top of this
- *                 file and assign it here. Leave null to keep the
- *                 illustrated bottle.
+ *   image         product photo: put the file in src/assets/products/,
+ *                 import it at the top of this file and assign it
+ *                 here. Leave null to show the illustrated bottle.
  *   imageAlt      describe the photo for screen readers
- *   bottle        illustration settings used while `image` is null
+ *   accent        backdrop tint behind the bottle on cards and in the
+ *                 modal: 'teal' | 'rust' | 'ochre' | 'cream'
+ *   bottle        illustration settings, used only while `image` is null
  *                 shape:  'arch' | 'flask' | 'column' | 'facet'
  *                 liquid: 'sage' | 'amber' | 'forest' | 'smoke'
  *                 cap:    'gold' | 'forest' | 'espresso'
  *   motif         small batik ornament on the card:
  *                 'bloom' | 'sprig' | 'seed' | 'tendril'
  *   motifPlacement 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
- *   isPlaceholder  set to false (or delete) once the record is real
+ *   isPlaceholder  true only for stand-in records
  */
+
+import verdiusImg from '../assets/products/verdius-bottle-640.webp'
+import tonviraImg from '../assets/products/tonvira-bottle-640.webp'
+import chestnutRushImg from '../assets/products/chestnut-rush-bottle-640.webp'
+import wavekissImg from '../assets/products/wavekiss-bottle-640.webp'
+import seductressImg from '../assets/products/seductress-bottle-640.webp'
+import celestiaRoseImg from '../assets/products/celestia-rose-bottle-640.webp'
+import berryTeaseImg from '../assets/products/berry-tease-bottle-640.webp'
+import lilyValleyImg from '../assets/products/lily-valley-bottle-640.webp'
+import chestnutRushLarge from '../assets/products/chestnut-rush-bottle-1200.webp'
 
 export const fragranceFamilies = {
   floral: { label: 'Floral', blurb: 'Built around flowers, from soft petals to heady blooms.' },
+  fruity: { label: 'Fruity', blurb: 'Juicy berries and dark fruit, sweet and indulgent.' },
   woody: { label: 'Woody', blurb: 'Dry, warm structures with the depth of timber.' },
-  fresh: { label: 'Fresh', blurb: 'Bright and airy, leaning citrus or green.' },
+  fresh: { label: 'Fresh', blurb: 'Bright and airy, leaning citrus, green or marine.' },
   amber: { label: 'Amber', blurb: 'Rounded and warm, with resinous softness.' },
 }
 
-const pendingNotes = { top: null, heart: null, base: null }
+/** Backdrop tints for each accent (see `accent` above). */
+export const accentTints = {
+  teal: 'var(--color-teal-soft)',
+  rust: 'var(--color-rust-soft)',
+  ochre: 'var(--color-ochre-soft)',
+  cream: 'var(--color-cream-deep)',
+}
+
+export const tintOf = (perfume) => accentTints[perfume?.accent] ?? accentTints.cream
+
+/**
+ * HERO PRODUCT
+ * The bottle photographed in the hero and carried through the scroll
+ * sequence. Swap the imports above to feature another scent.
+ */
+export const heroProduct = {
+  perfumeId: 'chestnut-rush',
+  src: chestnutRushLarge,
+  srcSet: `${chestnutRushImg} 640w, ${chestnutRushLarge} 1200w`,
+  alt: 'Beavie Chestnut Rush perfume bottle with a cream label framed by batik-style borders',
+}
 
 export const perfumes = [
   {
-    id: 'scent-i',
-    name: 'Scent I',
-    family: 'floral', // SAMPLE family
-    description: 'Paired with the open-bloom motif. The story of this scent will be added once its details are confirmed.',
+    id: 'verdius',
+    name: 'Verdius',
+    family: 'fresh',
+    description:
+      'A revitalizing breath of cool clarity. Verdius captures freshly washed skin, chilled green apple, and morning air with effortless polish.',
     price: null, // TODO: real price (MYR)
     size: null, // TODO
-    notes: pendingNotes, // TODO
-    image: null,
-    imageAlt: '',
+    notes: {
+      top: ['Green Apple', 'Bergamot', 'Iced Aldehydes'],
+      heart: ['Lavender', 'Aromatic Herbs', 'Rosemary'],
+      base: ['Cedarwood', 'Vetiver', 'White Musk'],
+    },
+    image: verdiusImg,
+    imageAlt: 'Verdius perfume bottle with a deep green botanical label',
+    accent: 'teal',
+    bottle: { shape: 'facet', liquid: 'forest', cap: 'gold' },
+    motif: 'sprig',
+    motifPlacement: 'top-right',
+  },
+  {
+    id: 'tonvira',
+    name: 'Tonvira',
+    family: 'woody',
+    description:
+      'Precision, composure, command. Cool mint meets warm vanilla and timeless woods, crafted for ambition without compromise.',
+    price: null,
+    size: null,
+    notes: {
+      top: ['Mint', 'Bergamot', 'Cardamom'],
+      heart: ['Lavender', 'Sage', 'Green Tea'],
+      base: ['Vanilla', 'Amberwood', 'Cedar'],
+    },
+    image: tonviraImg,
+    imageAlt: 'Tonvira perfume bottle',
+    accent: 'cream',
+    bottle: { shape: 'column', liquid: 'smoke', cap: 'espresso' },
+    motif: 'seed',
+    motifPlacement: 'bottom-left',
+  },
+  {
+    id: 'chestnut-rush',
+    name: 'Chestnut Rush',
+    family: 'amber',
+    description:
+      'An evocative blend of warmth and sophistication: rum, spices, rich tobacco, smooth leather, vanilla, and amber.',
+    price: null,
+    size: null,
+    notes: {
+      top: ['Rum', 'Chestnut', 'Saffron'],
+      heart: ['Tobacco', 'Leather', 'Lavender'],
+      base: ['Vanilla', 'Amber', 'Sandalwood'],
+    },
+    image: chestnutRushImg,
+    imageAlt: 'Chestnut Rush perfume bottle',
+    accent: 'ochre',
+    bottle: { shape: 'facet', liquid: 'amber', cap: 'espresso' },
+    motif: 'seed',
+    motifPlacement: 'top-left',
+  },
+  {
+    id: 'wavekiss',
+    name: 'Wavekiss',
+    family: 'fresh',
+    description:
+      'A surge of marine freshness. Sunlit citrus meets crystalline sea salt and airy waves: pure, invigorating, and clear.',
+    price: null,
+    size: null,
+    notes: {
+      top: ['Lemon', 'Bergamot', 'Sea Salt'],
+      heart: ['Marine Notes', 'Neroli', 'Aquatic Accord'],
+      base: ['Driftwood', 'White Musk', 'Soft Ambergris'],
+    },
+    image: wavekissImg,
+    imageAlt: 'Wavekiss perfume bottle',
+    accent: 'teal',
+    bottle: { shape: 'flask', liquid: 'forest', cap: 'gold' },
+    motif: 'tendril',
+    motifPlacement: 'bottom-right',
+  },
+  {
+    id: 'seductress',
+    name: 'Seductress',
+    family: 'fruity',
+    description: 'A bold, magnetic fragrance where juicy dark fruits meet luxurious florals and smoldering base notes.',
+    price: null,
+    size: null,
+    notes: {
+      top: ['Raspberry', 'Black Cherry', 'Pink Pepper'],
+      heart: ['Rose', 'Jasmine', 'Peony'],
+      base: ['Vanilla', 'Patchouli', 'Amber'],
+    },
+    image: seductressImg,
+    imageAlt: 'Seductress perfume bottle',
+    accent: 'rust',
+    bottle: { shape: 'arch', liquid: 'smoke', cap: 'espresso' },
+    motif: 'bloom',
+    motifPlacement: 'top-right',
+  },
+  {
+    id: 'celestia-rose',
+    name: 'Celestia Rose',
+    family: 'floral',
+    description:
+      'Frozen petals and luminous freshness. Rose and lotus meet crystalline air in an icy floral haute couture composition.',
+    price: null,
+    size: null,
+    notes: {
+      top: ['Frosted Lotus', 'Icy Accord', 'Pink Peony'],
+      heart: ['Rose', 'Water Lily', 'Translucent Florals'],
+      base: ['White Musk', 'Pale Woods', 'Clean Amber'],
+    },
+    image: celestiaRoseImg,
+    imageAlt: 'Celestia Rose perfume bottle',
+    accent: 'cream',
     bottle: { shape: 'arch', liquid: 'sage', cap: 'gold' },
     motif: 'bloom',
-    motifPlacement: 'top-right',
-    isPlaceholder: true,
-  },
-  {
-    id: 'scent-ii',
-    name: 'Scent II',
-    family: 'woody',
-    description: 'Paired with the leaf-sprig motif. A description will follow when the final formula is shared.',
-    price: null,
-    size: null,
-    notes: pendingNotes,
-    image: null,
-    imageAlt: '',
-    bottle: { shape: 'column', liquid: 'smoke', cap: 'espresso' },
-    motif: 'sprig',
     motifPlacement: 'bottom-left',
-    isPlaceholder: true,
   },
   {
-    id: 'scent-iii',
-    name: 'Scent III',
-    family: 'fresh',
-    description: 'Paired with the tendril motif. Scent details are still to be confirmed.',
+    id: 'berry-tease',
+    name: 'Berry Tease',
+    family: 'fruity',
+    description:
+      'A luscious celebration of whole frosted grapes and velvety sweetness with plush fruit and deep, indulgent warmth.',
     price: null,
     size: null,
-    notes: pendingNotes,
-    image: null,
-    imageAlt: '',
-    bottle: { shape: 'flask', liquid: 'sage', cap: 'forest' },
+    notes: {
+      top: ['Grape', 'Plum', 'Red Berries'],
+      heart: ['Violet', 'Heliotrope', 'Fruit Nectar'],
+      base: ['Vanilla', 'Patchouli', 'Amber'],
+    },
+    image: berryTeaseImg,
+    imageAlt: 'Berry Tease perfume bottle',
+    accent: 'rust',
+    bottle: { shape: 'flask', liquid: 'amber', cap: 'forest' },
     motif: 'tendril',
     motifPlacement: 'top-left',
-    isPlaceholder: true,
   },
   {
-    id: 'scent-iv',
-    name: 'Scent IV',
-    family: 'amber',
-    description: 'Paired with the seed-cluster motif. The full description arrives with the product launch.',
-    price: null,
-    size: null,
-    notes: pendingNotes,
-    image: null,
-    imageAlt: '',
-    bottle: { shape: 'facet', liquid: 'amber', cap: 'gold' },
-    motif: 'seed',
-    motifPlacement: 'bottom-right',
-    isPlaceholder: true,
-  },
-  {
-    id: 'scent-v',
-    name: 'Scent V',
+    id: 'lily-valley',
+    name: 'Lily in the Valley',
     family: 'floral',
-    description: 'Paired with the leaf-sprig motif. The story of this scent will be added once its details are confirmed.',
+    description:
+      'A soft radiance of white florals and creamy vanilla blooming like morning light through a veil of pure serenity.',
     price: null,
     size: null,
-    notes: pendingNotes,
-    image: null,
-    imageAlt: '',
-    bottle: { shape: 'flask', liquid: 'amber', cap: 'espresso' },
+    notes: {
+      top: ['Vanilla Orchid', 'Neroli', 'Soft Pear'],
+      heart: ['Lily of the Valley', 'Jasmine Petals', 'White Floral Accord'],
+      base: ['Vanilla', 'White Musk', 'Sandalwood'],
+    },
+    image: lilyValleyImg,
+    imageAlt: 'Lily in the Valley perfume bottle',
+    accent: 'cream',
+    bottle: { shape: 'column', liquid: 'sage', cap: 'forest' },
     motif: 'sprig',
-    motifPlacement: 'top-right',
-    isPlaceholder: true,
-  },
-  {
-    id: 'scent-vi',
-    name: 'Scent VI',
-    family: 'fresh',
-    description: 'Paired with the open-bloom motif. A description will follow when the final formula is shared.',
-    price: null,
-    size: null,
-    notes: pendingNotes,
-    image: null,
-    imageAlt: '',
-    bottle: { shape: 'arch', liquid: 'forest', cap: 'gold' },
-    motif: 'bloom',
-    motifPlacement: 'bottom-left',
-    isPlaceholder: true,
-  },
-  {
-    id: 'scent-vii',
-    name: 'Scent VII',
-    family: 'woody',
-    description: 'Paired with the seed-cluster motif. Scent details are still to be confirmed.',
-    price: null,
-    size: null,
-    notes: pendingNotes,
-    image: null,
-    imageAlt: '',
-    bottle: { shape: 'facet', liquid: 'forest', cap: 'espresso' },
-    motif: 'seed',
-    motifPlacement: 'top-left',
-    isPlaceholder: true,
-  },
-  {
-    id: 'scent-viii',
-    name: 'Scent VIII',
-    family: 'amber',
-    description: 'Paired with the tendril motif. The full description arrives with the product launch.',
-    price: null,
-    size: null,
-    notes: pendingNotes,
-    image: null,
-    imageAlt: '',
-    bottle: { shape: 'column', liquid: 'amber', cap: 'forest' },
-    motif: 'tendril',
     motifPlacement: 'bottom-right',
-    isPlaceholder: true,
   },
 ]
 

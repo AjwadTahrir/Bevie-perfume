@@ -2,11 +2,9 @@ import { useMemo, useState } from 'react'
 import { RotateCcw, ArrowUpRight } from 'lucide-react'
 import ProductVisual from './ProductVisual'
 import Reveal from './Reveal'
-import { SeedDivider } from '../assets/batik/Ornaments'
-import { LIQUIDS } from '../assets/products/BottleIllustration'
 import { brand, sections } from '../config/brand'
 import { copy } from '../config/content'
-import { perfumes, fragranceFamilies, usedFamilies, hasPlaceholderProducts } from '../data/perfumes'
+import { perfumes, fragranceFamilies, usedFamilies, hasPlaceholderProducts, tintOf } from '../data/perfumes'
 
 /**
  * FRAGRANCE FINDER
@@ -25,13 +23,13 @@ export default function FragranceFinder({ onSelect }) {
   const toggle = (key) => setSelected((s) => (s.includes(key) ? s.filter((k) => k !== key) : [...s, key]))
 
   return (
-    <section id={sections.finder} aria-labelledby="finder-title" className="pb-28 md:pb-36 lg:pb-44">
+    <section id={sections.finder} data-nav="find-your-scent" aria-labelledby="finder-title" className="py-24 md:py-32 lg:py-36">
       <div className="mx-auto max-w-[1400px] px-5 md:px-8 lg:px-12">
-        <SeedDivider className="mb-20 md:mb-28" />
 
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
           <Reveal className="lg:col-span-5">
-            <h2 id="finder-title" className="type-h2 text-balance text-forest">
+            <p className="type-eyebrow">{copy.finder.eyebrow}</p>
+            <h2 id="finder-title" className="type-h2 mt-5 text-balance text-brown">
               {copy.finder.title}
             </h2>
             <p className="type-lead mt-5 max-w-md">{copy.finder.intro}</p>
@@ -49,18 +47,18 @@ export default function FragranceFinder({ onSelect }) {
                       aria-pressed={active}
                       onClick={() => toggle(key)}
                       className={`group flex min-h-12 items-baseline gap-3 border-b py-3 text-left transition-colors duration-300 ${
-                        active ? 'border-forest text-forest' : 'border-gold/50 text-espresso-soft hover:text-forest'
+                        active ? 'border-brown text-brown' : 'border-ochre/50 text-brown-soft hover:text-brown'
                       }`}
                     >
                       <span
                         className={`mt-auto mb-auto size-3 shrink-0 rounded-full border transition-colors ${
-                          active ? 'border-forest bg-forest' : 'border-espresso-soft bg-transparent'
+                          active ? 'border-brown bg-brown' : 'border-brown-soft bg-transparent'
                         }`}
                         aria-hidden="true"
                       />
                       <span className="font-display text-[1.9rem] leading-none md:text-[2.4rem]">{fragranceFamilies[key].label}</span>
                       <span className="text-sm tabular-nums">({count})</span>
-                      <span className="ml-auto hidden max-w-[14rem] text-right text-sm text-espresso-soft lg:block">
+                      <span className="ml-auto hidden max-w-[14rem] text-right text-sm text-brown-soft lg:block">
                         {fragranceFamilies[key].blurb}
                       </span>
                     </button>
@@ -74,13 +72,13 @@ export default function FragranceFinder({ onSelect }) {
                 <RotateCcw size={15} strokeWidth={1.5} aria-hidden="true" />
                 Reset
               </button>
-              <p className="text-sm text-espresso-soft" aria-live="polite">
+              <p className="text-sm text-brown-soft" aria-live="polite">
                 Showing {results.length} of {perfumes.length} scents
               </p>
             </div>
 
             {brand.showPlaceholderNotices && hasPlaceholderProducts && (
-              <p className="mt-6 max-w-md text-sm text-espresso-soft">
+              <p className="mt-6 max-w-md text-sm text-brown-soft">
                 Demonstration families: these groupings are sample data and will change when the real scents are added.
               </p>
             )}
@@ -94,22 +92,22 @@ export default function FragranceFinder({ onSelect }) {
                     type="button"
                     onClick={() => onSelect(p)}
                     aria-haspopup="dialog"
-                    className="group flex w-full items-center gap-5 border border-gold/50 bg-ivory p-3 pr-5 text-left transition-colors duration-300 hover:border-forest"
+                    className="group flex w-full items-center gap-5 border border-ochre/50 bg-cream-light p-3 pr-5 text-left transition-colors duration-300 hover:border-brown"
                   >
                     <span
                       className="relative block h-24 w-[4.5rem] shrink-0 overflow-hidden rounded-t-full"
-                      style={{ background: LIQUIDS[p.bottle?.liquid]?.tint }}
+                      style={{ background: tintOf(p) }}
                     >
                       <ProductVisual perfume={p} className="absolute inset-x-[10%] bottom-[4%] h-[80%] w-[80%]" />
                     </span>
                     <span className="min-w-0 flex-1">
-                      <span className="type-label block text-espresso-soft">{fragranceFamilies[p.family]?.label}</span>
-                      <span className="mt-1 block font-display text-2xl text-forest">{p.name}</span>
+                      <span className="type-label block text-brown-soft">{fragranceFamilies[p.family]?.label}</span>
+                      <span className="mt-1 block font-display text-2xl text-brown">{p.name}</span>
                     </span>
                     <ArrowUpRight
                       size={18}
                       strokeWidth={1.5}
-                      className="shrink-0 text-forest transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                      className="shrink-0 text-brown transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
                       aria-hidden="true"
                     />
                     <span className="sr-only">View details</span>

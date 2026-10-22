@@ -21,7 +21,7 @@ export default function Hero() {
 
       <div className="relative mx-auto grid max-w-[1400px] grid-cols-1 px-5 pb-16 pt-[calc(var(--nav-h)+2.75rem)] md:px-8 md:pt-[calc(var(--nav-h)+4rem)] lg:min-h-[100dvh] lg:grid-cols-12 lg:content-center lg:px-12 lg:pb-20 lg:pt-[calc(var(--nav-h)+2rem)]">
         <div className="relative z-10 lg:col-span-8">
-          <h1 id="hero-title" className="type-display text-forest">
+          <h1 id="hero-title" className="type-display text-brown">
             <span className="hero-enter block" style={{ '--enter-delay': '80ms' }}>
               {line1}
             </span>
@@ -39,7 +39,7 @@ export default function Hero() {
                 Explore Collection
                 <ArrowRight size={18} strokeWidth={1.5} aria-hidden="true" />
               </a>
-              <a href={`#${sections.story}`} className="link-underline inline-flex min-h-11 items-center gap-2 font-medium text-forest">
+              <a href={`#${sections.story}`} className="link-underline inline-flex min-h-11 items-center gap-2 font-medium text-brown">
                 Our Story
               </a>
             </div>
@@ -54,8 +54,8 @@ export default function Hero() {
             className="hero-enter absolute bottom-0 left-[6%] w-[50%] lg:bottom-[5%] lg:left-[4%] lg:w-[min(22rem,32%)]"
             style={{ '--enter-delay': '700ms' }}
           >
-            <div className="relative aspect-[3/4] rounded-t-full bg-sage-soft shadow-[0_30px_60px_-30px_rgb(35_72_60/0.45)]">
-              <div className="absolute inset-[7px] rounded-t-full border border-gold/80" aria-hidden="true" />
+            <div className="relative aspect-[3/4] rounded-t-full bg-teal-soft shadow-[0_30px_60px_-30px_rgb(35_72_60/0.45)]">
+              <div className="absolute inset-[7px] rounded-t-full border border-ochre/80" aria-hidden="true" />
               {/* TODO: replace with hero product photography */}
               <BottleIllustration
                 bottle={{ shape: 'arch', liquid: 'sage', cap: 'gold' }}
