@@ -1,0 +1,14 @@
+{
+  "description": "Development-only input example. Phone is a dummy value, not the owner's contact. Committee code must be created in the test project before use.",
+  "customer_name": "Aniq Faizul",
+  "customer_phone": "0100000000",
+  "committee_code": "ANIQ_TEST",
+  "items": [
+    { "product_id": "verdius", "quantity": 2 },
+    { "product_id": "tonvira", "quantity": 1 }
+  ],
+  "expected_subtotal_sen": 10500,
+  "expected_discount_sen": 1500,
+  "expected_total_sen": 9000,
+  "expected_total_without_code_sen": 10500
+}

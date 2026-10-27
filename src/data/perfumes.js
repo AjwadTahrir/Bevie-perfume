@@ -2,9 +2,10 @@
  * THE BEAVIE COLLECTION
  * ---------------------------------------------------------------
  * The eight Beavie perfumes. Names, descriptions, notes and bottle
- * photos come from the BeavieWeb catalogue (scents.js). Prices and
- * sizes are PLACEHOLDERS (marked below) until the real ones are
- * confirmed; set price to null to show "to be announced" instead.
+ * photos come from the BeavieWeb catalogue (scents.js). Prices are
+ * RM 35 per bottle, matching the Supabase catalogue, which is the
+ * authoritative price at checkout. Sizes are not confirmed yet (null
+ * shows "to be confirmed").
  *
  * FIELDS (one record = one card + its modal)
  *   id            unique, url-safe text, e.g. 'melur-noir'
@@ -130,8 +131,8 @@ export const perfumes = [
       Season: 'Spring / Summer',
       'Time of Day': 'Morning',
     },
-    price: 149, // PLACEHOLDER price (MYR)
-    size: '50 ml Eau de Parfum', // PLACEHOLDER
+    price: 35, // MYR; authoritative checkout price comes from Supabase
+    size: null, // TODO
     notes: {
       top: ['Green Apple', 'Bergamot', 'Iced Aldehydes'],
       heart: ['Lavender', 'Aromatic Herbs', 'Rosemary'],
@@ -180,8 +181,8 @@ export const perfumes = [
       Season: 'All Season',
       'Time of Day': 'Work / Evening',
     },
-    price: 169, // PLACEHOLDER price (MYR)
-    size: '50 ml Eau de Parfum', // PLACEHOLDER
+    price: 35,
+    size: null,
     notes: {
       top: ['Mint', 'Bergamot', 'Cardamom'],
       heart: ['Lavender', 'Sage', 'Green Tea'],
@@ -231,8 +232,8 @@ export const perfumes = [
       Season: 'Fall / Winter',
       'Time of Day': 'Evening',
     },
-    price: 179, // PLACEHOLDER price (MYR)
-    size: '50 ml Eau de Parfum', // PLACEHOLDER
+    price: 35,
+    size: null,
     notes: {
       top: ['Rum', 'Chestnut', 'Saffron'],
       heart: ['Tobacco', 'Leather', 'Lavender'],
@@ -281,8 +282,8 @@ export const perfumes = [
       Season: 'Summer',
       'Time of Day': 'Daytime',
     },
-    price: 149, // PLACEHOLDER price (MYR)
-    size: '50 ml Eau de Parfum', // PLACEHOLDER
+    price: 35,
+    size: null,
     notes: {
       top: ['Lemon', 'Bergamot', 'Sea Salt'],
       heart: ['Marine Notes', 'Neroli', 'Aquatic Accord'],
@@ -330,8 +331,8 @@ export const perfumes = [
       Season: 'Fall / Winter',
       'Time of Day': 'Evening / Night',
     },
-    price: 169, // PLACEHOLDER price (MYR)
-    size: '50 ml Eau de Parfum', // PLACEHOLDER
+    price: 35,
+    size: null,
     notes: {
       top: ['Raspberry', 'Black Cherry', 'Pink Pepper'],
       heart: ['Rose', 'Jasmine', 'Peony'],
@@ -381,8 +382,8 @@ export const perfumes = [
       Season: 'Winter / Spring',
       'Time of Day': 'Day / Evening',
     },
-    price: 159, // PLACEHOLDER price (MYR)
-    size: '50 ml Eau de Parfum', // PLACEHOLDER
+    price: 35,
+    size: null,
     notes: {
       top: ['Frosted Lotus', 'Icy Accord', 'Pink Peony'],
       heart: ['Rose', 'Water Lily', 'Translucent Florals'],
@@ -432,8 +433,8 @@ export const perfumes = [
       Season: 'Fall',
       'Time of Day': 'Evening',
     },
-    price: 159, // PLACEHOLDER price (MYR)
-    size: '50 ml Eau de Parfum', // PLACEHOLDER
+    price: 35,
+    size: null,
     notes: {
       top: ['Grape', 'Plum', 'Red Berries'],
       heart: ['Violet', 'Heliotrope', 'Fruit Nectar'],
@@ -482,8 +483,8 @@ export const perfumes = [
       Season: 'Spring',
       'Time of Day': 'Daytime',
     },
-    price: 159, // PLACEHOLDER price (MYR)
-    size: '50 ml Eau de Parfum', // PLACEHOLDER
+    price: 35,
+    size: null,
     notes: {
       top: ['Vanilla Orchid', 'Neroli', 'Soft Pear'],
       heart: ['Lily of the Valley', 'Jasmine Petals', 'White Floral Accord'],
