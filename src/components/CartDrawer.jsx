@@ -9,6 +9,7 @@ import { normalizeReferralCode } from '../data/referralCodes'
 import { shop } from '../config/brand'
 import { payment } from '../config/payment'
 import { formatPrice } from '../lib/format'
+import { compressReceipt } from '../lib/compressImage'
 
 const STEPS = [
   { key: 'cart', label: 'Cart' },
@@ -508,12 +509,19 @@ function PaymentStep({ order, referral, proof, setProof, paid, setPaid }) {
   const [fileError, setFileError] = useState('')
   const count = useCart().count
 
-  const onFile = (file) => {
+  const [preparing, setPreparing] = useState(false)
+
+  // Shrink the screenshot as soon as it is picked: the preview shows what is sent,
+  // and the size limit applies to the smaller file.
+  const onFile = async (file) => {
     setFileError('')
     if (!file) return
     if (!shop.proof.accept.split(',').includes(file.type)) return setFileError('Please upload a JPG, PNG or WebP image.')
-    if (file.size > shop.proof.maxSizeMB * 1024 * 1024) return setFileError(`The file must be ${shop.proof.maxSizeMB} MB or smaller.`)
-    setProof({ file, url: URL.createObjectURL(file) })
+    setPreparing(true)
+    const upload = await compressReceipt(file)
+    setPreparing(false)
+    if (upload.size > shop.proof.maxSizeMB * 1024 * 1024) return setFileError(`The file must be ${shop.proof.maxSizeMB} MB or smaller.`)
+    setProof({ file: upload, url: URL.createObjectURL(upload) })
   }
 
   return (
@@ -549,7 +557,11 @@ function PaymentStep({ order, referral, proof, setProof, paid, setPaid }) {
             onFile(e.dataTransfer.files?.[0])
           }}
         >
-          {proof ? (
+          {preparing ? (
+            <span className="py-6 text-sm text-brown-soft" role="status">
+              Preparing your screenshot…
+            </span>
+          ) : proof ? (
             <>
               <img src={proof.url} alt="Your proof of payment" className="max-h-44 rounded-md object-contain" />
               <span className="max-w-full truncate text-xs text-brown-soft">{proof.file.name}</span>
