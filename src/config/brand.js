@@ -29,11 +29,11 @@ export const brand = {
    * shown as "to be announced" text, never as a clickable link.
    */
   contact: {
-    instagram: '', // full URL, e.g. 'https://www.instagram.com/<handle>/'
+    instagram: 'https://www.instagram.com/jelajahnusantara_kk10/',
   },
 
   // Display handle shown next to Instagram once the URL is set, e.g. '@beavie'.
-  instagramHandle: '',
+  instagramHandle: '@jelajahnusantara_kk10',
 
   /**
    * Development notices that flag sample data on the page
