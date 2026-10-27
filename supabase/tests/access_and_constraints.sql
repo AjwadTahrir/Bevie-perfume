@@ -68,7 +68,7 @@ begin
   if exists (select 1 from public.products where id = 'schema-test-hidden') then
     raise exception 'FAIL: anonymous visitor can see inactive products';
   end if;
-  if not exists (select 1 from public.products where id = 'verdius') then
+  if not exists (select 1 from public.products where id = 'bayu') then
     raise exception 'FAIL: anonymous visitor cannot read seeded catalogue';
   end if;
   begin
@@ -77,7 +77,7 @@ begin
   exception when insufficient_privilege then null;
   end;
   begin
-    update public.products set price_sen = 1 where id = 'verdius';
+    update public.products set price_sen = 1 where id = 'bayu';
     raise exception 'FAIL: anonymous visitor can change prices';
   exception when insufficient_privilege then null;
   end;

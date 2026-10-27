@@ -9,7 +9,7 @@ This is the backend for guest checkout with bank QR payment and manual receipt r
 3. In a new query, paste and run `migrations/20261027000200_seed_catalogue.sql`.
 4. Run `migrations/20261027000300_committee_distribution.sql`. Confirm the eight tables appear in Table Editor. Run each migration only once. If you already ran 001 and 002, run only 003.
 5. Run `migrations/20261027000400_fixed_prices_unlimited_stock.sql` (if 001-003 are already applied, run only 004). Then run `tests/access_and_constraints.sql` in SQL Editor. It rolls back its test data; an error means a check failed.
-6. Run `migrations/20261027000500_align_catalogue_and_checkout.sql` (if 001-004 are already applied, run only 005). It renames the seeded products to the website IDs (`verdius`, `tonvira`, ...), so 004's RM35 price actually applies, and adds the checkout functions.
+6. Run `migrations/20261027000500_align_catalogue_and_checkout.sql` (if 001-004 are already applied, run only 005). It puts the RM35 price on the Malay catalogue IDs seeded by 002 (`bayu`, `nirmala`, ...; 004 targeted English IDs that were never created), and adds the checkout functions. The website (`src/data/perfumes.js`) uses the same IDs and names.
 7. Load the committee codes: run `private/committee_codes.sql`. That file holds members' names, so it is kept out of git; ask for it rather than committing it.
 8. Create the receipt bucket (see **Create receipt storage** below).
 

@@ -1,14 +1,15 @@
 /**
  * THE BEAVIE COLLECTION
  * ---------------------------------------------------------------
- * The eight Beavie perfumes. Names, descriptions, notes and bottle
- * photos come from the BeavieWeb catalogue (scents.js). Prices are
- * RM 35 per bottle, matching the Supabase catalogue, which is the
- * authoritative price at checkout. Sizes are not confirmed yet (null
- * shows "to be confirmed").
+ * The eight Beavie perfumes. IDs and names match the Supabase catalogue
+ * (Bayu, Nirmala, ...). Descriptions, notes and bottle photos come from
+ * the BeavieWeb catalogue (scents.js); the photo files keep their
+ * original names. Prices are RM 35 per bottle, matching the Supabase
+ * catalogue, which is the authoritative price at checkout. Sizes are
+ * not confirmed yet (null shows "to be confirmed").
  *
  * FIELDS (one record = one card + its modal)
- *   id            unique, url-safe text, e.g. 'melur-noir'
+ *   id            unique, url-safe text; must equal the product id in Supabase
  *   name          the perfume's name as it should appear on the site
  *   family        one key from `fragranceFamilies` below
  *   description   one or two short sentences for the card and modal
@@ -95,19 +96,19 @@ export const tintOf = (perfume) => accentTints[perfume?.accent] ?? accentTints.c
  * sequence. Swap the imports above to feature another scent.
  */
 export const heroProduct = {
-  perfumeId: 'chestnut-rush',
+  perfumeId: 'senja',
   src: chestnutRushLarge,
   srcSet: `${chestnutRushImg} 640w, ${chestnutRushLarge} 1200w`,
-  alt: 'Beavie Chestnut Rush perfume bottle with a cream label framed by batik-style borders',
+  alt: 'Beavie Senja perfume bottle with a cream label framed by batik-style borders',
 }
 
 export const perfumes = [
   {
-    id: 'verdius',
-    name: 'Verdius',
+    id: 'bayu',
+    name: 'Bayu',
     family: 'fresh',
     description:
-      'A revitalizing breath of cool clarity. Verdius captures freshly washed skin, chilled green apple, and morning air with effortless polish.',
+      'A revitalizing breath of cool clarity. Bayu captures freshly washed skin, chilled green apple, and morning air with effortless polish.',
     tagline: 'Post-Shower Crispness',
     mood: 'Clean cold lighting, green apple glow, crushed ice, and slate mist.',
     accords: [
@@ -139,7 +140,7 @@ export const perfumes = [
       base: ['Cedarwood', 'Vetiver', 'White Musk'],
     },
     image: verdiusImg,
-    imageAlt: 'Verdius perfume bottle with a deep green botanical label',
+    imageAlt: 'Bayu perfume bottle with a deep green botanical label',
     scene: {
       src: verdiusScene1060,
       srcSet: `${verdiusScene640} 640w, ${verdiusScene1060} 1060w`,
@@ -152,8 +153,8 @@ export const perfumes = [
     motifPlacement: 'top-right',
   },
   {
-    id: 'tonvira',
-    name: 'Tonvira',
+    id: 'nirmala',
+    name: 'Nirmala',
     family: 'woody',
     description:
       'Precision, composure, command. Cool mint meets warm vanilla and timeless woods, crafted for ambition without compromise.',
@@ -189,7 +190,7 @@ export const perfumes = [
       base: ['Vanilla', 'Amberwood', 'Cedar'],
     },
     image: tonviraImg,
-    imageAlt: 'Tonvira perfume bottle',
+    imageAlt: 'Nirmala perfume bottle',
     scene: {
       src: tonviraScene1060,
       srcSet: `${tonviraScene640} 640w, ${tonviraScene1060} 1060w`,
@@ -202,8 +203,8 @@ export const perfumes = [
     motifPlacement: 'bottom-left',
   },
   {
-    id: 'chestnut-rush',
-    name: 'Chestnut Rush',
+    id: 'senja',
+    name: 'Senja',
     family: 'amber',
     description:
       'An evocative blend of warmth and sophistication: rum, spices, rich tobacco, smooth leather, vanilla, and amber.',
@@ -240,7 +241,7 @@ export const perfumes = [
       base: ['Vanilla', 'Amber', 'Sandalwood'],
     },
     image: chestnutRushImg,
-    imageAlt: 'Chestnut Rush perfume bottle',
+    imageAlt: 'Senja perfume bottle',
     scene: {
       src: chestnutRushScene1060,
       srcSet: `${chestnutRushScene640} 640w, ${chestnutRushScene1060} 1060w`,
@@ -253,8 +254,8 @@ export const perfumes = [
     motifPlacement: 'top-left',
   },
   {
-    id: 'wavekiss',
-    name: 'Wavekiss',
+    id: 'samudera',
+    name: 'Samudera',
     family: 'fresh',
     description:
       'A surge of marine freshness. Sunlit citrus meets crystalline sea salt and airy waves: pure, invigorating, and clear.',
@@ -290,7 +291,7 @@ export const perfumes = [
       base: ['Driftwood', 'White Musk', 'Soft Ambergris'],
     },
     image: wavekissImg,
-    imageAlt: 'Wavekiss perfume bottle',
+    imageAlt: 'Samudera perfume bottle',
     scene: {
       src: wavekissScene1060,
       srcSet: `${wavekissScene640} 640w, ${wavekissScene1060} 1060w`,
@@ -303,8 +304,8 @@ export const perfumes = [
     motifPlacement: 'bottom-right',
   },
   {
-    id: 'seductress',
-    name: 'Seductress',
+    id: 'purnama',
+    name: 'Purnama',
     family: 'fruity',
     description: 'A bold, magnetic fragrance where juicy dark fruits meet luxurious florals and smoldering base notes.',
     tagline: 'Midnight Raspberry CEO',
@@ -339,7 +340,7 @@ export const perfumes = [
       base: ['Vanilla', 'Patchouli', 'Amber'],
     },
     image: seductressImg,
-    imageAlt: 'Seductress perfume bottle',
+    imageAlt: 'Purnama perfume bottle',
     scene: {
       src: seductressScene1060,
       srcSet: `${seductressScene640} 640w, ${seductressScene1060} 1060w`,
@@ -352,8 +353,8 @@ export const perfumes = [
     motifPlacement: 'top-right',
   },
   {
-    id: 'celestia-rose',
-    name: 'Celestia Rose',
+    id: 'ratna',
+    name: 'Ratna',
     family: 'floral',
     description:
       'Frozen petals and luminous freshness. Rose and lotus meet crystalline air in an icy floral haute couture composition.',
@@ -390,7 +391,7 @@ export const perfumes = [
       base: ['White Musk', 'Pale Woods', 'Clean Amber'],
     },
     image: celestiaRoseImg,
-    imageAlt: 'Celestia Rose perfume bottle',
+    imageAlt: 'Ratna perfume bottle',
     scene: {
       src: celestiaRoseScene1060,
       srcSet: `${celestiaRoseScene640} 640w, ${celestiaRoseScene1060} 1060w`,
@@ -403,8 +404,8 @@ export const perfumes = [
     motifPlacement: 'bottom-left',
   },
   {
-    id: 'berry-tease',
-    name: 'Berry Tease',
+    id: 'ranum',
+    name: 'Ranum',
     family: 'fruity',
     description:
       'A luscious celebration of whole frosted grapes and velvety sweetness with plush fruit and deep, indulgent warmth.',
@@ -441,7 +442,7 @@ export const perfumes = [
       base: ['Vanilla', 'Patchouli', 'Amber'],
     },
     image: berryTeaseImg,
-    imageAlt: 'Berry Tease perfume bottle',
+    imageAlt: 'Ranum perfume bottle',
     scene: {
       src: berryTeaseScene1060,
       srcSet: `${berryTeaseScene640} 640w, ${berryTeaseScene1060} 1060w`,
@@ -454,8 +455,8 @@ export const perfumes = [
     motifPlacement: 'top-left',
   },
   {
-    id: 'lily-valley',
-    name: 'Lily in the Valley',
+    id: 'seroja',
+    name: 'Seroja',
     family: 'floral',
     description:
       'A soft radiance of white florals and creamy vanilla blooming like morning light through a veil of pure serenity.',
@@ -491,7 +492,7 @@ export const perfumes = [
       base: ['Vanilla', 'White Musk', 'Sandalwood'],
     },
     image: lilyValleyImg,
-    imageAlt: 'Lily in the Valley perfume bottle',
+    imageAlt: 'Seroja perfume bottle',
     scene: {
       src: lilyValleyScene1060,
       srcSet: `${lilyValleyScene640} 640w, ${lilyValleyScene1060} 1060w`,

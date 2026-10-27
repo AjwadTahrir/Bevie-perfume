@@ -8,7 +8,7 @@ const REFLECTION_MASK = `linear-gradient(to top, transparent ${100 - BASE}%, rgb
 
 /**
  * HERO BOTTLE
- * The real Chestnut Rush product photograph (transparent WebP), with
+ * The real Senja product photograph (transparent WebP), with
  * a soft contact shadow and a faint reflection on the floor. It is a
  * flat photograph, so the scroll sequence only scales, moves and
  * slightly tilts it; it never fakes a rotation that would reveal

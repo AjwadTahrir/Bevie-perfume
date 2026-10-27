@@ -1,7 +1,8 @@
 -- Run after 001-004 (on projects that already ran them, run only this file).
--- 1. Aligns product IDs and names with the website catalogue (src/data/perfumes.js).
---    002 seeded bayu, nirmala, ... while 004 and the frontend use verdius, tonvira, ...,
---    so 004's RM35 update matched no rows and nothing was purchasable.
+-- 1. Makes the Malay catalogue IDs from 002 (bayu, nirmala, ...) the purchasable
+--    products. 004 priced verdius, tonvira, ..., IDs that 002 never created, so its
+--    RM35 update matched no rows and nothing was purchasable. If an earlier draft of
+--    this file renamed the products to those English IDs, they are renamed back.
 -- 2. Adds the transactional checkout functions the Edge Function calls
 --    (supabase/functions/checkout). Only service_role may execute them.
 begin;
@@ -13,51 +14,46 @@ declare
 begin
   for m in
     select * from (values
-      ('bayu', 'verdius', 'Verdius'),
-      ('nirmala', 'tonvira', 'Tonvira'),
-      ('senja', 'chestnut-rush', 'Chestnut Rush'),
-      ('samudera', 'wavekiss', 'Wavekiss'),
-      ('purnama', 'seductress', 'Seductress'),
-      ('ratna', 'celestia-rose', 'Celestia Rose'),
-      ('ranum', 'berry-tease', 'Berry Tease'),
-      ('seroja', 'lily-valley', 'Lily in the Valley')
-    ) as t(old_id, new_id, new_name)
+      ('verdius', 'bayu', 'Bayu', 'fresh', 1),
+      ('tonvira', 'nirmala', 'Nirmala', 'woody', 2),
+      ('chestnut-rush', 'senja', 'Senja', 'amber', 3),
+      ('wavekiss', 'samudera', 'Samudera', 'fresh', 4),
+      ('seductress', 'purnama', 'Purnama', 'fruity', 5),
+      ('celestia-rose', 'ratna', 'Ratna', 'floral', 6),
+      ('berry-tease', 'ranum', 'Ranum', 'fruity', 7),
+      ('lily-valley', 'seroja', 'Seroja', 'floral', 8)
+    ) as t(english_id, id, name, family, sort_order)
   loop
-    if exists (select 1 from public.products where id = m.old_id)
-       and not exists (select 1 from public.products where id = m.new_id) then
+    if exists (select 1 from public.products where id = m.english_id)
+       and not exists (select 1 from public.products where id = m.id) then
       -- Primary keys are referenced without ON UPDATE CASCADE: copy, repoint, remove.
       insert into public.products (id, name, family, description, price_sen, size, notes_top, notes_heart,
         notes_base, image_path, image_alt, is_active, is_purchasable, sort_order, track_stock)
-      select m.new_id, m.new_name, family, description, price_sen, size, notes_top, notes_heart,
+      select m.id, m.name, family, description, price_sen, size, notes_top, notes_heart,
         notes_base, image_path, image_alt, is_active, false, sort_order, track_stock
-      from public.products where id = m.old_id;
-      update public.inventory set product_id = m.new_id where product_id = m.old_id;
-      update public.order_items set product_id = m.new_id where product_id = m.old_id;
-      delete from public.products where id = m.old_id;
-    elsif not exists (select 1 from public.products where id = m.new_id) then
-      insert into public.products (id, name, family, sort_order)
-      select m.new_id, m.new_name, f.family, f.sort_order
-      from (values
-        ('verdius', 'fresh', 1), ('tonvira', 'woody', 2), ('chestnut-rush', 'amber', 3),
-        ('wavekiss', 'fresh', 4), ('seductress', 'fruity', 5), ('celestia-rose', 'floral', 6),
-        ('berry-tease', 'fruity', 7), ('lily-valley', 'floral', 8)
-      ) as f(id, family, sort_order)
-      where f.id = m.new_id;
-      insert into public.inventory (product_id) values (m.new_id);
+      from public.products where id = m.english_id;
+      update public.inventory set product_id = m.id where product_id = m.english_id;
+      update public.order_items set product_id = m.id where product_id = m.english_id;
+      delete from public.products where id = m.english_id;
+    elsif not exists (select 1 from public.products where id = m.id) then
+      insert into public.products (id, name, family, sort_order) values (m.id, m.name, m.family, m.sort_order);
+      insert into public.inventory (product_id) values (m.id);
     end if;
   end loop;
 end;
 $$;
 
+-- The seeded description still named the scent by its old name.
+update public.products set description = replace(description, 'Verdius captures', 'Bayu captures') where id = 'bayu';
+
 -- What 004 intended: RM35 each, purchasable, unlimited stock.
 update public.products set price_sen = 3500, track_stock = false, is_purchasable = is_active
-where id in ('verdius', 'tonvira', 'chestnut-rush', 'wavekiss',
-  'seductress', 'celestia-rose', 'berry-tease', 'lily-valley');
+where id in ('bayu', 'nirmala', 'senja', 'samudera', 'purnama', 'ratna', 'ranum', 'seroja');
 
 -- ---------------------------------------------------------------- 2. checkout functions
 
 -- Valid code -> true. Codes are never listed; the Edge Function rate-limits calls.
-create function public.checkout_code_is_active(p_code text)
+create or replace function public.checkout_code_is_active(p_code text)
 returns boolean
 language sql stable security definer
 set search_path = ''
@@ -69,8 +65,8 @@ as $$
 $$;
 
 -- Creates an order atomically and idempotently (same checkout_request_id -> same order).
--- p_items: [{"id": "verdius", "quantity": 2}, ...]. Prices come from public.products only.
-create function public.checkout_create_order(
+-- p_items: [{"id": "bayu", "quantity": 2}, ...]. Prices come from public.products only.
+create or replace function public.checkout_create_order(
   p_request_id uuid,
   p_guest_token_hash text,
   p_customer_name text,
@@ -164,7 +160,7 @@ $$;
 
 -- Records a receipt the Edge Function has already uploaded and checked (type, size, bytes).
 -- Proves ownership with the guest token hash; never trusts the order number.
-create function public.checkout_record_receipt(
+create or replace function public.checkout_record_receipt(
   p_order_id uuid,
   p_guest_token_hash text,
   p_submission_id uuid,

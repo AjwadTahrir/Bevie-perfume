@@ -4,8 +4,8 @@
   "customer_phone": "0100000000",
   "committee_code": "ANIQ_TEST",
   "items": [
-    { "product_id": "verdius", "quantity": 2 },
-    { "product_id": "tonvira", "quantity": 1 }
+    { "product_id": "bayu", "quantity": 2 },
+    { "product_id": "nirmala", "quantity": 1 }
   ],
   "expected_subtotal_sen": 10500,
   "expected_discount_sen": 1500,
