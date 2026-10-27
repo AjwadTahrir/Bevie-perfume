@@ -15,7 +15,8 @@ async function loadAdmin(session) {
  * password of their Supabase Auth account (Supabase rate-limits sign-in);
  * Supabase then keeps and refreshes the session. A signed-in account that
  * isn't in shop_admins is signed straight out, and 30 minutes without
- * activity ends the session.
+ * activity ends the session. Sign-out is local (this browser only), so one
+ * idle tab never signs the same account out on other devices.
  */
 export function AuthProvider({ children }) {
   const [state, setState] = useState({ status: 'loading', admin: null, notice: '' })
@@ -25,7 +26,7 @@ export function AuthProvider({ children }) {
     if (!session) return setState({ status: 'signedOut', admin: null, notice })
     const admin = await loadAdmin(session)
     if (!admin) {
-      await supabase.auth.signOut()
+      await supabase.auth.signOut({ scope: 'local' })
       return setState({ status: 'signedOut', admin: null, notice: 'This account does not have dashboard access.' })
     }
     setState({ status: 'signedIn', admin, notice: '' })
@@ -49,7 +50,7 @@ export function AuthProvider({ children }) {
     const timer = setInterval(() => {
       if (Date.now() - lastActive.current > IDLE_LIMIT_MS) {
         setState((s) => ({ ...s, notice: 'You were signed out after 30 minutes of inactivity.' }))
-        supabase.auth.signOut()
+        supabase.auth.signOut({ scope: 'local' })
       }
     }, 30_000)
     return () => {
@@ -70,7 +71,7 @@ export function AuthProvider({ children }) {
 
   const logout = useCallback(async () => {
     setState((s) => ({ ...s, notice: 'You have been signed out.' }))
-    await supabase.auth.signOut()
+    await supabase.auth.signOut({ scope: 'local' })
   }, [])
 
   return <AuthContext.Provider value={{ ...state, login, logout }}>{children}</AuthContext.Provider>
