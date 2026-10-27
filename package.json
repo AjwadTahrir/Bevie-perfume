@@ -6,10 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview",
-    "test": "vitest run",
-    "db:apply": "node scripts/db-apply.mjs",
-    "admin:create": "node scripts/create-admin.mjs"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@fontsource-variable/dm-sans": "^5.2.8",
@@ -25,12 +22,9 @@
     "recharts": "^3.10.1"
   },
   "devDependencies": {
-    "@electric-sql/pglite": "^0.5.12",
     "@tailwindcss/vite": "^4.3.3",
     "@vitejs/plugin-react": "^6.1.2",
-    "pg": "^8.23.1",
     "tailwindcss": "^4.3.3",
-    "vite": "^8.3.4",
-    "vitest": "^5.0.5"
+    "vite": "^8.3.4"
   }
 }

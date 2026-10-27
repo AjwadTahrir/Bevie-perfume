@@ -315,8 +315,12 @@ export default function OrderDetail() {
               </Field>
               {o.customer_email && <Field label="Email">{o.customer_email}</Field>}
             </dl>
-            <p className="mt-3 text-xs font-medium text-ink-3">Delivery address</p>
-            <p className="mt-1 text-sm whitespace-pre-line">{o.delivery_address}</p>
+            {o.delivery_address && (
+              <>
+                <p className="mt-3 text-xs font-medium text-ink-3">Delivery address</p>
+                <p className="mt-1 text-sm whitespace-pre-line">{o.delivery_address}</p>
+              </>
+            )}
             {o.customer_notes && (
               <>
                 <p className="mt-3 text-xs font-medium text-ink-3">Customer notes</p>

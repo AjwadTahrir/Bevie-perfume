@@ -1,26 +1,29 @@
 import { QrCode } from 'lucide-react'
-import { shop } from '../config/brand'
+import { payment } from '../config/payment'
+import { checkoutMode } from '../lib/orders'
 
 /**
- * The payment QR code. Shows the image set in shop.payment.qrImage
- * (src/config/brand.js); until one is set, a clearly marked
- * placeholder so nobody mistakes it for a real, scannable code.
+ * The payment QR code from src/config/payment.js. It is only shown
+ * when checkout is live (backend connected); otherwise a clearly
+ * marked placeholder, so nobody pays while orders can't be saved.
  */
 export default function PaymentQr() {
-  if (shop.payment.qrImage) {
+  if (checkoutMode === 'live') {
     return (
       <img
-        src={shop.payment.qrImage}
-        alt={`${shop.payment.method} code for paying Beavie Perfume`}
-        className="size-56 rounded-lg bg-white object-contain p-2"
+        src={payment.qrImagePath}
+        alt={`${payment.method} code for paying ${payment.recipientName}`}
+        className="h-auto w-60 max-w-full rounded-lg bg-white object-contain"
       />
     )
   }
   return (
     <div className="flex size-56 flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed border-brown/35 bg-white/60 px-6 text-brown-soft">
       <QrCode size={56} strokeWidth={1.1} aria-hidden="true" />
-      <p className="text-sm font-medium text-brown">QR code placeholder</p>
-      <p className="text-xs leading-snug">Add the business payment QR in src/config/brand.js</p>
+      <p className="text-sm font-medium text-brown">{checkoutMode === 'demo' ? 'Demo mode · do not pay' : 'QR available soon'}</p>
+      <p className="text-xs leading-snug">
+        {checkoutMode === 'demo' ? 'The real QR appears once the checkout backend is connected.' : 'Online payment opens soon.'}
+      </p>
     </div>
   )
 }

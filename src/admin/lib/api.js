@@ -12,6 +12,8 @@ const messages = {
   invalid_price: 'Prices must be between RM 1 and RM 10,000 (profit RM 0 or more).',
   invalid_target: 'Targets must be whole numbers above zero.',
   invalid_campaign_name: 'Campaign name must be 3 to 120 characters.',
+  invalid_dates: 'The campaign end date must be after the start date.',
+  note_length: 'Notes must be 1 to 2,000 characters.',
 }
 
 function friendly(error) {
@@ -62,8 +64,8 @@ export async function fetchOrder(id) {
   }
   const [order, items, submissions, history, notes] = await Promise.all([
     one(supabase.from('admin_orders').select('*').eq('id', id).maybeSingle()),
-    one(supabase.from('order_items').select('*').eq('order_id', id).order('id')),
-    one(supabase.from('payment_submissions').select('*').eq('order_id', id).order('created_at', { ascending: false })),
+    one(supabase.from('admin_order_items').select('*').eq('order_id', id).order('perfume_name')),
+    one(supabase.from('admin_payment_submissions').select('*').eq('order_id', id).order('created_at', { ascending: false })),
     one(supabase.from('order_status_history').select('*').eq('order_id', id).order('created_at')),
     one(supabase.from('order_notes').select('*').eq('order_id', id).order('created_at')),
   ])
@@ -76,9 +78,9 @@ export async function fetchSettings() {
   return data
 }
 
-/** Short-lived link to a private proof file (RLS: admins only). */
+/** Short-lived link to a private receipt in the payment_receipts bucket (storage policy: admins only). */
 export async function proofUrl(path) {
-  const { data, error } = await supabase.storage.from('payment-proofs').createSignedUrl(path, 300)
+  const { data, error } = await supabase.storage.from('payment_receipts').createSignedUrl(path, 300)
   if (error) throw new Error('Could not open the proof file.')
   return data.signedUrl
 }

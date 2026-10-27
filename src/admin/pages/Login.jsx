@@ -6,7 +6,7 @@ import { useAuth } from '../lib/auth'
 export default function Login() {
   const { status, login, notice } = useAuth()
   const location = useLocation()
-  const [username, setUsername] = useState('')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
@@ -18,7 +18,7 @@ export default function Login() {
     setBusy(true)
     setError('')
     try {
-      await login(username.trim(), password)
+      await login(email.trim(), password)
     } catch (err) {
       setError(err.message)
       setPassword('')
@@ -32,7 +32,7 @@ export default function Login() {
       <div className="w-full max-w-sm">
         <div className="mb-8 flex flex-col items-center text-center">
           <span className="flex size-11 items-center justify-center rounded-xl bg-brand text-lg font-semibold text-white">B</span>
-          <h1 className="mt-4 text-lg font-semibold tracking-tight">Bevie Fundraising Console</h1>
+          <h1 className="mt-4 text-lg font-semibold tracking-tight">Beavie Fundraising Console</h1>
           <p className="mt-1 text-sm text-ink-2">Sign in to manage orders and campaign sales.</p>
         </div>
         <form onSubmit={submit} className="card space-y-4 p-6" noValidate>
@@ -42,10 +42,10 @@ export default function Login() {
             </p>
           )}
           <div>
-            <label htmlFor="username" className="label">
-              Username
+            <label htmlFor="email" className="label">
+              Email
             </label>
-            <input id="username" className="input" autoComplete="username" autoCapitalize="none" spellCheck={false} value={username} onChange={(e) => setUsername(e.target.value)} required />
+            <input id="email" type="email" className="input" autoComplete="username" autoCapitalize="none" spellCheck={false} value={email} onChange={(e) => setEmail(e.target.value)} required />
           </div>
           <div>
             <label htmlFor="password" className="label">
@@ -58,7 +58,7 @@ export default function Login() {
               {error}
             </p>
           )}
-          <button type="submit" className="btn btn-primary w-full" disabled={busy || !username || !password}>
+          <button type="submit" className="btn btn-primary w-full" disabled={busy || !email || !password}>
             <Lock size={14} aria-hidden="true" />
             {busy || status === 'loading' ? 'Signing in…' : 'Sign in'}
           </button>

@@ -5,8 +5,8 @@ import { shop } from '../config/brand'
 /**
  * CART
  * Lines are { id, quantity }; product details always come from
- * src/data/perfumes.js and prices from the campaign settings, so
- * nothing stale is kept in someone's cart. The cart is kept in this browser's localStorage
+ * src/data/perfumes.js, so a price change can't leave a stale price in
+ * someone's cart. The cart is kept in this browser's localStorage
  * between visits (a convenience only: the order itself is created at
  * checkout by src/lib/orders.js).
  */
@@ -66,7 +66,9 @@ export function CartProvider({ children }) {
   const value = useMemo(() => {
     const items = lines.map((l) => ({ ...l, perfume: byId.get(l.id) })).filter((l) => l.perfume)
     const count = items.reduce((n, l) => n + l.quantity, 0)
-    return { items, count, add, setQuantity, remove, clear, isOpen, open, close }
+    // Items without a price (null) count as 0 until priced.
+    const subtotal = items.reduce((sum, l) => sum + (typeof l.perfume.price === 'number' ? l.perfume.price * l.quantity : 0), 0)
+    return { items, count, subtotal, add, setQuantity, remove, clear, isOpen, open, close }
   }, [lines, add, setQuantity, remove, clear, isOpen, open, close])
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>
@@ -76,4 +78,14 @@ export function useCart() {
   const ctx = useContext(CartContext)
   if (!ctx) throw new Error('useCart must be used inside <CartProvider>')
   return ctx
+}
+
+/**
+ * Totals the site shows before the order exists. The backend
+ * recalculates them from database prices when the order is created,
+ * and checkout then shows the backend's figures.
+ */
+export function orderTotals(subtotal, count, codeApplied) {
+  const discount = codeApplied ? shop.committeeDiscountPerBottle * count : 0
+  return { subtotal, discount, total: Math.max(0, subtotal - discount) }
 }

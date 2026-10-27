@@ -50,30 +50,24 @@ export const brand = {
 /**
  * SHOP AND CHECKOUT
  * ---------------------------------------------------------------
- * Customers pay by bank transfer or by scanning a QR code with their
- * banking app, then enter the transfer reference and upload proof.
- * Nothing here is a payment gateway: an admin checks each payment by
- * hand in the dashboard. Prices and the promo discount come from the
- * campaign settings in the database (admin -> Settings).
+ * Customers pay by scanning a QR code (src/config/payment.js) and
+ * upload a screenshot of the payment. Orders, prices, committee codes
+ * and receipts are handled by the Supabase backend (src/lib/orders.js,
+ * supabase/README.md); the values here only drive what the site shows,
+ * and must match the backend.
  */
 export const shop = {
-  payment: {
-    // QR image to scan, e.g. a DuitNow QR exported from the business bank
-    // account. Put the file in src/assets/ and import it here. While null,
-    // checkout shows a clearly marked placeholder instead.
-    qrImage: null,
-    method: 'DuitNow QR',
-    accountName: '', // e.g. 'BEAVIE PERFUME' (shown under the QR)
-    bankName: '', // e.g. 'Maybank'
-  },
+  // RM off each bottle with an active committee (referral) code.
+  // Matches the backend rule: discount_sen = 500 x total quantity.
+  committeeDiscountPerBottle: 5,
 
-  // Flat delivery fee in ringgit, or null to show "Calculated after checkout".
-  shippingFee: null,
+  // The committee distributes orders: no delivery fee, no address needed.
+  distributionNote: 'Free · arranged by the committee',
 
-  // Proof of payment upload limits (the server checks them again).
+  // Proof of payment: images only, as the receipts bucket accepts.
   proof: {
-    maxSizeMB: 4,
-    accept: 'image/jpeg,image/png,image/webp,application/pdf',
+    maxSizeMB: 5,
+    accept: 'image/jpeg,image/png,image/webp',
   },
 
   maxQuantityPerItem: 10,

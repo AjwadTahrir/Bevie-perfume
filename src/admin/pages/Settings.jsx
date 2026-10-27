@@ -8,8 +8,6 @@ import { supabase } from '../lib/supabase'
 import { fmtDateTime } from '../lib/format'
 
 const FIELDS = [
-  { key: 'selling_price', label: 'Selling price (RM per bottle)', step: '0.01' },
-  { key: 'discounted_price', label: 'Promo price with a valid AJK code (RM)', step: '0.01' },
   { key: 'profit_per_bottle', label: 'Campaign profit per bottle (RM)', step: '0.01' },
   { key: 'campaign_target', label: 'Campaign target (bottles)', step: '1' },
   { key: 'member_target', label: 'Target per AJK member (bottles)', step: '1' },
@@ -33,13 +31,10 @@ function CampaignSettings() {
   const save = async (e) => {
     e.preventDefault()
     setError('')
-    if (Number(form.discounted_price) > Number(form.selling_price)) return setError('The promo price cannot be higher than the selling price.')
     setSaving(true)
     try {
       const saved = await actions.updateSettings({
         campaign_name: form.campaign_name,
-        selling_price: Number(form.selling_price),
-        discounted_price: Number(form.discounted_price),
         profit_per_bottle: Number(form.profit_per_bottle),
         campaign_target: Number(form.campaign_target),
         member_target: Number(form.member_target),
@@ -65,6 +60,14 @@ function CampaignSettings() {
           <input id="campaign_name" className="input" value={form.campaign_name} onChange={set('campaign_name')} required minLength={3} maxLength={120} />
         </div>
         <div className="grid gap-5 sm:grid-cols-2">
+          <div>
+            <span className="label">Selling price (RM per bottle)</span>
+            <p className="input tabular-nums text-ink-2">{Number(form.selling_price).toFixed(2)}</p>
+          </div>
+          <div>
+            <span className="label">Promo price with a valid AJK code (RM)</span>
+            <p className="input tabular-nums text-ink-2">{Number(form.discounted_price).toFixed(2)}</p>
+          </div>
           {FIELDS.map((f) => (
             <div key={f.key}>
               <label htmlFor={f.key} className="label">
@@ -77,19 +80,19 @@ function CampaignSettings() {
         <div className="grid gap-5 sm:grid-cols-2">
           <div>
             <label htmlFor="starts_on" className="label">
-              Orders open from (optional)
+              Campaign starts (optional)
             </label>
             <input id="starts_on" type="date" className="input" value={form.starts_on} onChange={set('starts_on')} />
           </div>
           <div>
             <label htmlFor="ends_on" className="label">
-              Orders close after (optional)
+              Campaign ends (optional)
             </label>
             <input id="ends_on" type="date" className="input" value={form.ends_on} min={form.starts_on || undefined} onChange={set('ends_on')} />
           </div>
         </div>
         <p className="rounded-lg bg-info-soft px-3 py-2 text-xs text-info">
-          Changes apply to new orders only. Every existing order keeps the prices, discount and profit it was placed with, so past totals never change.
+          Prices are set by the shop checkout (RM 35 a bottle, RM 5 off each bottle with an AJK code), so they are shown here for reference only. Profit per bottle and targets apply to every report as soon as you save. The campaign dates are for your reference; they do not open or close the shop.
         </p>
         {error && (
           <p role="alert" className="text-sm text-bad">
@@ -156,7 +159,7 @@ function PasswordSettings() {
 export default function Settings() {
   return (
     <>
-      <PageHeader title="Settings" description="Campaign pricing, targets and your account." />
+      <PageHeader title="Settings" description="Campaign targets, profit and your account." />
       <div className="grid gap-4 xl:grid-cols-3">
         <div className="xl:col-span-2">
           <CampaignSettings />

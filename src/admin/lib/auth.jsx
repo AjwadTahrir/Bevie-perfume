@@ -6,16 +6,16 @@ const AuthContext = createContext(null)
 
 async function loadAdmin(session) {
   if (!session) return null
-  const { data } = await supabase.from('admin_profiles').select('username, display_name').eq('user_id', session.user.id).maybeSingle()
-  return data
+  const { data } = await supabase.rpc('is_shop_admin')
+  return data === true ? { username: session.user.email, display_name: null } : null
 }
 
 /**
- * Session handling for the dashboard. Sign-in goes through
- * /api/admin/login (username -> account mapping and rate limiting on
- * the server); Supabase then keeps and refreshes the session. A signed-in
- * account that isn't in admin_profiles is signed straight out, and 30
- * minutes without activity ends the session.
+ * Session handling for the dashboard. Admins sign in with the email and
+ * password of their Supabase Auth account (Supabase rate-limits sign-in);
+ * Supabase then keeps and refreshes the session. A signed-in account that
+ * isn't in shop_admins is signed straight out, and 30 minutes without
+ * activity ends the session.
  */
 export function AuthProvider({ children }) {
   const [state, setState] = useState({ status: 'loading', admin: null, notice: '' })
@@ -58,18 +58,14 @@ export function AuthProvider({ children }) {
     }
   }, [state.status])
 
-  const login = useCallback(async (username, password) => {
-    let res
-    try {
-      res = await fetch('/api/admin/login', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ username, password }) })
-    } catch {
-      throw new Error('Could not reach the server. Check your connection.')
-    }
-    const body = await res.json().catch(() => ({}))
-    if (!res.ok) throw new Error(body.message || 'Sign-in failed. Please try again.')
+  const login = useCallback(async (email, password) => {
     lastActive.current = Date.now()
-    const { error } = await supabase.auth.setSession({ access_token: body.session.access_token, refresh_token: body.session.refresh_token })
-    if (error) throw new Error('Could not start your session. Please try again.')
+    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    if (!error) return
+    if (/invalid login credentials/i.test(error.message)) throw new Error('Wrong email or password.')
+    if (error.status === 429) throw new Error('Too many attempts. Please wait a few minutes and try again.')
+    if (/fetch|network/i.test(error.message)) throw new Error('Could not reach the server. Check your connection.')
+    throw new Error(error.message || 'Sign-in failed. Please try again.')
   }, [])
 
   const logout = useCallback(async () => {

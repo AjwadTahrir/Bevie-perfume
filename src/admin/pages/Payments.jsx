@@ -135,7 +135,7 @@ export default function Payments() {
         body={
           <>
             <p>
-              Confirm that {rm(verifying?.final_amount)} with reference "{verifying?.transfer_reference}" is in the bank account. The {verifying?.quantity} bottles will count
+              Confirm that {rm(verifying?.final_amount)} for order {verifying?.reference}{verifying?.transfer_reference ? ` (bank reference "${verifying.transfer_reference}")` : ''} is in the bank account. The {verifying?.quantity} bottles will count
               towards sales and targets.
             </p>
             {verifying?.duplicate_transfer_reference && <p className="mt-2 font-medium text-warn">This transfer reference was also used on another order.</p>}

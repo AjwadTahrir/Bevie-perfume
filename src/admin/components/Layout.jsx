@@ -23,7 +23,7 @@ function Sidebar({ onNavigate }) {
       <div className="flex items-center gap-2.5 px-5 pt-5 pb-6">
         <span className="flex size-8 items-center justify-center rounded-lg bg-brand text-sm font-semibold text-white">B</span>
         <div className="leading-tight">
-          <p className="text-sm font-semibold text-ink">Bevie Perfume</p>
+          <p className="text-sm font-semibold text-ink">Beavie Perfume</p>
           <p className="text-xs text-ink-3">Fundraising console</p>
         </div>
       </div>
@@ -96,7 +96,7 @@ export default function Layout() {
         <button type="button" className="btn btn-ghost -ml-2 px-2 lg:hidden" onClick={() => setOpen(true)} aria-label="Open navigation">
           <Menu size={18} />
         </button>
-        <span className="text-sm font-semibold lg:hidden">Bevie Admin</span>
+        <span className="text-sm font-semibold lg:hidden">Beavie Admin</span>
         <div className="ml-auto">
           <LiveIndicator />
         </div>

@@ -2,7 +2,6 @@ import { ArrowRight } from 'lucide-react'
 import ProductVisual from './ProductVisual'
 import { fragranceFamilies, tintOf } from '../data/perfumes'
 import { formatPrice } from '../lib/format'
-import { useCampaign } from '../lib/campaign'
 
 /**
  * Product card: an arched window onto the scent's own still life with
@@ -14,7 +13,6 @@ import { useCampaign } from '../lib/campaign'
 export default function PerfumeCard({ perfume, onSelect }) {
   const family = fragranceFamilies[perfume.family]?.label ?? 'Family to be confirmed'
   const scene = perfume.scene
-  const { sellingPrice } = useCampaign()
 
   return (
     <article className="group relative flex h-full flex-col">
@@ -51,7 +49,7 @@ export default function PerfumeCard({ perfume, onSelect }) {
         {perfume.tagline && <p className="mt-1 font-display text-[0.95rem] italic leading-snug text-rust-deep">{perfume.tagline}</p>}
         <p className="mt-2 text-[0.8rem] text-brown-soft">
           {family}
-          · {formatPrice(sellingPrice)}
+          {typeof perfume.price === 'number' && <> · {formatPrice(perfume.price)}</>}
         </p>
         <button
           type="button"
