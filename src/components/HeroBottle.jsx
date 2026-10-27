@@ -1,11 +1,18 @@
+import { useEffect, useRef } from 'react'
 import { heroProduct } from '../data/perfumes'
+
+// The bottle's visible base sits at 91.6% of the photo's height
+// (measured from its transparent bounds), so the reflection mirrors there.
+const BASE = 91.6
+const REFLECTION_MASK = `linear-gradient(to top, transparent ${100 - BASE}%, rgb(0 0 0 / 0.3) ${100 - BASE + 0.2}%, transparent ${100 - BASE + 22}%)`
 
 /**
  * HERO BOTTLE
  * The real Chestnut Rush product photograph (transparent WebP), with
- * a soft contact shadow. It is a flat photograph, so the scroll
- * sequence only scales, moves and slightly tilts it; it never fakes a
- * rotation that would reveal unseen sides.
+ * a soft contact shadow and a faint reflection on the floor. It is a
+ * flat photograph, so the scroll sequence only scales, moves and
+ * slightly tilts it; it never fakes a rotation that would reveal
+ * unseen sides. On desktop it also leans gently towards the pointer.
  *
  * TO USE A REAL 3D MODEL LATER: replace the <img> below with a lazily
  * loaded canvas (e.g. React Three Fiber + a GLB) inside the same
@@ -14,6 +21,46 @@ import { heroProduct } from '../data/perfumes'
  * photograph as the fallback for mobile and missing WebGL.
  */
 export default function HeroBottle() {
+  const hoverRef = useRef(null)
+
+  // Pointer tilt: mouse/trackpad only, never under reduced motion, and it
+  // fades out as the visitor scrolls away from the hero.
+  useEffect(() => {
+    const el = hoverRef.current
+    const fine = window.matchMedia('(pointer: fine) and (prefers-reduced-motion: no-preference)')
+    if (!el || !fine.matches) return
+    let target = { x: 0, y: 0 }
+    const current = { x: 0, y: 0 }
+    let frame = 0
+    const step = () => {
+      current.x += (target.x - current.x) * 0.08
+      current.y += (target.y - current.y) * 0.08
+      el.style.transform = `perspective(1400px) rotateY(${(current.x * 9).toFixed(2)}deg) rotateX(${(current.y * -5).toFixed(2)}deg)`
+      const settled = Math.abs(target.x - current.x) < 0.001 && Math.abs(target.y - current.y) < 0.001
+      frame = settled ? 0 : requestAnimationFrame(step)
+    }
+    const kick = () => {
+      if (!frame) frame = requestAnimationFrame(step)
+    }
+    const onMove = (e) => {
+      const fade = Math.max(0, 1 - window.scrollY / (window.innerHeight * 0.6))
+      target = { x: (e.clientX / window.innerWidth - 0.5) * fade, y: (e.clientY / window.innerHeight - 0.5) * fade }
+      kick()
+    }
+    const onLeave = () => {
+      target = { x: 0, y: 0 }
+      kick()
+    }
+    window.addEventListener('pointermove', onMove, { passive: true })
+    document.documentElement.addEventListener('pointerleave', onLeave)
+    return () => {
+      cancelAnimationFrame(frame)
+      window.removeEventListener('pointermove', onMove)
+      document.documentElement.removeEventListener('pointerleave', onLeave)
+      el.style.transform = ''
+    }
+  }, [])
+
   return (
     <div className="hb-move pointer-events-none absolute inset-x-0 bottom-[10%] flex h-[56%] justify-center lg:bottom-auto lg:top-[calc(55%-min(21%,14vw))] lg:h-[min(42%,28vw)]">
       <div className="relative h-full">
@@ -22,18 +69,30 @@ export default function HeroBottle() {
           aria-hidden="true"
         />
         <div className="hb-tilt relative h-full">
-          <img
-            src={heroProduct.src}
-            srcSet={heroProduct.srcSet}
-            sizes="(min-width: 1024px) 70vh, 80vw"
-            alt={heroProduct.alt}
-            width="1200"
-            height="1200"
-            fetchPriority="high"
-            decoding="async"
-            className="hero-bottle-enter relative h-full w-auto max-w-none select-none drop-shadow-[0_24px_30px_rgb(79_50_45/0.22)]"
-            draggable="false"
-          />
+          <div ref={hoverRef} className="relative h-full will-change-transform">
+            {/* Floor reflection: the photo mirrored at the bottle's base, fading out */}
+            <img
+              src={heroProduct.src}
+              alt=""
+              aria-hidden="true"
+              decoding="async"
+              className="hb-reflection hero-bottle-enter absolute inset-0 h-full w-auto max-w-none -scale-y-100 select-none"
+              style={{ transformOrigin: `50% ${BASE}%`, maskImage: REFLECTION_MASK, WebkitMaskImage: REFLECTION_MASK }}
+              draggable="false"
+            />
+            <img
+              src={heroProduct.src}
+              srcSet={heroProduct.srcSet}
+              sizes="(min-width: 1024px) 70vh, 80vw"
+              alt={heroProduct.alt}
+              width="1200"
+              height="1200"
+              fetchPriority="high"
+              decoding="async"
+              className="hero-bottle-enter relative h-full w-auto max-w-none select-none drop-shadow-[0_24px_30px_rgb(79_50_45/0.22)]"
+              draggable="false"
+            />
+          </div>
         </div>
       </div>
     </div>

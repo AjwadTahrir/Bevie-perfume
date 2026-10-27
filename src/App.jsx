@@ -20,14 +20,14 @@ export default function App() {
     <CartProvider>
       <Navbar />
       <main id="main">
-        <ScrollExperience />
+        <ScrollExperience onSelect={setSelected} />
         <Collection onSelect={setSelected} />
         <CallToAction />
         <FragranceFinder onSelect={setSelected} />
         <ContactSection />
       </main>
       <Footer />
-      <PerfumeModal perfume={selected} onClose={close} />
+      <PerfumeModal perfume={selected} onClose={close} onNavigate={setSelected} />
       <CartDrawer />
     </CartProvider>
   )

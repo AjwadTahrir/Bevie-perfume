@@ -3,6 +3,7 @@ import { pack } from '../assets/pack'
 import HeroBottle from './HeroBottle'
 import { sections } from '../config/brand'
 import { copy } from '../config/content'
+import { perfumes } from '../data/perfumes'
 
 /**
  * HERO SCENE
@@ -11,7 +12,7 @@ import { copy } from '../config/content'
  * bottle are the layers the scroll sequence moves at different speeds. On small screens and under
  * reduced motion this is a normal, static section.
  */
-export default function HeroScene() {
+export default function HeroScene({ onSelect }) {
   const h = copy.hero
   return (
     <section data-nav="home" aria-labelledby="hero-title" className="scene scene-hero relative isolate overflow-hidden lg:h-[100dvh]">
@@ -70,6 +71,25 @@ export default function HeroScene() {
           <HeroBottle />
         </div>
       </div>
+
+      {/* Scent index: every scent one tap from the first screen (desktop) */}
+      <nav aria-label="The eight scents" className="hero-index absolute inset-x-0 bottom-7 z-10">
+        <ul className="mx-auto flex max-w-[1440px] flex-wrap gap-x-7 gap-y-2 border-t border-brown/15 px-12 pr-28 pt-4">
+          {perfumes.map((p, i) => (
+            <li key={p.id}>
+              <button
+                type="button"
+                onClick={() => onSelect?.(p)}
+                aria-haspopup="dialog"
+                className="link-underline inline-flex min-h-8 items-baseline gap-2 text-[0.64rem] font-medium uppercase tracking-[0.22em] text-brown-soft transition-colors hover:text-rust-deep"
+              >
+                <span className="font-display text-[0.8rem] normal-case tracking-normal text-rust-deep/80">{String(i + 1).padStart(2, '0')}</span>
+                {p.name}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </nav>
 
       {/* Scroll cue: the wheel dot is driven by the scroll sequence */}
       <div className="scroll-cue absolute bottom-10 right-6 hidden flex-col items-center gap-3 lg:flex xl:right-10" aria-hidden="true">

@@ -7,8 +7,10 @@ import { copy } from '../config/content'
 
 /**
  * HERITAGE SCENE
- * Editorial split: draped batik cloth on the left; on the right the
- * story, a hairline divider and a painted batik phoenix. In the
+ * Editorial split: draped batik cloth on the left, lifted by warm light
+ * and fading into cream at its inner edge; on the right one left-aligned
+ * group (eyebrow, heading, story, link) that ends with the painted batik
+ * phoenix to the right of the link. In the
  * cinematic sequence the cloth wipes in from the left and the hero
  * bottle comes to rest on it. "Discover our story" swaps the intro
  * for the longer story in place.
@@ -35,10 +37,12 @@ export default function HeritageScene() {
           decoding="async"
           className="absolute inset-0 h-full w-full object-cover object-[62%_50%]"
         />
+        {/* Lift the cloth: warm daylight from the upper left and a soft cream fade into the text side */}
+        <div className="heritage-light pointer-events-none absolute inset-0" aria-hidden="true" />
       </div>
 
-      <div className="heritage-panel relative flex items-center gap-10 px-5 py-20 md:px-12 lg:pb-6 lg:pl-14 lg:pt-[var(--nav-h)] xl:gap-12 xl:pl-20">
-        <div className="relative z-10 min-w-0 max-w-[27rem] flex-1 xl:w-[24rem] xl:flex-none">
+      <div className="heritage-panel relative flex items-center overflow-hidden bg-cream px-5 lg:-ml-[2px] py-20 md:px-12 lg:pb-6 lg:pl-14 lg:pt-[var(--nav-h)] xl:pl-20">
+        <div className="relative z-10 w-full min-w-0 max-w-[33rem]">
           <Reveal className="heritage-item">
             <p className="type-eyebrow">{s.eyebrow}</p>
           </Reveal>
@@ -51,15 +55,17 @@ export default function HeritageScene() {
           </Reveal>
           {/* The full story takes the intro's place, so the panel barely grows and still fits short screens. */}
           <Reveal className="heritage-item" delay={160}>
-            <p className="type-lead mt-6" hidden={open}>
+            <p className="type-lead mt-6 max-w-[30rem]" hidden={open}>
               {s.intro}
             </p>
-            <div id={storyId} hidden={!open} className="type-lead mt-6 space-y-3 border-l border-ochre/70 pl-5">
+            <div id={storyId} hidden={!open} className="type-lead mt-6 max-w-[30rem] space-y-3 border-l border-ochre/70 pl-5">
               {s.story.map((p) => (
                 <p key={p}>{p}</p>
               ))}
             </div>
           </Reveal>
+          {/* Link and phoenix share one row: the link on the left, the phoenix hanging to its right */}
+          <div className="heritage-cta-row">
           <Reveal className="heritage-item" delay={240}>
             <button
               type="button"
@@ -72,12 +78,22 @@ export default function HeritageScene() {
               <ArrowRight size={15} strokeWidth={1.5} aria-hidden="true" className={open ? 'rotate-90' : ''} />
             </button>
           </Reveal>
-        </div>
 
-        <Reveal className="heritage-item pointer-events-none hidden min-w-0 flex-1 items-center gap-8 sm:flex lg:hidden xl:flex xl:max-w-[16rem]" delay={320}>
-          <span className="h-[min(40vh,18rem)] w-px shrink-0 bg-brown/30" aria-hidden="true" />
-          <img src={pack.phoenix.src} alt="" width="900" height="591" loading="lazy" decoding="async" className="w-full min-w-0 max-w-[13rem]" />
-        </Reveal>
+          {/* The phoenix closes the composition at its lower right, with a faint bouquet behind it. */}
+          <Reveal className="heritage-item heritage-art pointer-events-none relative ml-auto" delay={320}>
+            <img
+              src={pack.bouquet.src}
+              srcSet={pack.bouquet.srcSet}
+              sizes="20rem"
+              alt=""
+              loading="lazy"
+              decoding="async"
+              className="absolute -right-[18%] top-1/2 w-[125%] max-w-none -translate-y-[46%] opacity-[0.22]"
+            />
+            <img src={pack.phoenix.src} alt="" width="900" height="591" loading="lazy" decoding="async" className="relative w-full" />
+          </Reveal>
+          </div>
+        </div>
       </div>
     </section>
   )

@@ -53,7 +53,7 @@ function boxWithin(el, ancestor) {
  * Everything is reverted (inline styles removed, class dropped) when
  * a media query stops matching, e.g. resizing to mobile.
  */
-export default function ScrollExperience() {
+export default function ScrollExperience({ onSelect }) {
   const rootRef = useRef(null)
 
   useLayoutEffect(() => {
@@ -99,7 +99,7 @@ export default function ScrollExperience() {
 
       // Stage 2: the product comes alive
       tl.to(q('.scroll-cue-dot'), { y: 9, duration: 0.4 }, 0)
-        .to(q('.hero-copy'), { y: -90, autoAlpha: 0, ease: 'power1.in', duration: 0.3 }, 0.05)
+        .to(q('.hero-copy, .hero-index'), { y: -90, autoAlpha: 0, ease: 'power1.in', duration: 0.3 }, 0.05)
         // The bottle grows from its base so it stays standing on its shadow.
         .to(q('.hb-tilt'), { scale: 1.06, rotationY: -8, transformPerspective: 1400, transformOrigin: '50% 90%', ease: 'sine.inOut', duration: 0.38 }, 0)
         .fromTo(q('.layer-back'), { scale: 0.96 }, { yPercent: -8, scale: 1.08, duration: 0.45 }, 0)
@@ -113,6 +113,8 @@ export default function ScrollExperience() {
           0.4,
         )
         .to(q('.hb-tilt'), { scale: 1, rotationY: 0, ease: 'sine.inOut', duration: 0.3 }, 0.4)
+        // The floor reflection belongs to the hero; the bottle lands on cloth without it.
+        .to(q('.hb-reflection'), { autoAlpha: 0, duration: 0.12 }, 0.4)
         .to(bottle, { x: () => target().x, y: () => target().y, scale: () => target().scale, ease: 'power2.inOut', duration: 0.32 }, 0.4)
         .fromTo(
           q('.heritage-item'),
@@ -175,7 +177,7 @@ export default function ScrollExperience() {
       <span className="nav-marker" data-nav="our-story" style={{ top: '45%', height: '55%' }} aria-hidden="true" />
 
       <div className="scroll-stage">
-        <HeroScene />
+        <HeroScene onSelect={onSelect} />
         <HeritageScene />
       </div>
     </div>
