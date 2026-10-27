@@ -3,8 +3,8 @@
  * ---------------------------------------------------------------
  * The eight Beavie perfumes. Names, descriptions, notes and bottle
  * photos come from the BeavieWeb catalogue (scents.js). Prices and
- * sizes have not been supplied yet, so they are null and show as
- * "to be announced" on the site.
+ * sizes are PLACEHOLDERS (marked below) until the real ones are
+ * confirmed; set price to null to show "to be announced" instead.
  *
  * FIELDS (one record = one card + its modal)
  *   id            unique, url-safe text, e.g. 'melur-noir'
@@ -100,8 +100,8 @@ export const perfumes = [
     family: 'fresh',
     description:
       'A revitalizing breath of cool clarity. Verdius captures freshly washed skin, chilled green apple, and morning air with effortless polish.',
-    price: null, // TODO: real price (MYR)
-    size: null, // TODO
+    price: 149, // PLACEHOLDER price (MYR)
+    size: '50 ml Eau de Parfum', // PLACEHOLDER
     notes: {
       top: ['Green Apple', 'Bergamot', 'Iced Aldehydes'],
       heart: ['Lavender', 'Aromatic Herbs', 'Rosemary'],
@@ -126,8 +126,8 @@ export const perfumes = [
     family: 'woody',
     description:
       'Precision, composure, command. Cool mint meets warm vanilla and timeless woods, crafted for ambition without compromise.',
-    price: null,
-    size: null,
+    price: 169, // PLACEHOLDER price (MYR)
+    size: '50 ml Eau de Parfum', // PLACEHOLDER
     notes: {
       top: ['Mint', 'Bergamot', 'Cardamom'],
       heart: ['Lavender', 'Sage', 'Green Tea'],
@@ -152,8 +152,8 @@ export const perfumes = [
     family: 'amber',
     description:
       'An evocative blend of warmth and sophistication: rum, spices, rich tobacco, smooth leather, vanilla, and amber.',
-    price: null,
-    size: null,
+    price: 179, // PLACEHOLDER price (MYR)
+    size: '50 ml Eau de Parfum', // PLACEHOLDER
     notes: {
       top: ['Rum', 'Chestnut', 'Saffron'],
       heart: ['Tobacco', 'Leather', 'Lavender'],
@@ -178,8 +178,8 @@ export const perfumes = [
     family: 'fresh',
     description:
       'A surge of marine freshness. Sunlit citrus meets crystalline sea salt and airy waves: pure, invigorating, and clear.',
-    price: null,
-    size: null,
+    price: 149, // PLACEHOLDER price (MYR)
+    size: '50 ml Eau de Parfum', // PLACEHOLDER
     notes: {
       top: ['Lemon', 'Bergamot', 'Sea Salt'],
       heart: ['Marine Notes', 'Neroli', 'Aquatic Accord'],
@@ -203,8 +203,8 @@ export const perfumes = [
     name: 'Seductress',
     family: 'fruity',
     description: 'A bold, magnetic fragrance where juicy dark fruits meet luxurious florals and smoldering base notes.',
-    price: null,
-    size: null,
+    price: 169, // PLACEHOLDER price (MYR)
+    size: '50 ml Eau de Parfum', // PLACEHOLDER
     notes: {
       top: ['Raspberry', 'Black Cherry', 'Pink Pepper'],
       heart: ['Rose', 'Jasmine', 'Peony'],
@@ -229,8 +229,8 @@ export const perfumes = [
     family: 'floral',
     description:
       'Frozen petals and luminous freshness. Rose and lotus meet crystalline air in an icy floral haute couture composition.',
-    price: null,
-    size: null,
+    price: 159, // PLACEHOLDER price (MYR)
+    size: '50 ml Eau de Parfum', // PLACEHOLDER
     notes: {
       top: ['Frosted Lotus', 'Icy Accord', 'Pink Peony'],
       heart: ['Rose', 'Water Lily', 'Translucent Florals'],
@@ -255,8 +255,8 @@ export const perfumes = [
     family: 'fruity',
     description:
       'A luscious celebration of whole frosted grapes and velvety sweetness with plush fruit and deep, indulgent warmth.',
-    price: null,
-    size: null,
+    price: 159, // PLACEHOLDER price (MYR)
+    size: '50 ml Eau de Parfum', // PLACEHOLDER
     notes: {
       top: ['Grape', 'Plum', 'Red Berries'],
       heart: ['Violet', 'Heliotrope', 'Fruit Nectar'],
@@ -281,8 +281,8 @@ export const perfumes = [
     family: 'floral',
     description:
       'A soft radiance of white florals and creamy vanilla blooming like morning light through a veil of pure serenity.',
-    price: null,
-    size: null,
+    price: 159, // PLACEHOLDER price (MYR)
+    size: '50 ml Eau de Parfum', // PLACEHOLDER
     notes: {
       top: ['Vanilla Orchid', 'Neroli', 'Soft Pear'],
       heart: ['Lily of the Valley', 'Jasmine Petals', 'White Floral Accord'],

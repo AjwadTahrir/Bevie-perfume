@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
-import { Menu, X } from 'lucide-react'
+import { Menu, ShoppingBag, X } from 'lucide-react'
 import { brand, sections } from '../config/brand'
+import { useCart } from '../lib/cart'
 
 // No journal, search or cart exist yet, so they are not offered.
 const links = [
@@ -25,6 +26,7 @@ export default function Navbar() {
   const [active, setActive] = useState('home')
   const toggleRef = useRef(null)
   const panelRef = useRef(null)
+  const cart = useCart()
 
   // Solid background once the top of the page leaves the viewport.
   useEffect(() => {
@@ -116,23 +118,41 @@ export default function Navbar() {
           ))}
         </ul>
 
-        <div className="hidden justify-self-end lg:block">
-          <a href={`#${sections.contact}`} className="btn btn-outline btn-small">
+        <div className="flex items-center gap-1 justify-self-end lg:gap-4">
+          <a href={`#${sections.contact}`} className="btn btn-outline btn-small hidden lg:inline-flex">
             Contact
           </a>
+          <button
+            type="button"
+            onClick={() => {
+              setOpen(false)
+              cart.open()
+            }}
+            className="relative inline-flex size-11 items-center justify-center rounded-full text-brown transition-colors hover:bg-brown/5"
+            aria-label={cart.count ? `Open cart, ${cart.count} ${cart.count === 1 ? 'item' : 'items'}` : 'Open cart, empty'}
+          >
+            <ShoppingBag size={21} strokeWidth={1.5} aria-hidden="true" />
+            {cart.count > 0 && (
+              <span
+                className="absolute right-0.5 top-0.5 inline-flex min-w-[1.15rem] items-center justify-center rounded-full bg-rust px-1 text-[0.62rem] font-semibold leading-[1.15rem] text-cream"
+                aria-hidden="true"
+              >
+                {cart.count}
+              </span>
+            )}
+          </button>
+          <button
+            ref={toggleRef}
+            type="button"
+            className="-mr-2 inline-flex size-11 items-center justify-center text-brown lg:hidden"
+            aria-expanded={open}
+            aria-controls="mobile-menu"
+            aria-label={open ? 'Close menu' : 'Open menu'}
+            onClick={() => setOpen((o) => !o)}
+          >
+            {open ? <X size={24} strokeWidth={1.5} /> : <Menu size={24} strokeWidth={1.5} />}
+          </button>
         </div>
-
-        <button
-          ref={toggleRef}
-          type="button"
-          className="-mr-2 inline-flex size-11 items-center justify-center justify-self-end text-brown lg:hidden"
-          aria-expanded={open}
-          aria-controls="mobile-menu"
-          aria-label={open ? 'Close menu' : 'Open menu'}
-          onClick={() => setOpen((o) => !o)}
-        >
-          {open ? <X size={24} strokeWidth={1.5} /> : <Menu size={24} strokeWidth={1.5} />}
-        </button>
       </nav>
 
       <div

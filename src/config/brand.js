@@ -47,6 +47,41 @@ export const brand = {
   locale: 'en-MY',
 }
 
+/**
+ * SHOP AND CHECKOUT (PLACEHOLDERS)
+ * ---------------------------------------------------------------
+ * Customers pay by scanning a QR code with their banking app, then
+ * upload a screenshot of the payment. Nothing here is a payment
+ * gateway. Orders are not saved anywhere yet: src/lib/orders.js is
+ * the single place to connect a database and file storage.
+ */
+export const shop = {
+  payment: {
+    // QR image to scan, e.g. a DuitNow QR exported from the business bank
+    // account. Put the file in src/assets/ and import it here. While null,
+    // checkout shows a clearly marked placeholder instead.
+    qrImage: null,
+    method: 'DuitNow QR',
+    accountName: '', // e.g. 'BEAVIE PERFUME' (shown under the QR)
+    bankName: '', // e.g. 'Maybank'
+  },
+
+  // Flat delivery fee in ringgit, or null to show "Calculated after checkout".
+  shippingFee: null,
+
+  // Referral codes come from src/data/referralCodes.js. A valid code is
+  // recorded with the order; set a percentage here to also give a discount.
+  referralDiscountPercent: 0,
+
+  // Proof of payment upload limits.
+  proof: {
+    maxSizeMB: 5,
+    accept: 'image/jpeg,image/png,image/webp,application/pdf',
+  },
+
+  maxQuantityPerItem: 10,
+}
+
 /** Section anchors used by the navigation and in-page links. */
 export const sections = {
   story: 'our-story',

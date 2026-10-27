@@ -27,7 +27,7 @@ export default function FragranceFinder({ onSelect }) {
       <div className="mx-auto max-w-[1400px] px-5 md:px-8 lg:px-12">
 
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
-          <Reveal className="lg:col-span-5">
+          <Reveal data-scroll-anchor className="lg:col-span-5">
             <p className="type-eyebrow">{copy.finder.eyebrow}</p>
             <h2 id="finder-title" className="type-h2 mt-5 text-balance text-brown">
               {copy.finder.title}

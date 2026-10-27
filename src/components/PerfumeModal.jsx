@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { X } from 'lucide-react'
+import { Check, ShoppingBag, X } from 'lucide-react'
 import { pack } from '../assets/pack'
 import ProductVisual from './ProductVisual'
 import WhatsAppButton from './WhatsAppButton'
 import { fragranceFamilies, tintOf } from '../data/perfumes'
 import { formatPrice } from '../lib/format'
 import { orderMessage } from '../lib/whatsapp'
+import { useCart } from '../lib/cart'
+import { lockScroll, unlockScroll } from '../lib/scrollLock'
 
 const NOTE_TIERS = [
   { key: 'top', label: 'Top' },
@@ -26,14 +28,21 @@ export default function PerfumeModal({ perfume, onClose }) {
   const returnFocusRef = useRef(null)
   // Keep the last perfume rendered during the closing animation.
   const [shown, setShown] = useState(perfume)
-  if (perfume && perfume !== shown) setShown(perfume)
+  const [added, setAdded] = useState(false)
+  if (perfume && perfume !== shown) {
+    setShown(perfume)
+    setAdded(false)
+  }
+  const cart = useCart()
 
   useEffect(() => {
     const dialog = dialogRef.current
     if (!dialog || !perfume) return
     returnFocusRef.current = document.activeElement
-    if (!dialog.open) dialog.showModal()
-    document.documentElement.style.overflow = 'hidden'
+    if (!dialog.open) {
+      dialog.showModal()
+      lockScroll()
+    }
     dialog.querySelector('.modal-scroll')?.scrollTo(0, 0)
   }, [perfume])
 
@@ -41,9 +50,12 @@ export default function PerfumeModal({ perfume, onClose }) {
     const dialog = dialogRef.current
     if (!dialog) return
     dialog.classList.remove('is-closing')
-    if (dialog.open) dialog.close()
-    document.documentElement.style.overflow = ''
+    if (dialog.open) {
+      dialog.close()
+      unlockScroll()
+    }
     returnFocusRef.current?.focus?.()
+    setAdded(false)
     onClose()
   }, [onClose])
 
@@ -55,8 +67,8 @@ export default function PerfumeModal({ perfume, onClose }) {
     dialog.addEventListener('animationend', finishClose, { once: true })
   }, [finishClose])
 
-  // Safety net: restore scrolling if the component unmounts while open.
-  useEffect(() => () => (document.documentElement.style.overflow = ''), [])
+  // Safety net: release the scroll lock if the component unmounts while open.
+  useEffect(() => () => dialogRef.current?.open && unlockScroll(), [])
 
   const p = shown
   const family = p ? fragranceFamilies[p.family] : null
@@ -144,8 +156,42 @@ export default function PerfumeModal({ perfume, onClose }) {
                 {!hasNotes && <p className="mt-4 text-sm text-brown-soft">Notes will be published with the final product details.</p>}
               </div>
 
-              <div className="mt-10">
-                <WhatsAppButton message={orderMessage(p.name)} label="Order Through WhatsApp" />
+              <div className="mt-10 flex flex-wrap items-center gap-3">
+                {added ? (
+                  <>
+                    <p className="inline-flex min-h-[3.25rem] items-center gap-2 text-sm text-brown" role="status">
+                      <Check size={16} className="text-rust-deep" aria-hidden="true" />
+                      Added to your cart
+                    </p>
+                    <button
+                      type="button"
+                      className="btn btn-primary"
+                      onClick={() => {
+                        requestClose()
+                        cart.open()
+                      }}
+                    >
+                      View Cart
+                      <ShoppingBag size={16} strokeWidth={1.5} aria-hidden="true" />
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    disabled={typeof p.price !== 'number'}
+                    onClick={() => {
+                      cart.add(p.id)
+                      setAdded(true)
+                    }}
+                  >
+                    Add to Cart
+                    <ShoppingBag size={16} strokeWidth={1.5} aria-hidden="true" />
+                  </button>
+                )}
+              </div>
+              <div className="mt-5">
+                <WhatsAppButton message={orderMessage(p.name)} label="Ask on WhatsApp" variant="outline" />
               </div>
             </div>
           </div>
