@@ -55,7 +55,7 @@ export default function Leaderboard() {
         title="Leaderboard"
         description="Ranked by verified bottles sold. Equal counts share a rank; the next rank skips accordingly (1, 1, 3)."
         actions={
-          <button type="button" className="btn btn-secondary" disabled={!all.length} onClick={() => downloadCsv(`bevie-leaderboard-${stamp()}.csv`, MEMBER_CSV, all)}>
+          <button type="button" className="btn btn-secondary" disabled={!all.length} onClick={() => downloadCsv(`beavie-leaderboard-${stamp()}.csv`, MEMBER_CSV, all)}>
             <Download size={15} /> Export CSV
           </button>
         }

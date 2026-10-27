@@ -53,7 +53,7 @@ export default function Members() {
         title="AJK Performance"
         description={members.data ? `${reached} of ${members.data.length} members have reached their target. Only verified payments count.` : 'Sales by committee member'}
         actions={
-          <button type="button" className="btn btn-secondary" disabled={!filtered.length} onClick={() => downloadCsv(`bevie-ajk-performance-${stamp()}.csv`, MEMBER_CSV, filtered)}>
+          <button type="button" className="btn btn-secondary" disabled={!filtered.length} onClick={() => downloadCsv(`beavie-ajk-performance-${stamp()}.csv`, MEMBER_CSV, filtered)}>
             <Download size={15} /> Export CSV
           </button>
         }

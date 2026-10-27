@@ -74,7 +74,7 @@ export default function Orders() {
         title="Orders"
         description="Every customer order, newest first. Click a row for details and actions."
         actions={
-          <button type="button" className="btn btn-secondary" disabled={!filtered.length} onClick={() => downloadCsv(`bevie-orders-${stamp()}.csv`, ORDER_CSV, filtered)}>
+          <button type="button" className="btn btn-secondary" disabled={!filtered.length} onClick={() => downloadCsv(`beavie-orders-${stamp()}.csv`, ORDER_CSV, filtered)}>
             <Download size={15} /> Export CSV
           </button>
         }
