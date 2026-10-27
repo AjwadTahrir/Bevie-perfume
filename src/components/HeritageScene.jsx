@@ -9,8 +9,9 @@ import { copy } from '../config/content'
  * HERITAGE SCENE
  * Editorial split: draped batik cloth on the left, lifted by warm light
  * and fading into cream at its inner edge; on the right one left-aligned
- * group (eyebrow, heading, story, link) that ends with the painted batik
- * bouquet to the right of the link. In the
+ * group (eyebrow, heading, story, link). On wide screens a faint vertical
+ * rule runs down the right of that group with the painted batik bouquet
+ * beside it; narrower layouts keep the bouquet next to the link. In the
  * cinematic sequence the cloth wipes in from the left and the hero
  * bottle comes to rest on it. "Discover our story" swaps the intro
  * for the longer story in place.
@@ -42,7 +43,8 @@ export default function HeritageScene() {
       </div>
 
       <div className="heritage-panel relative flex items-center overflow-hidden bg-cream px-5 lg:-ml-[2px] py-20 md:px-12 lg:pb-6 lg:pl-14 lg:pt-[var(--nav-h)] xl:pl-20">
-        <div className="relative z-10 w-full min-w-0 max-w-[33rem]">
+        <div className="relative z-10 flex w-full min-w-0 items-stretch">
+        <div className="heritage-copy w-full min-w-0 max-w-[33rem]">
           <Reveal className="heritage-item">
             <p className="type-eyebrow">{s.eyebrow}</p>
           </Reveal>
@@ -79,7 +81,7 @@ export default function HeritageScene() {
             </button>
           </Reveal>
 
-          {/* The bouquet closes the composition at its lower right. */}
+          {/* Below 1360px the bouquet closes the composition at its lower right. */}
           <Reveal className="heritage-item heritage-art pointer-events-none relative ml-auto" delay={320}>
             <img
               src={pack.bouquet.src}
@@ -94,6 +96,13 @@ export default function HeritageScene() {
             />
           </Reveal>
           </div>
+        </div>
+
+        {/* 1360px and up: a faint rule beside the story, the bouquet just past it */}
+        <Reveal className="heritage-item heritage-side pointer-events-none" delay={320} aria-hidden="true">
+          <span className="heritage-rule" />
+          <img src={pack.bouquet.src} srcSet={pack.bouquet.srcSet} sizes="20rem" alt="" width="1200" height="800" loading="lazy" decoding="async" className="heritage-side-art" />
+        </Reveal>
         </div>
       </div>
     </section>

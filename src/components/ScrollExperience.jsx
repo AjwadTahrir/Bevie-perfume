@@ -70,16 +70,17 @@ export default function ScrollExperience({ onSelect }) {
       const cloth = root.querySelector('.heritage-textile')
       const q = gsap.utils.selector(root)
 
-      // Resting place for the bottle: centred on the cloth. On desktop the cloth is
-      // the full-height left half; on phones it is a band across the top.
+      // Resting place for the bottle. On desktop the cloth is the full-height left
+      // side: the bottle keeps its home-page size and sits in the middle of the
+      // visible batik (the cloth's right edge fades into cream). On phones the
+      // cloth is a band across the top and the bottle is fitted and centred in it.
       const target = () => {
         const b = boxWithin(bottle, stage)
         const c = boxWithin(cloth, stage)
-        const fill = stacked ? 0.84 : 0.62
         return {
-          x: c.x + c.w / 2 - (b.x + b.w / 2),
+          x: c.x + c.w * (stacked ? 0.5 : 0.42) - (b.x + b.w / 2),
           y: c.y + c.h * 0.53 - (b.y + b.h / 2),
-          scale: (c.h * fill) / b.h,
+          scale: stacked ? (c.h * 0.84) / b.h : 1,
         }
       }
 

@@ -638,6 +638,53 @@
     margin-right: 0;
   }
 }
+/* Wide screens: the bouquet moves beside the story, past a faint vertical rule */
+.heritage-side {
+  display: none;
+}
+@media (min-width: 1360px) {
+  /* A little more room for the story side */
+  .scene-heritage {
+    grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
+  }
+  .heritage-panel {
+    padding-left: 4rem;
+    padding-right: 1.5rem;
+  }
+  .heritage-cta-row .heritage-art {
+    display: none;
+  }
+  .heritage-copy {
+    max-width: 23rem;
+  }
+  .heritage-side {
+    display: flex;
+    flex: 1 1 0;
+    min-width: 0;
+    align-items: center;
+  }
+  .heritage-rule {
+    align-self: stretch;
+    flex: none;
+    width: 1px;
+    margin: 0 1.5rem 0 1.75rem;
+    background: linear-gradient(to bottom, transparent, rgb(209 142 80 / 0.55) 18%, rgb(209 142 80 / 0.55) 82%, transparent);
+  }
+  .heritage-side-art {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 26rem;
+    height: auto;
+  }
+}
+@media (min-width: 1600px) {
+  .heritage-copy {
+    max-width: 25rem;
+  }
+  .heritage-rule {
+    margin: 0 2.25rem 0 2.5rem;
+  }
+}
 /* Short desktop windows: a smaller bouquet so the group fits the pinned stage */
 @media (min-width: 1024px) and (max-height: 760px) {
   .heritage-art {
