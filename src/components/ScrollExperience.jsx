@@ -113,8 +113,6 @@ export default function ScrollExperience({ onSelect }) {
           0.4,
         )
         .to(q('.hb-tilt'), { scale: 1, rotationY: 0, ease: 'sine.inOut', duration: 0.3 }, 0.4)
-        // The floor reflection belongs to the hero; the bottle lands on cloth without it.
-        .to(q('.hb-reflection'), { autoAlpha: 0, duration: 0.12 }, 0.4)
         .to(bottle, { x: () => target().x, y: () => target().y, scale: () => target().scale, ease: 'power2.inOut', duration: 0.32 }, 0.4)
         .fromTo(
           q('.heritage-item'),

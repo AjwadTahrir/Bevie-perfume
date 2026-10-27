@@ -1,15 +1,10 @@
 import { useEffect, useRef } from 'react'
 import { heroProduct } from '../data/perfumes'
 
-// The bottle's visible base sits at 91.6% of the photo's height
-// (measured from its transparent bounds), so the reflection mirrors there.
-const BASE = 91.6
-const REFLECTION_MASK = `linear-gradient(to top, transparent ${100 - BASE}%, rgb(0 0 0 / 0.3) ${100 - BASE + 0.2}%, transparent ${100 - BASE + 22}%)`
-
 /**
  * HERO BOTTLE
  * The real Senja product photograph (transparent WebP), with
- * a soft contact shadow and a faint reflection on the floor. It is a
+ * a soft contact shadow on the floor. It is a
  * flat photograph, so the scroll sequence only scales, moves and
  * slightly tilts it; it never fakes a rotation that would reveal
  * unseen sides. On desktop it also leans gently towards the pointer.
@@ -70,16 +65,6 @@ export default function HeroBottle() {
         />
         <div className="hb-tilt relative h-full">
           <div ref={hoverRef} className="relative h-full will-change-transform">
-            {/* Floor reflection: the photo mirrored at the bottle's base, fading out */}
-            <img
-              src={heroProduct.src}
-              alt=""
-              aria-hidden="true"
-              decoding="async"
-              className="hb-reflection hero-bottle-enter absolute inset-0 h-full w-auto max-w-none -scale-y-100 select-none"
-              style={{ transformOrigin: `50% ${BASE}%`, maskImage: REFLECTION_MASK, WebkitMaskImage: REFLECTION_MASK }}
-              draggable="false"
-            />
             <img
               src={heroProduct.src}
               srcSet={heroProduct.srcSet}
