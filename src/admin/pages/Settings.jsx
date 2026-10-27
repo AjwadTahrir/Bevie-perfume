@@ -5,7 +5,8 @@ import { actions, fetchSettings } from '../lib/api'
 import { useAuth } from '../lib/auth'
 import { useQuery } from '../lib/data'
 import { supabase } from '../lib/supabase'
-import { fmtDateTime } from '../lib/format'
+import { Lock } from 'lucide-react'
+import { fmtDateTime, rm } from '../lib/format'
 
 const FIELDS = [
   { key: 'profit_per_bottle', label: 'Campaign profit per bottle (RM)', step: '0.01' },
@@ -13,19 +14,31 @@ const FIELDS = [
   { key: 'member_target', label: 'Target per AJK member (bottles)', step: '1' },
 ]
 
+/** Form values from a settings row; dates as '' so the inputs stay controlled. */
+const snapshot = (row, override) => {
+  const s = override || row
+  return { ...s, starts_on: s.starts_on ?? '', ends_on: s.ends_on ?? '' }
+}
+const EDITABLE = ['campaign_name', 'profit_per_bottle', 'campaign_target', 'member_target', 'starts_on', 'ends_on']
+
 function CampaignSettings() {
   const toast = useToast()
   const q = useQuery(() => fetchSettings(), [])
   const [form, setForm] = useState(null)
+  const [saved, setSaved] = useState(null)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
 
   useEffect(() => {
-    if (q.data && !form) setForm({ ...q.data, starts_on: q.data.starts_on ?? '', ends_on: q.data.ends_on ?? '' })
+    if (q.data && !form) setForm(snapshot(q.data))
   }, [q.data, form])
 
   if (q.error && !q.data) return <ErrorState error={q.error} />
   if (!form) return <Skeleton className="h-80" />
+
+  // Compare against whichever is newer: our last save or the live row (another admin may have saved since).
+  const base = snapshot(q.data, saved && !(new Date(q.data.updated_at) > new Date(saved.updated_at)) ? saved : null)
+  const dirty = EDITABLE.some((k) => String(form[k] ?? '') !== String(base[k] ?? ''))
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }))
   const save = async (e) => {
@@ -33,7 +46,7 @@ function CampaignSettings() {
     setError('')
     setSaving(true)
     try {
-      const saved = await actions.updateSettings({
+      const result = await actions.updateSettings({
         campaign_name: form.campaign_name,
         profit_per_bottle: Number(form.profit_per_bottle),
         campaign_target: Number(form.campaign_target),
@@ -41,7 +54,8 @@ function CampaignSettings() {
         starts_on: form.starts_on || null,
         ends_on: form.ends_on || null,
       })
-      setForm({ ...saved, starts_on: saved.starts_on ?? '', ends_on: saved.ends_on ?? '' })
+      setSaved(result)
+      setForm(snapshot(result))
       toast('Campaign settings saved.')
     } catch (err) {
       setError(err.message)
@@ -59,15 +73,26 @@ function CampaignSettings() {
           </label>
           <input id="campaign_name" className="input" value={form.campaign_name} onChange={set('campaign_name')} required minLength={3} maxLength={120} />
         </div>
+        <div className="rounded-md border border-line bg-tint/50 p-4">
+          <p className="eyebrow flex items-center gap-1.5">
+            <Lock size={12} aria-hidden="true" /> Fixed by the shop checkout · read only
+          </p>
+          <dl className="mt-3 grid gap-4 sm:grid-cols-2">
+            <div>
+              <dt className="text-xs text-ink-2">Standard price</dt>
+              <dd className="display mt-1 text-2xl">
+                {rm(form.selling_price)} <span className="font-sans text-xs text-ink-3">per bottle</span>
+              </dd>
+            </div>
+            <div>
+              <dt className="text-xs text-ink-2">With a valid promo code</dt>
+              <dd className="display mt-1 text-2xl">
+                {rm(form.discounted_price)} <span className="font-sans text-xs text-ink-3">per bottle</span>
+              </dd>
+            </div>
+          </dl>
+        </div>
         <div className="grid gap-5 sm:grid-cols-2">
-          <div>
-            <span className="label">Selling price (RM per bottle)</span>
-            <p className="input tabular-nums text-ink-2">{Number(form.selling_price).toFixed(2)}</p>
-          </div>
-          <div>
-            <span className="label">Promo price with a valid AJK code (RM)</span>
-            <p className="input tabular-nums text-ink-2">{Number(form.discounted_price).toFixed(2)}</p>
-          </div>
           {FIELDS.map((f) => (
             <div key={f.key}>
               <label htmlFor={f.key} className="label">
@@ -91,17 +116,31 @@ function CampaignSettings() {
             <input id="ends_on" type="date" className="input" value={form.ends_on} min={form.starts_on || undefined} onChange={set('ends_on')} />
           </div>
         </div>
-        <p className="rounded-lg bg-info-soft px-3 py-2 text-xs text-info">
-          Prices are set by the shop checkout (RM 35 a bottle, RM 5 off each bottle with an AJK code), so they are shown here for reference only. Profit per bottle and targets apply to every report as soon as you save. The campaign dates are for your reference; they do not open or close the shop.
+        <p className="text-xs text-ink-3">
+          Profit per bottle and targets apply to every report as soon as you save. The campaign dates are for your reference; they do not open or close the shop.
         </p>
         {error && (
           <p role="alert" className="text-sm text-bad">
             {error}
           </p>
         )}
-        <button type="submit" className="btn btn-primary" disabled={saving}>
-          {saving ? 'Saving…' : 'Save settings'}
-        </button>
+        <div className="flex flex-wrap items-center gap-3 border-t border-line pt-5">
+          <button type="submit" className="btn btn-primary" disabled={saving || !dirty}>
+            {saving ? 'Saving…' : 'Save settings'}
+          </button>
+          {dirty ? (
+            <>
+              <span className="inline-flex items-center gap-1.5 text-xs font-medium text-warn" role="status">
+                <span className="size-1.5 rounded-full bg-warn" aria-hidden="true" /> Unsaved changes
+              </span>
+              <button type="button" className="btn btn-ghost h-8 px-2 text-xs" onClick={() => setForm(base)} disabled={saving}>
+                Discard
+              </button>
+            </>
+          ) : (
+            <span className="text-xs text-ink-3">All changes saved</span>
+          )}
+        </div>
       </form>
     </Card>
   )
@@ -159,7 +198,7 @@ function PasswordSettings() {
 export default function Settings() {
   return (
     <>
-      <PageHeader title="Settings" description="Campaign targets, profit and your account." />
+      <PageHeader eyebrow="Configuration" title="Settings" description="Campaign targets, profit and your account." />
       <div className="grid gap-4 xl:grid-cols-3">
         <div className="xl:col-span-2">
           <CampaignSettings />

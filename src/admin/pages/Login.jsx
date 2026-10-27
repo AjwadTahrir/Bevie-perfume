@@ -30,14 +30,19 @@ export default function Login() {
   return (
     <main className="flex min-h-dvh items-center justify-center bg-canvas px-4 py-10">
       <div className="w-full max-w-sm">
-        <div className="mb-8 flex flex-col items-center text-center">
-          <span className="flex size-11 items-center justify-center rounded-xl bg-brand text-lg font-semibold text-white">B</span>
-          <h1 className="mt-4 text-lg font-semibold tracking-tight">Beavie Fundraising Console</h1>
-          <p className="mt-1 text-sm text-ink-2">Sign in to manage orders and campaign sales.</p>
+        <div className="mb-9 flex flex-col items-center text-center">
+          <span className="font-display text-[2rem] leading-none font-semibold tracking-[0.32em] text-ink">BEAVIE</span>
+          <span className="mt-2 flex items-center gap-2.5 text-[0.625rem] font-medium tracking-[0.5em] text-ink-3">
+            <span className="h-px w-5 bg-gold" aria-hidden="true" />
+            PERFUME
+            <span className="h-px w-5 bg-gold" aria-hidden="true" />
+          </span>
+          <h1 className="display mt-8 text-2xl">Beavie Fundraising Console</h1>
+          <p className="mt-1.5 text-sm text-ink-2">Sign in to manage orders and campaign sales.</p>
         </div>
-        <form onSubmit={submit} className="card space-y-4 p-6" noValidate>
+        <form onSubmit={submit} className="card space-y-4 p-6 sm:p-7" noValidate>
           {notice && !error && (
-            <p role="status" className="rounded-lg bg-info-soft px-3 py-2 text-xs text-info">
+            <p role="status" className="rounded-md bg-info-soft px-3 py-2 text-xs text-info">
               {notice}
             </p>
           )}
@@ -45,20 +50,20 @@ export default function Login() {
             <label htmlFor="email" className="label">
               Email
             </label>
-            <input id="email" type="email" className="input" autoComplete="username" autoCapitalize="none" spellCheck={false} value={email} onChange={(e) => setEmail(e.target.value)} required />
+            <input id="email" type="email" className="input h-10" autoComplete="username" autoCapitalize="none" spellCheck={false} value={email} onChange={(e) => setEmail(e.target.value)} required />
           </div>
           <div>
             <label htmlFor="password" className="label">
               Password
             </label>
-            <input id="password" type="password" className="input" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+            <input id="password" type="password" className="input h-10" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required />
           </div>
           {error && (
-            <p role="alert" className="rounded-lg bg-bad-soft px-3 py-2 text-xs text-bad">
+            <p role="alert" className="rounded-md bg-bad-soft px-3 py-2 text-xs text-bad">
               {error}
             </p>
           )}
-          <button type="submit" className="btn btn-primary w-full" disabled={busy || !email || !password}>
+          <button type="submit" className="btn btn-primary h-10 w-full" disabled={busy || !email || !password}>
             <Lock size={14} aria-hidden="true" />
             {busy || status === 'loading' ? 'Signing in…' : 'Sign in'}
           </button>

@@ -20,7 +20,7 @@ function NotConfigured() {
   return (
     <div className="flex min-h-dvh items-center justify-center p-6">
       <div className="card max-w-md p-6">
-        <h1 className="text-base font-semibold">Dashboard not connected</h1>
+        <h1 className="display text-xl">Dashboard not connected</h1>
         <p className="mt-2 text-sm text-ink-2">
           Set <code>VITE_SUPABASE_URL</code> and <code>VITE_SUPABASE_ANON_KEY</code> for this deployment, then rebuild. See the README's setup section.
         </p>

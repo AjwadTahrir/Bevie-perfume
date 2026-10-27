@@ -1,13 +1,13 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Download, Medal, Trophy } from 'lucide-react'
-import { Card, EmptyState, ErrorState, PageHeader, ProgressBar, Skeleton, StatusBadge } from '../components/ui'
+import { Download, Trophy } from 'lucide-react'
+import { Card, EmptyState, ErrorState, PageHeader, ProgressBar, Skeleton, StatusBadge, TableScroll } from '../components/ui'
 import { ColumnChart, RankChart } from '../components/charts'
 import DateRangeFilter from '../components/DateRangeFilter'
 import { fetchMembers } from '../lib/api'
 import { useQuery } from '../lib/data'
 import { DEFAULT_RANGE, resolveRange } from '../lib/dateRange'
-import { displayName, n, rm } from '../lib/format'
+import { displayName, n, pct, rm } from '../lib/format'
 import { MEMBER_STATUS } from '../lib/status'
 import { downloadCsv, stamp } from '../lib/csv'
 import { MEMBER_CSV } from './Members'
@@ -18,11 +18,7 @@ const METRICS = {
   profit: { label: 'Profit', format: (v) => rm(v) },
 }
 
-const PLACES = [
-  { ring: 'ring-gold/40', bg: 'bg-gold-soft', text: 'text-gold', label: '1st place', icon: Trophy },
-  { ring: 'ring-silver/40', bg: 'bg-silver-soft', text: 'text-silver', label: '2nd place', icon: Medal },
-  { ring: 'ring-bronze/40', bg: 'bg-bronze-soft', text: 'text-bronze', label: '3rd place', icon: Medal },
-]
+const PLACE = ['First', 'Second', 'Third']
 
 /** Short label for chart axes: first two words of the title-cased name. */
 const shortName = (name) => displayName(name).split(' ').slice(0, 2).join(' ')
@@ -38,6 +34,7 @@ export default function Leaderboard() {
   const top3 = sellers.slice(0, 3)
   const rest = all.slice(top3.length)
   const target = all[0]?.target ?? 5
+  const totalBottles = sellers.reduce((s, m) => s + m.verified_bottles, 0)
 
   const top10 = [...sellers]
     .sort((a, b) => Number(b[metric]) - Number(a[metric]) || a.rank - b.rank)
@@ -52,6 +49,7 @@ export default function Leaderboard() {
   return (
     <>
       <PageHeader
+        eyebrow="Committee"
         title="Leaderboard"
         description="Ranked by verified bottles sold. Equal counts share a rank; the next rank skips accordingly (1, 1, 3)."
         actions={
@@ -66,11 +64,7 @@ export default function Leaderboard() {
       {members.error && !members.data && <ErrorState error={members.error} />}
 
       {members.loading && !members.data ? (
-        <div className="grid gap-3 md:grid-cols-3">
-          {[0, 1, 2].map((i) => (
-            <Skeleton key={i} className="h-44" />
-          ))}
-        </div>
+        <Skeleton className="h-52" />
       ) : !top3.length ? (
         <div className="card">
           <EmptyState icon={Trophy} title="The competition hasn't started yet">
@@ -78,38 +72,40 @@ export default function Leaderboard() {
           </EmptyState>
         </div>
       ) : (
-        <ol className="grid gap-3 md:grid-cols-3" aria-label="Top three sellers">
-          {top3.map((m, i) => {
-            const p = PLACES[Math.min(m.rank, 3) - 1]
-            const Icon = p.icon
+        <ol className={`card grid divide-y divide-line md:divide-x md:divide-y-0 ${['', 'md:grid-cols-1', 'md:grid-cols-2', 'md:grid-cols-3'][top3.length]}`} aria-label="Top three sellers">
+          {top3.map((m) => {
+            const tied = top3.filter((x) => x.rank === m.rank).length > 1
+            const first = m.rank === 1
             return (
-              <li key={m.member_id}>
-                <button
-                  type="button"
-                  onClick={() => navigate(`/members/${m.member_id}`)}
-                  className={`card rise flex h-full w-full flex-col p-5 text-left ring-1 transition-shadow hover:shadow-md ${p.ring} ${i === 0 ? 'md:-translate-y-1' : ''}`}
-                >
-                  <span className={`inline-flex items-center gap-1.5 self-start rounded-full px-2.5 py-1 text-xs font-semibold ${p.bg} ${p.text}`}>
-                    <Icon size={14} aria-hidden="true" /> {p.label}
-                    {top3.filter((x) => x.rank === m.rank).length > 1 && ' (tied)'}
+              <li key={m.member_id} className="min-w-0">
+                <button type="button" onClick={() => navigate(`/members/${m.member_id}`)} className="group flex h-full w-full flex-col p-5 text-left transition-colors duration-150 hover:bg-tint/50 sm:p-6">
+                  <span className="flex items-baseline justify-between gap-3">
+                    <span className={`display text-[2.75rem] leading-none ${first ? 'text-brand-deep' : 'text-ink-3'}`}>{m.rank}</span>
+                    <span className="eyebrow">
+                      {PLACE[m.rank - 1] ?? `Rank ${m.rank}`} place{tied ? ' · tied' : ''}
+                    </span>
                   </span>
-                  <span className="mt-4 block text-base font-semibold">{displayName(m.full_name)}</span>
-                  <span className="text-xs text-ink-3">{m.committee_role}</span>
-                  <span className="mt-4 flex items-baseline gap-1.5">
-                    <span className="text-3xl font-semibold tabular-nums">{m.verified_bottles}</span>
-                    <span className="text-sm text-ink-3">bottles</span>
+                  <span className={`mt-4 block h-px w-10 ${first ? 'bg-gold' : 'bg-line-strong'}`} aria-hidden="true" />
+                  <span className="display mt-4 block text-lg leading-snug group-hover:text-brand-deep">{displayName(m.full_name)}</span>
+                  <span className="mt-0.5 text-xs text-ink-3">{m.committee_role}</span>
+                  <span className="mt-5 flex items-baseline gap-1.5">
+                    <span className="display text-3xl leading-none">{m.verified_bottles}</span>
+                    <span className="text-sm text-ink-3">bottles · {pct(totalBottles ? (m.verified_bottles / totalBottles) * 100 : 0)} of sales</span>
                   </span>
-                  <span className="mt-3 block">
-                    <ProgressBar value={m.verified_bottles} max={m.target} size="sm" label="Target progress" />
+                  <span className="mt-3 flex items-center gap-2">
+                    <ProgressBar value={m.verified_bottles} max={m.target} size="sm" label={`${displayName(m.full_name)} target progress`} />
+                    <span className="text-[0.6875rem] whitespace-nowrap text-ink-3 tabular-nums">
+                      {Math.min(m.verified_bottles, m.target)}/{m.target}
+                    </span>
                   </span>
-                  <span className="mt-4 grid grid-cols-2 gap-2 text-xs">
+                  <span className="mt-5 grid grid-cols-2 gap-2 border-t border-line pt-4 text-xs">
                     <span>
-                      <span className="block text-ink-3">Revenue</span>
-                      <span className="font-medium tabular-nums">{rm(m.revenue)}</span>
+                      <span className="eyebrow block">Revenue</span>
+                      <span className="mt-1 block font-medium tabular-nums">{rm(m.revenue)}</span>
                     </span>
                     <span>
-                      <span className="block text-ink-3">Profit</span>
-                      <span className="font-medium tabular-nums">{rm(m.profit)}</span>
+                      <span className="eyebrow block">Profit</span>
+                      <span className="mt-1 block font-medium tabular-nums">{rm(m.profit)}</span>
                     </span>
                   </span>
                 </button>
@@ -125,15 +121,9 @@ export default function Leaderboard() {
           title="Top 10 sellers"
           description="Click a bar to open the member"
           actions={
-            <div className="inline-flex rounded-lg border border-line-strong p-0.5" role="group" aria-label="Chart metric">
+            <div className="segmented" role="group" aria-label="Chart metric">
               {Object.entries(METRICS).map(([k, v]) => (
-                <button
-                  key={k}
-                  type="button"
-                  aria-pressed={metric === k}
-                  onClick={() => setMetric(k)}
-                  className={`h-7 rounded-md px-2.5 text-xs font-medium ${metric === k ? 'bg-navy text-white' : 'text-ink-2 hover:text-ink'}`}
-                >
+                <button key={k} type="button" aria-pressed={metric === k} onClick={() => setMetric(k)} className="segment h-7 px-2.5">
                   {v.label}
                 </button>
               ))}
@@ -150,7 +140,7 @@ export default function Leaderboard() {
             caption={`Top ten sellers by ${METRICS[metric].label.toLowerCase()}`}
           />
         </Card>
-        <Card className="xl:col-span-2" title="Sales distribution" description="How many AJK members have sold each number of verified bottles">
+        <Card className="xl:col-span-2" title="Sales distribution" description="How many code holders have sold each number of verified bottles">
           <ColumnChart
             data={distribution}
             x="bucket"
@@ -163,15 +153,15 @@ export default function Leaderboard() {
         </Card>
       </div>
 
-      <Card className="mt-4" title="Full ranking" bodyClass="p-0">
-        <div className="relative overflow-x-auto">
+      <Card className="mt-4" title="Full ranking" description={`${n(sellers.length)} of ${n(all.length)} code holders have verified sales`} bodyClass="p-0">
+        <TableScroll label="Full ranking">
           <table className="w-full text-sm">
-            <thead className="border-b border-line bg-canvas/60">
+            <thead className="table-head">
               <tr>
-                <th className="th">Rank</th>
+                <th className="th w-16">Rank</th>
                 <th className="th">Member</th>
                 <th className="th text-right">Bottles</th>
-                <th className="th w-40">Target</th>
+                <th className="th w-44">Target</th>
                 <th className="th text-right">Revenue</th>
                 <th className="th text-right">Profit</th>
                 <th className="th">Status</th>
@@ -179,15 +169,20 @@ export default function Leaderboard() {
             </thead>
             <tbody className="divide-y divide-line">
               {rest.map((m) => (
-                <tr key={m.member_id} tabIndex={0} onClick={() => navigate(`/members/${m.member_id}`)} onKeyDown={(e) => e.key === 'Enter' && navigate(`/members/${m.member_id}`)} className="cursor-pointer hover:bg-canvas">
-                  <td className="td text-ink-3 tabular-nums">{m.verified_bottles > 0 ? m.rank : '—'}</td>
+                <tr key={m.member_id} tabIndex={0} onClick={() => navigate(`/members/${m.member_id}`)} onKeyDown={(e) => e.key === 'Enter' && navigate(`/members/${m.member_id}`)} className="row-link">
+                  <td className="td display text-base text-ink-3">{m.verified_bottles > 0 ? m.rank : '—'}</td>
                   <td className="td">
                     <span className="block font-medium">{displayName(m.full_name)}</span>
                     <span className="text-xs text-ink-3">{m.committee_role}</span>
                   </td>
-                  <td className="td text-right font-semibold tabular-nums">{m.verified_bottles}</td>
+                  <td className="td display text-right text-base">{m.verified_bottles}</td>
                   <td className="td">
-                    <ProgressBar value={m.verified_bottles} max={m.target} size="sm" label="Target progress" />
+                    <span className="flex items-center gap-2">
+                      <ProgressBar value={m.verified_bottles} max={m.target} size="sm" label={`${displayName(m.full_name)}: ${m.verified_bottles} of ${m.target}`} />
+                      <span className="w-8 text-right text-xs text-ink-3 tabular-nums">
+                        {Math.min(m.verified_bottles, m.target)}/{m.target}
+                      </span>
+                    </span>
                   </td>
                   <td className="td text-right tabular-nums">{rm(m.revenue)}</td>
                   <td className="td text-right tabular-nums">{rm(m.profit)}</td>
@@ -198,7 +193,7 @@ export default function Leaderboard() {
               ))}
             </tbody>
           </table>
-        </div>
+        </TableScroll>
       </Card>
     </>
   )

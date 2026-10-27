@@ -5,6 +5,7 @@ const dateTime = new Intl.DateTimeFormat('en-MY', { timeZone: TZ, day: 'numeric'
 const dateOnly = new Intl.DateTimeFormat('en-MY', { timeZone: TZ, day: 'numeric', month: 'short', year: 'numeric' })
 const dayShort = new Intl.DateTimeFormat('en-MY', { timeZone: 'UTC', day: 'numeric', month: 'short' })
 const timeOnly = new Intl.DateTimeFormat('en-MY', { timeZone: TZ, hour: 'numeric', minute: '2-digit', second: '2-digit' })
+const clock = new Intl.DateTimeFormat('en-MY', { timeZone: TZ, hour: 'numeric', minute: '2-digit' })
 const num = new Intl.NumberFormat('en-MY')
 
 /** "RM 1,234.00" */
@@ -15,6 +16,8 @@ export const pct = (v, digits = 1) => `${(Number(v) || 0).toFixed(digits).replac
 export const fmtDateTime = (v) => (v ? dateTime.format(new Date(v)) : '—')
 export const fmtDate = (v) => (v ? dateOnly.format(new Date(v)) : '—')
 export const fmtTime = (v) => (v ? timeOnly.format(new Date(v)) : '—')
+/** '2:51 pm' */
+export const fmtClock = (v) => (v ? clock.format(new Date(v)) : '')
 /** For 'YYYY-MM-DD' calendar dates from the database. */
 export const fmtDay = (d) => (d ? dayShort.format(new Date(`${d}T00:00:00Z`)) : '—')
 

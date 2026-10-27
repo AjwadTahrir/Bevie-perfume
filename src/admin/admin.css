@@ -1,40 +1,55 @@
 @import 'tailwindcss';
 
-/* Admin console tokens: neutral surfaces, navy ink, brand rust used sparingly. */
+/* ================================================================
+   BEAVIE ADMIN TOKENS
+   The operational counterpart of the storefront: the same champagne,
+   espresso and terracotta, Playfair Display for headings and key
+   figures, DM Sans for data. No batik or florals here; the brand
+   comes through colour, type and spacing. Text colours are checked
+   for at least 4.5:1 on the surfaces they sit on.
+   ================================================================ */
 @theme {
   --font-sans: 'DM Sans Variable', 'Segoe UI', system-ui, sans-serif;
-  --color-canvas: #f6f6f4;
-  --color-surface: #ffffff;
-  --color-line: #e6e4df;
-  --color-line-strong: #d3d0c9;
-  --color-ink: #0f1b2d;
-  --color-ink-2: #4a5565;
-  --color-ink-3: #7b8491;
-  --color-navy: #13233d;
-  --color-navy-soft: #e9edf4;
-  --color-brand: #c0502e;
-  --color-brand-soft: #f8e9e3;
-  --color-series-1: #2a78d6;
-  --color-series-2: #eb6834;
-  --color-good: #157f3c;
-  --color-good-soft: #e5f4ea;
-  --color-warn: #a35d00;
-  --color-warn-soft: #fdf1dc;
-  --color-bad: #b42318;
-  --color-bad-soft: #fde8e6;
-  --color-info: #1d5fb0;
-  --color-info-soft: #e6f0fb;
-  --color-gold: #b88a00;
-  --color-gold-soft: #fbf3d9;
-  --color-silver: #6b7480;
-  --color-silver-soft: #eef0f3;
-  --color-bronze: #a0582c;
-  --color-bronze-soft: #f6e8de;
+  --font-display: 'Playfair Display', 'Iowan Old Style', Georgia, serif;
+
+  /* Surfaces */
+  --color-canvas: #f4e6d3; /* page background: warm champagne */
+  --color-sidebar: #eedbc2; /* navigation: a shade deeper */
+  --color-surface: #fbf5ec; /* raised panels, tables, dialogs */
+  --color-tint: #f0e2cf; /* row hover, table headers, quiet fills */
+  --color-line: #e5d2bd; /* dividers and borders */
+  --color-line-strong: #d3bba1; /* inputs, controls */
+
+  /* Ink */
+  --color-ink: #3f2925; /* espresso: text, headings, icons (11:1) */
+  --color-ink-2: #6b4a42; /* secondary text (6.4:1) */
+  --color-ink-3: #785c4e; /* metadata, captions (5:1 on canvas) */
+  --color-espresso: #3a2420; /* dark fills: toasts, tooltips */
+
+  /* Brand accents */
+  --color-brand: #b94d32; /* terracotta: primary actions, active nav, chart marks */
+  --color-brand-deep: #9c3f22; /* terracotta text and links (5.4:1) */
+  --color-brand-soft: #f3dccf;
+  --color-gold: #c99455; /* restrained decorative accents only */
+  --color-gold-soft: #f1e1c8;
+
+  /* Status: used for meaning only */
+  --color-good: #3e6b3a;
+  --color-good-soft: #e4ebd8;
+  --color-warn: #8a5410;
+  --color-warn-soft: #f6e4c6;
+  --color-bad: #a3352a;
+  --color-bad-soft: #f6ded7;
+  --color-info: #3d6a6e;
+  --color-info-soft: #dfeae8;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
+    scrollbar-gutter: stable;
   }
   body {
     background: var(--color-canvas);
@@ -45,35 +60,50 @@
     -webkit-font-smoothing: antialiased;
   }
   :focus-visible {
-    outline: 2px solid var(--color-series-1);
+    outline: 2px solid var(--color-brand);
     outline-offset: 2px;
+  }
+  ::selection {
+    background: var(--color-brand-soft);
   }
 }
 
 @layer components {
+  /* Display type: Playfair with lining, even-width figures for numbers */
+  .display {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+  /* Small tracked uppercase section labels */
+  .eyebrow {
+    @apply text-[0.6875rem] font-medium tracking-[0.16em] text-ink-3 uppercase;
+  }
+
   .card {
-    @apply rounded-xl border border-line bg-surface shadow-[0_1px_2px_rgba(15,27,45,0.04)];
+    @apply rounded-lg border border-line bg-surface shadow-[0_1px_0_rgba(63,41,37,0.03)];
   }
   .btn {
-    @apply inline-flex h-9 items-center justify-center gap-2 rounded-lg px-3.5 text-sm font-medium whitespace-nowrap transition-colors disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex h-9 items-center justify-center gap-2 rounded-md px-3.5 text-sm font-medium whitespace-nowrap transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-50;
   }
   .btn-primary {
-    @apply bg-navy text-white hover:bg-[#1d3256];
+    @apply bg-brand text-white hover:bg-brand-deep;
   }
   .btn-secondary {
-    @apply border border-line-strong bg-surface text-ink hover:bg-canvas;
+    @apply border border-line-strong bg-surface text-ink hover:border-ink-3/50 hover:bg-tint;
   }
   .btn-ghost {
-    @apply text-ink-2 hover:bg-canvas hover:text-ink;
+    @apply text-ink-2 hover:bg-tint hover:text-ink;
   }
   .btn-danger {
-    @apply bg-bad text-white hover:bg-[#912018];
+    @apply bg-bad text-white hover:bg-[#86281f];
   }
   .btn-good {
-    @apply bg-good text-white hover:bg-[#106030];
+    @apply bg-good text-white hover:bg-[#30552d];
   }
   .input {
-    @apply h-9 w-full rounded-lg border border-line-strong bg-surface px-3 text-sm text-ink placeholder:text-ink-3 focus:border-series-1 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-series-1/20;
+    @apply h-9 w-full rounded-md border border-line-strong bg-surface px-3 text-sm text-ink transition-colors duration-150 placeholder:text-ink-3 hover:border-ink-3/50 focus:border-brand focus:ring-2 focus:ring-brand/15 focus:outline-none focus-visible:outline-none;
   }
   textarea.input {
     @apply h-auto py-2;
@@ -82,10 +112,27 @@
     @apply mb-1.5 block text-xs font-medium text-ink-2;
   }
   .th {
-    @apply px-4 py-2.5 text-left text-xs font-medium whitespace-nowrap text-ink-3;
+    @apply px-3 py-2.5 text-left min-[90rem]:px-3.5 text-[0.6875rem] font-medium tracking-[0.08em] whitespace-nowrap text-ink-3 uppercase;
   }
   .td {
-    @apply px-4 py-3 align-middle whitespace-nowrap;
+    @apply px-3 py-3 align-middle whitespace-nowrap min-[90rem]:px-3.5;
+  }
+  /* Table shell: header band and row rules shared by every table */
+  .table-head {
+    @apply border-b border-line bg-tint/60;
+  }
+  .row-link {
+    @apply cursor-pointer transition-colors duration-150 hover:bg-tint/70 focus-visible:bg-tint/70;
+  }
+  .text-link {
+    @apply text-brand-deep underline-offset-2 hover:underline;
+  }
+  /* Segmented control (date presets, chart metric) */
+  .segmented {
+    @apply inline-flex rounded-md border border-line-strong bg-surface p-0.5;
+  }
+  .segment {
+    @apply h-8 rounded-[5px] px-3 text-xs font-medium whitespace-nowrap text-ink-2 transition-colors duration-150 hover:text-ink aria-pressed:bg-ink aria-pressed:text-surface;
   }
 }
 
@@ -95,7 +142,7 @@
   }
 }
 .skeleton {
-  background: linear-gradient(90deg, #efeee9 25%, #f7f6f2 50%, #efeee9 75%);
+  background: linear-gradient(90deg, #ecdcc7 25%, #f5eadb 50%, #ecdcc7 75%);
   background-size: 200% 100%;
   animation: shimmer 1.4s linear infinite;
   border-radius: 6px;
@@ -107,11 +154,20 @@
   }
 }
 .rise {
-  animation: rise 0.25s ease-out;
+  animation: rise 0.22s var(--ease-out);
+}
+@keyframes slide-in {
+  from {
+    transform: translateX(-100%);
+  }
+}
+.slide-in {
+  animation: slide-in 0.22s var(--ease-out);
 }
 @media (prefers-reduced-motion: reduce) {
   .skeleton,
-  .rise {
+  .rise,
+  .slide-in {
     animation: none;
   }
 }

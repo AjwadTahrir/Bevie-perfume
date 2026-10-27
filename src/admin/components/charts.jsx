@@ -4,21 +4,23 @@ import { BarChart3 } from 'lucide-react'
 
 /**
  * Chart conventions (one system for every chart in the dashboard):
- * one y-axis, a single colour per series (series-1 blue, series-2
- * orange), thin bars with 4px rounded data ends, 2px lines, recessive
- * grid, a hover tooltip on every mark, text in ink colours, and a data
- * table behind every chart for screen readers and exact values.
+ * one y-axis, a single colour per series (terracotta first, espresso
+ * second), slim bars with 3px rounded data ends, 2px lines, a recessive
+ * hairline grid, a hover tooltip on every mark, text in ink colours, and
+ * a data table behind every chart for screen readers and exact values.
  */
-export const SERIES = ['#2a78d6', '#eb6834']
-const INK_3 = '#7b8491'
-const GRID = '#ecebe6'
+export const SERIES = ['#b94d32', '#4b302c']
+const INK_3 = '#785c4e'
+const INK_2 = '#6b4a42'
+const GRID = '#e8d7c2'
+const CURSOR = '#b94d3214'
 const axis = { stroke: INK_3, fontSize: 11, tickLine: false, axisLine: false }
 
 function TipBox({ active, payload, label, labelFormat, valueFormat, rows }) {
   if (!active || !payload?.length) return null
   const row = payload[0].payload
   return (
-    <div className="rounded-lg border border-line bg-surface px-3 py-2 text-xs shadow-lg">
+    <div className="rounded-md border border-line bg-surface px-3 py-2 text-xs shadow-[0_8px_24px_rgba(63,41,37,0.12)]">
       <p className="mb-1 font-medium text-ink">{labelFormat ? labelFormat(label, row) : label}</p>
       {payload.map((p) => (
         <p key={p.dataKey} className="flex items-center gap-2 text-ink-2">
@@ -34,11 +36,11 @@ function TipBox({ active, payload, label, labelFormat, valueFormat, rows }) {
 function DataTable({ caption, columns, data }) {
   return (
     <details className="mt-2 text-xs text-ink-3">
-      <summary className="cursor-pointer select-none hover:text-ink">Show data table</summary>
-      <div className="mt-2 max-h-56 overflow-auto rounded-lg border border-line">
+      <summary className="inline-block cursor-pointer rounded select-none hover:text-ink">Show data table</summary>
+      <div className="mt-2 max-h-56 overflow-auto rounded-md border border-line bg-surface">
         <table className="w-full text-left">
           <caption className="sr-only">{caption}</caption>
-          <thead className="bg-canvas">
+          <thead className="bg-tint">
             <tr>
               {columns.map((c) => (
                 <th key={c.label} className="px-3 py-1.5 font-medium">
@@ -79,8 +81,8 @@ export function ColumnChart({ data, x, y, name, height = 240, xFormat, valueForm
             <CartesianGrid vertical={false} stroke={GRID} />
             <XAxis dataKey={x} {...axis} tickFormatter={xFormat} minTickGap={12} />
             <YAxis {...axis} allowDecimals={false} tickFormatter={valueFormat} width={56} />
-            <Tooltip cursor={{ fill: '#13233d0d' }} content={<TipBox labelFormat={xFormat} valueFormat={valueFormat} rows={tooltipRows} />} />
-            <Bar dataKey={y} name={name} fill={SERIES[0]} radius={[4, 4, 0, 0]} maxBarSize={32} isAnimationActive={false} />
+            <Tooltip cursor={{ fill: CURSOR }} content={<TipBox labelFormat={xFormat} valueFormat={valueFormat} rows={tooltipRows} />} />
+            <Bar dataKey={y} name={name} fill={SERIES[0]} radius={[3, 3, 0, 0]} maxBarSize={28} isAnimationActive={false} />
           </BarChart>
         </ResponsiveContainer>
       </div>
@@ -107,13 +109,13 @@ export function RankChart({ data, label, y, name, valueFormat, onSelect, caption
           <BarChart data={data} layout="vertical" margin={{ top: 0, right: 16, bottom: 0, left: 0 }}>
             <CartesianGrid horizontal={false} stroke={GRID} />
             <XAxis type="number" {...axis} allowDecimals={false} tickFormatter={valueFormat} />
-            <YAxis type="category" dataKey={label} {...axis} width={labelWidth} tick={{ fill: '#4a5565', fontSize: 11 }} interval={0} />
-            <Tooltip cursor={{ fill: '#13233d0d' }} content={<TipBox valueFormat={valueFormat} />} />
+            <YAxis type="category" dataKey={label} {...axis} width={labelWidth} tick={{ fill: INK_2, fontSize: 11 }} interval={0} />
+            <Tooltip cursor={{ fill: CURSOR }} content={<TipBox valueFormat={valueFormat} />} />
             <Bar
               dataKey={y}
               name={name}
               fill={SERIES[0]}
-              radius={[0, 4, 4, 0]}
+              radius={[0, 3, 3, 0]}
               barSize={18}
               isAnimationActive={false}
               onClick={onSelect ? (d) => onSelect(d.payload ?? d) : undefined}
@@ -163,7 +165,7 @@ export function TwoLineChart({ data, x, series, height = 260, xFormat, valueForm
                 stroke={SERIES[i]}
                 strokeWidth={2}
                 dot={data.length < 20 ? { r: 3, strokeWidth: 0, fill: SERIES[i] } : false}
-                activeDot={{ r: 5, stroke: '#fff', strokeWidth: 2 }}
+                activeDot={{ r: 5, stroke: '#fbf5ec', strokeWidth: 2 }}
                 isAnimationActive={false}
               />
             ))}

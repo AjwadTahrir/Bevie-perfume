@@ -1,12 +1,12 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Copy, Download, ShoppingBag } from 'lucide-react'
-import { Card, EmptyState, ErrorState, PageHeader, Pagination, SearchInput, Select, SortTh, StatusBadge, TableSkeleton, sortRows, usePaged } from '../components/ui'
+import { Card, EmptyState, ErrorState, PageHeader, Pagination, SearchInput, Select, SortTh, StatusBadge, TableScroll, TableSkeleton, Toolbar, sortRows, usePaged } from '../components/ui'
 import DateRangeFilter from '../components/DateRangeFilter'
 import { fetchMembers, fetchOrders } from '../lib/api'
 import { useQuery } from '../lib/data'
 import { DEFAULT_RANGE, resolveRange } from '../lib/dateRange'
-import { displayName, fmtDateTime, rm } from '../lib/format'
+import { displayName, fmtClock, fmtDate, n, rm } from '../lib/format'
 import { ORDER_STATUS, PAYMENT_STATUS } from '../lib/status'
 import { downloadCsv, stamp } from '../lib/csv'
 
@@ -71,6 +71,7 @@ export default function Orders() {
   return (
     <>
       <PageHeader
+        eyebrow="Operations"
         title="Orders"
         description="Every customer order, newest first. Click a row for details and actions."
         actions={
@@ -80,15 +81,20 @@ export default function Orders() {
         }
       />
 
-      <div className="mb-4 flex flex-col gap-3">
+      <div className="mb-3">
         <DateRangeFilter value={range} onChange={setRange} />
-        <div className="flex flex-wrap gap-2">
-          <SearchInput value={q} onChange={setQ} placeholder="Reference, customer or code" label="Search orders" />
-          <Select label="Payment status" value={pay} onChange={setPay} options={opts(PAYMENT_STATUS, 'All payment statuses')} className="w-full sm:w-48" />
-          <Select label="Order status" value={status} onChange={setStatus} options={opts(ORDER_STATUS, 'All order statuses')} className="w-full sm:w-44" />
-          <Select label="AJK member" value={member} onChange={setMember} options={memberOptions} className="w-full sm:w-64" />
-        </div>
       </div>
+      <Toolbar>
+        <SearchInput value={q} onChange={setQ} placeholder="Reference, customer, phone or code" label="Search orders" />
+        <Select label="Payment status" value={pay} onChange={setPay} options={opts(PAYMENT_STATUS, 'All payment statuses')} className="w-full sm:w-48" />
+        <Select label="Order status" value={status} onChange={setStatus} options={opts(ORDER_STATUS, 'All order statuses')} className="w-full sm:w-44" />
+        <Select label="AJK member" value={member} onChange={setMember} options={memberOptions} className="w-full sm:w-60" />
+        {orders.data && (
+          <p className="text-xs text-ink-3 sm:ml-auto" aria-live="polite">
+            {n(filtered.length)} of {n(orders.data.length)} orders
+          </p>
+        )}
+      </Toolbar>
 
       {orders.error && !orders.data && <ErrorState error={orders.error} />}
       <Card bodyClass="p-0">
@@ -100,20 +106,55 @@ export default function Orders() {
           </EmptyState>
         ) : (
           <>
-            <div className="relative overflow-x-auto">
+            {/* Phones: one card per order with every figure; tap to open */}
+            <ul className="divide-y divide-line sm:hidden">
+              {rows.map((o) => (
+                <li key={o.id}>
+                  <button type="button" onClick={() => navigate(`/orders/${o.id}`)} className="row-link block w-full px-4 py-4 text-left">
+                    <span className="flex items-start justify-between gap-3">
+                      <span className="min-w-0">
+                        <span className="block font-medium tabular-nums">
+                          {o.reference}
+                          {o.duplicate_transfer_reference && <Copy size={12} className="ml-1.5 inline text-warn" aria-label="Duplicate transfer reference" role="img" />}
+                        </span>
+                        <span className="block truncate text-sm text-ink-2">{o.customer_name}</span>
+                        <span className="text-xs text-ink-3">
+                          {fmtDate(o.created_at)}, {fmtClock(o.created_at)}
+                        </span>
+                      </span>
+                      <span className="text-right">
+                        <span className="display block text-lg leading-tight">{rm(o.final_amount)}</span>
+                        <span className="text-xs text-ink-3 tabular-nums">
+                          {o.quantity} {o.quantity === 1 ? 'bottle' : 'bottles'}{Number(o.discount_total) ? ` · − ${rm(o.discount_total)}` : ''}
+                        </span>
+                      </span>
+                    </span>
+                    <span className="mt-2 flex flex-wrap items-center gap-1.5">
+                      <StatusBadge map={PAYMENT_STATUS} value={o.payment_status} />
+                      <StatusBadge map={ORDER_STATUS} value={o.order_status} />
+                      {o.promo_code && (
+                        <span className="text-xs text-ink-3">
+                          <span className="font-mono text-ink-2">{o.promo_code}</span> · {displayName(o.member_name || o.ajk_member_name)}
+                        </span>
+                      )}
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <div className="hidden sm:block">
+            <TableScroll label="Orders table">
               <table className="w-full text-sm">
-                <thead className="border-b border-line bg-canvas/60">
+                <thead className="table-head">
                   <tr>
-                    <th className="th">Reference</th>
+                    <th className="th sticky left-0 z-10 bg-[#f4eadb]">Reference</th>
                     <SortTh label="Date" k="created_at" sort={sort} setSort={setSort} />
                     <th className="th">Customer</th>
                     <SortTh label="Bottles" k="quantity" sort={sort} setSort={setSort} className="text-right" />
                     <th className="th">Promo · AJK</th>
                     <th className="th text-right">Subtotal</th>
-                    <th className="th text-right">Discount</th>
                     <SortTh label="Final" k="final_amount" sort={sort} setSort={setSort} className="text-right" />
-                    <th className="th">Payment</th>
-                    <th className="th">Order</th>
+                    <th className="th">Status</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-line">
@@ -123,19 +164,22 @@ export default function Orders() {
                       tabIndex={0}
                       onClick={() => navigate(`/orders/${o.id}`)}
                       onKeyDown={(e) => e.key === 'Enter' && navigate(`/orders/${o.id}`)}
-                      className="cursor-pointer hover:bg-canvas focus-visible:bg-canvas"
+                      className="row-link group"
                     >
-                      <td className="td font-medium tabular-nums">
+                      <td className="td sticky left-0 z-10 bg-surface font-medium tabular-nums transition-colors duration-150 group-hover:bg-[#f3e8d8]">
                         {o.reference}
-                        {o.duplicate_transfer_reference && <Copy size={12} className="ml-1.5 inline text-warn" aria-label="Duplicate transfer reference" />}
+                        {o.duplicate_transfer_reference && <Copy size={12} className="ml-1.5 inline text-warn" aria-label="Duplicate transfer reference" role="img" />}
                       </td>
-                      <td className="td text-ink-2">{fmtDateTime(o.created_at)}</td>
+                      <td className="td text-ink-2">
+                        <span className="block">{fmtDate(o.created_at)}</span>
+                        <span className="text-xs text-ink-3">{fmtClock(o.created_at)}</span>
+                      </td>
                       <td className="td">
                         <span className="block">{o.customer_name}</span>
                         <span className="text-xs text-ink-3">{o.customer_phone}</span>
                       </td>
                       <td className="td text-right tabular-nums">{o.quantity}</td>
-                      <td className="td">
+                      <td className="td max-w-[9.5rem] truncate" title={o.promo_code ? displayName(o.member_name || o.ajk_member_name) : undefined}>
                         {o.promo_code ? (
                           <>
                             <span className="block font-mono text-xs">{o.promo_code}</span>
@@ -145,19 +189,22 @@ export default function Orders() {
                           <span className="text-ink-3">—</span>
                         )}
                       </td>
-                      <td className="td text-right text-ink-2 tabular-nums">{rm(o.original_subtotal)}</td>
-                      <td className="td text-right text-ink-2 tabular-nums">{Number(o.discount_total) ? `− ${rm(o.discount_total)}` : '—'}</td>
+                      <td className="td text-right tabular-nums">
+                        <span className="block text-ink-2">{rm(o.original_subtotal)}</span>
+                        <span className="text-xs text-ink-3">{Number(o.discount_total) ? `− ${rm(o.discount_total)}` : 'No discount'}</span>
+                      </td>
                       <td className="td text-right font-medium tabular-nums">{rm(o.final_amount)}</td>
                       <td className="td">
-                        <StatusBadge map={PAYMENT_STATUS} value={o.payment_status} />
-                      </td>
-                      <td className="td">
-                        <StatusBadge map={ORDER_STATUS} value={o.order_status} />
+                        <span className="flex flex-col items-start gap-1">
+                          <StatusBadge map={PAYMENT_STATUS} value={o.payment_status} />
+                          <StatusBadge map={ORDER_STATUS} value={o.order_status} />
+                        </span>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
+            </TableScroll>
             </div>
             <Pagination {...pager} />
           </>

@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Download, Users } from 'lucide-react'
-import { Card, EmptyState, ErrorState, PageHeader, Pagination, ProgressBar, SearchInput, Select, SortTh, StatusBadge, TableSkeleton, sortRows, usePaged } from '../components/ui'
+import { Card, EmptyState, ErrorState, PageHeader, Pagination, ProgressBar, SearchInput, Select, SortTh, StatusBadge, TableScroll, TableSkeleton, Toolbar, sortRows, usePaged } from '../components/ui'
 import { fetchMembers } from '../lib/api'
 import { useQuery } from '../lib/data'
 import { displayName, fmtDateTime, rm } from '../lib/format'
@@ -50,15 +50,16 @@ export default function Members() {
   return (
     <>
       <PageHeader
+        eyebrow="Committee"
         title="AJK Performance"
-        description={members.data ? `${reached} of ${members.data.length} members have reached their target. Only verified payments count.` : 'Sales by committee member'}
+        description={members.data ? `${reached} of ${members.data.length} code holders have reached their ${members.data[0]?.target ?? 5}-bottle target. Only verified payments count.` : 'Sales by committee member'}
         actions={
           <button type="button" className="btn btn-secondary" disabled={!filtered.length} onClick={() => downloadCsv(`beavie-ajk-performance-${stamp()}.csv`, MEMBER_CSV, filtered)}>
             <Download size={15} /> Export CSV
           </button>
         }
       />
-      <div className="mb-4 flex flex-wrap gap-2">
+      <Toolbar>
         <SearchInput value={q} onChange={setQ} placeholder="Name or promo code" label="Search members" />
         <Select label="Jawatan / Biro" value={bureau} onChange={setBureau} className="w-full sm:w-56" options={[{ value: '', label: 'All bureaus' }, ...bureaus(members.data).map((b) => ({ value: b, label: b }))]} />
         <Select
@@ -68,7 +69,7 @@ export default function Members() {
           className="w-full sm:w-48"
           options={[{ value: '', label: 'All statuses' }, ...Object.entries(MEMBER_STATUS).map(([value, s]) => ({ value, label: s.label }))]}
         />
-      </div>
+      </Toolbar>
 
       {members.error && !members.data && <ErrorState error={members.error} />}
       <Card bodyClass="p-0">
@@ -78,22 +79,17 @@ export default function Members() {
           <EmptyState icon={Users} title="No members match these filters" />
         ) : (
           <>
-            <div className="relative overflow-x-auto">
+            <TableScroll label="AJK performance table">
               <table className="w-full text-sm">
-                <thead className="border-b border-line bg-canvas/60">
+                <thead className="table-head">
                   <tr>
-                    <th className="th">Rank</th>
-                    <SortTh label="Member" k="full_name" sort={sort} setSort={setSort} />
-                    <th className="th">Code</th>
+                    <th className="th w-14">Rank</th>
+                    <SortTh label="Member · code" k="full_name" sort={sort} setSort={setSort} />
                     <SortTh label="Verified" k="verified_bottles" sort={sort} setSort={setSort} className="text-right" />
-                    <th className="th text-right">Pending</th>
-                    <th className="th w-44">Target progress</th>
-                    <th className="th text-right">To go</th>
+                    <th className="th w-52">Target</th>
                     <SortTh label="Revenue" k="revenue" sort={sort} setSort={setSort} className="text-right" />
                     <SortTh label="Profit" k="profit" sort={sort} setSort={setSort} className="text-right" />
-                    <th className="th text-right">Orders</th>
-                    <th className="th">Last order</th>
-                    <th className="th">Status</th>
+                    <th className="th">Orders · last</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-line">
@@ -103,43 +99,48 @@ export default function Members() {
                       tabIndex={0}
                       onClick={() => navigate(`/members/${m.member_id}`)}
                       onKeyDown={(e) => e.key === 'Enter' && navigate(`/members/${m.member_id}`)}
-                      className="cursor-pointer hover:bg-canvas focus-visible:bg-canvas"
+                      className="row-link"
                     >
-                      <td className="td text-ink-3 tabular-nums">{m.verified_bottles > 0 ? m.rank : '—'}</td>
-                      <td className="td">
+                      <td className={`td display text-base ${m.verified_bottles > 0 && m.rank <= 3 ? 'text-brand-deep' : 'text-ink-3'}`}>{m.verified_bottles > 0 ? m.rank : '—'}</td>
+                      <td className="td min-w-[14rem] whitespace-normal">
                         <span className="block font-medium">{displayName(m.full_name)}</span>
-                        <span className="text-xs text-ink-3">{m.committee_role}</span>
+                        <span className="text-xs text-ink-3">
+                          {m.committee_role} · <span className="font-mono text-ink-2">{m.promo_code}</span>
+                        </span>
                       </td>
-                      <td className="td font-mono text-xs">{m.promo_code}</td>
-                      <td className="td text-right font-semibold tabular-nums">{m.verified_bottles}</td>
-                      <td className="td text-right text-ink-3 tabular-nums">{m.pending_bottles || '—'}</td>
+                      <td className="td text-right">
+                        <span className="display block text-base">{m.verified_bottles}</span>
+                        <span className="text-xs text-ink-3 tabular-nums">{m.pending_bottles ? `+${m.pending_bottles} pending` : 'none pending'}</span>
+                      </td>
                       <td className="td">
                         <div className="flex items-center gap-2">
                           <ProgressBar value={m.verified_bottles} max={m.target} size="sm" label={`${displayName(m.full_name)}: ${m.verified_bottles} of ${m.target}`} />
                           <span className="w-9 text-right text-xs text-ink-3 tabular-nums">
-                            {m.verified_bottles}/{m.target}
+                            {Math.min(m.verified_bottles, m.target)}/{m.target}
                           </span>
                         </div>
+                        <span className="mt-1.5 flex items-center gap-2 text-xs text-ink-3">
+                          <StatusBadge map={MEMBER_STATUS} value={m.status} />
+                          {m.remaining > 0 && <span className="tabular-nums">{m.remaining} to go</span>}
+                        </span>
                       </td>
-                      <td className="td text-right tabular-nums">{m.remaining}</td>
                       <td className="td text-right tabular-nums">{rm(m.revenue)}</td>
                       <td className="td text-right tabular-nums">{rm(m.profit)}</td>
-                      <td className="td text-right tabular-nums">{m.verified_orders}</td>
-                      <td className="td text-ink-2">{fmtDateTime(m.last_order_at)}</td>
                       <td className="td">
-                        <StatusBadge map={MEMBER_STATUS} value={m.status} />
+                        <span className="block tabular-nums">{m.verified_orders} verified</span>
+                        <span className="text-xs text-ink-3">{m.last_order_at ? fmtDateTime(m.last_order_at) : 'No orders yet'}</span>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-            </div>
+            </TableScroll>
             <Pagination {...pager} />
           </>
         )}
       </Card>
       <p className="mt-3 text-xs text-ink-3">
-        Not started: 0 verified bottles · In progress: 1–4 · Target reached: 5 or more. Members with equal verified bottles share a rank.
+        Target progress shows verified bottles out of the target, as numbers and a bar. Not started: 0 verified bottles · In progress: 1–4 · Target reached: 5 or more. Members with equal verified bottles share a rank.
       </p>
     </>
   )

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { AlertTriangle, ArrowLeft, Ban, CheckCircle2, ExternalLink, FileText, PackageCheck, RotateCcw, XCircle } from 'lucide-react'
 import { Badge, Card, EmptyState, ErrorState, Field, Skeleton, StatusBadge } from '../components/ui'
@@ -6,12 +6,13 @@ import ConfirmDialog from '../components/ConfirmDialog'
 import { useToast } from '../components/Toasts'
 import { actions, fetchOrder, proofUrl } from '../lib/api'
 import { useLiveData, useQuery } from '../lib/data'
-import { displayName, fmtDate, fmtDateTime, rm } from '../lib/format'
+import { displayName, fmtDateTime, rm } from '../lib/format'
 import { HISTORY_LABEL, ORDER_STATUS, PAYMENT_STATUS } from '../lib/status'
 
 const fileSize = (b) => (b < 1024 ? `${b} B` : b < 1024 * 1024 ? `${Math.round(b / 1024)} KB` : `${(b / 1024 / 1024).toFixed(1)} MB`)
 
-function ProofViewer({ submission }) {
+/** Receipt preview. The latest one loads straight away; earlier ones wait for a click. */
+function ProofViewer({ submission, autoOpen }) {
   const [url, setUrl] = useState(null)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -28,28 +29,40 @@ function ProofViewer({ submission }) {
       setLoading(false)
     }
   }
+  useEffect(() => {
+    if (autoOpen) open()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoOpen, submission.id])
 
   if (!url) {
     return (
       <div>
-        <button type="button" className="btn btn-secondary" onClick={open} disabled={loading}>
-          <FileText size={15} /> {loading ? 'Opening…' : `View proof (${isPdf ? 'PDF' : 'image'})`}
-        </button>
+        {loading ? (
+          <div className="skeleton h-72 w-full max-w-sm" aria-label="Loading receipt" />
+        ) : (
+          <button type="button" className="btn btn-secondary" onClick={open}>
+            <FileText size={15} /> View proof ({isPdf ? 'PDF' : 'image'})
+          </button>
+        )}
         {error && <p className="mt-2 text-xs text-bad">{error}</p>}
-        <p className="mt-2 text-xs text-ink-3">Opens a private link that expires in 5 minutes.</p>
       </div>
     )
   }
   return (
     <div>
-      {isPdf ? (
-        <iframe title="Proof of payment" src={url} className="h-[480px] w-full rounded-lg border border-line" />
-      ) : (
-        <img src={url} alt="Customer's proof of payment" className="max-h-[560px] w-full rounded-lg border border-line bg-canvas object-contain" />
-      )}
-      <a href={url} target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center gap-1 text-xs text-info hover:underline">
-        Open in new tab <ExternalLink size={12} />
-      </a>
+      <div className="rounded-md border border-line bg-tint/50 p-3">
+        {isPdf ? (
+          <iframe title="Proof of payment" src={url} className="h-[480px] w-full rounded bg-surface" />
+        ) : (
+          <img src={url} alt="Customer's proof of payment" className="mx-auto max-h-[560px] w-auto rounded object-contain" />
+        )}
+      </div>
+      <p className="mt-2 flex flex-wrap items-center gap-x-3 text-xs text-ink-3">
+        <a href={url} target="_blank" rel="noreferrer" className="text-link inline-flex items-center gap-1">
+          Open full size <ExternalLink size={12} />
+        </a>
+        <span>Private link, expires in 5 minutes.</span>
+      </p>
     </div>
   )
 }
@@ -101,7 +114,7 @@ export default function OrderDetail() {
   const [savingNote, setSavingNote] = useState(false)
 
   const back = (
-    <Link to="/orders" className="mb-4 inline-flex items-center gap-1.5 text-sm text-ink-2 hover:text-ink">
+    <Link to="/orders" className="mb-5 inline-flex items-center gap-1.5 text-sm text-ink-2 transition-colors hover:text-brand-deep">
       <ArrowLeft size={15} /> Orders
     </Link>
   )
@@ -109,10 +122,10 @@ export default function OrderDetail() {
     return (
       <>
         {back}
-        <Skeleton className="h-8 w-64" />
-        <div className="mt-6 grid gap-4 lg:grid-cols-3">
-          <Skeleton className="h-64 lg:col-span-2" />
-          <Skeleton className="h-64" />
+        <Skeleton className="h-10 w-64" />
+        <div className="mt-8 grid gap-4 lg:grid-cols-3">
+          <Skeleton className="h-80 lg:col-span-2" />
+          <Skeleton className="h-80" />
         </div>
       </>
     )
@@ -164,47 +177,50 @@ export default function OrderDetail() {
   return (
     <>
       {back}
-      <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="text-xl font-semibold tracking-tight tabular-nums">{o.reference}</h1>
-          <p className="mt-1 text-sm text-ink-2">Placed {fmtDateTime(o.created_at)}</p>
+      <header className="mb-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-5 border-b border-line pb-6">
+        <div className="min-w-0">
+          <p className="eyebrow">Order</p>
+          <h1 className="display mt-2 text-[2rem] leading-none sm:text-[2.5rem]">{o.reference}</h1>
+          <p className="mt-2 text-sm text-ink-2">
+            Placed {fmtDateTime(o.created_at)} · {o.quantity} {o.quantity === 1 ? 'bottle' : 'bottles'} · <span className="font-medium text-ink tabular-nums">{rm(o.final_amount)}</span>
+          </p>
           <div className="mt-3 flex flex-wrap gap-2">
             <StatusBadge map={PAYMENT_STATUS} value={o.payment_status} />
             <StatusBadge map={ORDER_STATUS} value={o.order_status} />
             {o.is_verified ? <Badge tone="good">Counted in sales</Badge> : o.is_pending ? <Badge tone="info">Pending, not counted</Badge> : <Badge>Not counted</Badge>}
           </div>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex w-full flex-wrap gap-2 sm:w-auto">
           {can.verify && (
-            <button type="button" className="btn btn-good" onClick={() => setDialog('verify')}>
+            <button type="button" className="btn btn-good flex-1 sm:flex-none" onClick={() => setDialog('verify')}>
               <CheckCircle2 size={15} /> Verify payment
             </button>
           )}
-          {can.reject && (
-            <button type="button" className="btn btn-secondary" onClick={() => setDialog('reject')}>
-              <XCircle size={15} /> Reject
-            </button>
-          )}
           {can.fulfil && (
-            <button type="button" className="btn btn-secondary" onClick={() => setDialog('fulfil')}>
+            <button type="button" className="btn btn-primary flex-1 sm:flex-none" onClick={() => setDialog('fulfil')}>
               <PackageCheck size={15} /> Mark fulfilled
             </button>
           )}
+          {can.reject && (
+            <button type="button" className="btn btn-secondary flex-1 sm:flex-none" onClick={() => setDialog('reject')}>
+              <XCircle size={15} /> Reject
+            </button>
+          )}
           {can.refund && (
-            <button type="button" className="btn btn-secondary" onClick={() => setDialog('refund')}>
+            <button type="button" className="btn btn-secondary flex-1 sm:flex-none" onClick={() => setDialog('refund')}>
               <RotateCcw size={15} /> Refund
             </button>
           )}
           {can.cancel && (
-            <button type="button" className="btn btn-ghost text-bad" onClick={() => setDialog('cancel')}>
+            <button type="button" className="btn btn-ghost flex-1 text-bad hover:bg-bad-soft hover:text-bad sm:flex-none" onClick={() => setDialog('cancel')}>
               <Ban size={15} /> Cancel order
             </button>
           )}
         </div>
-      </div>
+      </header>
 
       {o.duplicate_transfer_reference && (
-        <div role="alert" className="mb-4 flex items-start gap-3 rounded-xl border border-warn/30 bg-warn-soft px-4 py-3 text-sm text-warn">
+        <div role="alert" className="mb-4 flex items-start gap-3 rounded-lg border border-warn/30 bg-warn-soft px-4 py-3 text-sm text-warn">
           <AlertTriangle size={16} className="mt-0.5 shrink-0" />
           <p>
             <strong className="font-medium">Duplicate transfer reference.</strong> The reference "{o.transfer_reference}" was also submitted for another order. Check the bank
@@ -213,55 +229,50 @@ export default function OrderDetail() {
         </div>
       )}
       {o.payment_status === 'rejected' && o.rejection_reason && (
-        <p className="mb-4 rounded-xl border border-bad/20 bg-bad-soft px-4 py-3 text-sm text-bad">Rejected: {o.rejection_reason}</p>
+        <p className="mb-4 rounded-lg border border-bad/20 bg-bad-soft px-4 py-3 text-sm text-bad">
+          <strong className="font-medium">Rejected:</strong> {o.rejection_reason}
+        </p>
       )}
 
       <div className="grid gap-4 lg:grid-cols-3">
-        <div className="space-y-4 lg:col-span-2">
-          <Card title="Payment" description="Submitted by the customer. Verification is a human check against the bank account.">
+        <div className="min-w-0 space-y-4 lg:col-span-2">
+          <Card title="Payment receipt" description="Submitted by the customer. Verification is a human check against the bank account.">
             {!submissions.length ? (
               <p className="text-sm text-ink-3">The customer has not submitted a payment yet.</p>
             ) : (
               <div className="space-y-6">
                 {submissions.map((s, i) => (
                   <div key={s.id} className={i ? 'border-t border-line pt-6' : ''}>
-                    {i > 0 && <p className="mb-2 text-xs font-medium text-ink-3">Earlier submission</p>}
-                    <dl className="mb-4 grid gap-x-6 sm:grid-cols-2">
-                      <Field label="Transfer reference">
-                        <span className="font-mono">{s.transfer_reference}</span>
-                      </Field>
-                      <Field label="Payment date">{fmtDate(s.paid_on)}</Field>
-                      <Field label="Submitted">{fmtDateTime(s.created_at)}</Field>
-                      <Field label="File">
-                        {s.proof_mime.split('/')[1].toUpperCase()} · {fileSize(s.proof_size)}
-                      </Field>
+                    {i > 0 && <p className="eyebrow mb-2">Earlier submission</p>}
+                    <dl className="mb-4 grid gap-4 text-sm sm:grid-cols-3">
+                      <div>
+                        <dt className="eyebrow">Bank reference</dt>
+                        <dd className="mt-1">{s.transfer_reference ? <span className="font-mono">{s.transfer_reference}</span> : <span className="text-ink-3">None given</span>}</dd>
+                      </div>
+                      <div>
+                        <dt className="eyebrow">Submitted</dt>
+                        <dd className="mt-1">{fmtDateTime(s.created_at)}</dd>
+                      </div>
+                      <div>
+                        <dt className="eyebrow">File</dt>
+                        <dd className="mt-1">
+                          {s.proof_mime.split('/')[1].toUpperCase()} · {fileSize(s.proof_size)}
+                        </dd>
+                      </div>
                     </dl>
-                    <ProofViewer submission={s} />
+                    <ProofViewer submission={s} autoOpen={i === 0} />
                   </div>
                 ))}
               </div>
             )}
           </Card>
 
-          <Card title="Items" bodyClass="p-0">
-            <table className="w-full text-sm">
-              <tbody className="divide-y divide-line">
-                {items.map((it) => (
-                  <tr key={it.id}>
-                    <td className="td">{it.perfume_name}</td>
-                    <td className="td text-right text-ink-2 tabular-nums">× {it.quantity}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </Card>
-
           <Card title="Status history" description="Every change, who made it and when">
-            <ol className="space-y-4">
-              {history.map((h) => (
-                <li key={h.id} className="flex gap-3">
-                  <span className="mt-1.5 size-2 shrink-0 rounded-full bg-line-strong" aria-hidden="true" />
-                  <div className="text-sm">
+            <ol className="relative space-y-5 before:absolute before:top-2 before:bottom-2 before:left-[3px] before:w-px before:bg-line">
+              {history.map((h, i) => (
+                <li key={h.id} className="relative flex gap-4">
+                  <span className={`relative mt-1.5 size-[7px] shrink-0 rounded-full ring-4 ring-surface ${i === history.length - 1 ? 'bg-brand' : 'bg-line-strong'}`} aria-hidden="true" />
+                  <div className="min-w-0 text-sm">
                     <p>
                       <span className="font-medium">{HISTORY_LABEL[h.action] || h.action}</span>
                       <span className="text-ink-3"> · {h.actor_label}</span>
@@ -275,26 +286,37 @@ export default function OrderDetail() {
           </Card>
         </div>
 
-        <div className="space-y-4">
-          <Card title="Amounts" description="Saved when the order was placed">
-            <dl className="divide-y divide-line">
-              <Field label={`${o.quantity} × ${rm(o.original_unit_price)}`}>{rm(o.original_subtotal)}</Field>
-              <Field label="Promo discount">{Number(o.discount_total) ? `− ${rm(o.discount_total)}` : '—'}</Field>
-              <Field label={<span className="font-medium text-ink">Final amount</span>}>
-                <span className="font-semibold">{rm(o.final_amount)}</span>
+        <div className="min-w-0 space-y-4">
+          <Card title="Order summary" description="Prices saved when the order was placed">
+            <ul className="divide-y divide-line">
+              {items.map((it) => (
+                <li key={it.id} className="flex justify-between gap-4 py-2 text-sm">
+                  <span>{it.perfume_name}</span>
+                  <span className="text-ink-2 tabular-nums">× {it.quantity}</span>
+                </li>
+              ))}
+            </ul>
+            <dl className="mt-3 divide-y divide-line border-t border-line-strong/70 pt-1">
+              <Field label={`${o.quantity} × ${rm(o.original_unit_price)}`}>
+                <span className="tabular-nums">{rm(o.original_subtotal)}</span>
               </Field>
-              <Field label="Campaign profit">{o.is_verified ? rm(o.profit_amount) : <span className="text-ink-3">{rm(o.profit_amount)} once verified</span>}</Field>
+              <Field label="Promo discount">{Number(o.discount_total) ? <span className="tabular-nums">− {rm(o.discount_total)}</span> : '—'}</Field>
+              <div className="flex items-baseline justify-between gap-4 py-3">
+                <dt className="font-medium text-ink">Final amount</dt>
+                <dd className="display text-2xl">{rm(o.final_amount)}</dd>
+              </div>
+              <Field label="Campaign profit">{o.is_verified ? <span className="tabular-nums">{rm(o.profit_amount)}</span> : <span className="text-ink-3">{rm(o.profit_amount)} once verified</span>}</Field>
             </dl>
           </Card>
 
-          <Card title="Promo code">
+          <Card title="AJK & promo code">
             {o.promo_code ? (
               <dl>
                 <Field label="Code">
                   <span className="font-mono">{o.promo_code}</span>
                 </Field>
                 <Field label="AJK member">
-                  <Link to={`/members/${o.ajk_member_id}`} className="text-info hover:underline">
+                  <Link to={`/members/${o.ajk_member_id}`} className="text-link">
                     {displayName(o.member_name || o.ajk_member_name)}
                   </Link>
                 </Field>
@@ -309,7 +331,7 @@ export default function OrderDetail() {
             <dl>
               <Field label="Name">{o.customer_name}</Field>
               <Field label="Phone">
-                <a href={`tel:${o.customer_phone}`} className="text-info hover:underline">
+                <a href={`tel:${o.customer_phone}`} className="text-link">
                   {o.customer_phone}
                 </a>
               </Field>
@@ -317,13 +339,13 @@ export default function OrderDetail() {
             </dl>
             {o.delivery_address && (
               <>
-                <p className="mt-3 text-xs font-medium text-ink-3">Delivery address</p>
+                <p className="eyebrow mt-4">Delivery address</p>
                 <p className="mt-1 text-sm whitespace-pre-line">{o.delivery_address}</p>
               </>
             )}
             {o.customer_notes && (
               <>
-                <p className="mt-3 text-xs font-medium text-ink-3">Customer notes</p>
+                <p className="eyebrow mt-4">Customer notes</p>
                 <p className="mt-1 text-sm whitespace-pre-line">{o.customer_notes}</p>
               </>
             )}
@@ -333,7 +355,7 @@ export default function OrderDetail() {
             {notes.length > 0 && (
               <ul className="mb-4 space-y-3">
                 {notes.map((nt) => (
-                  <li key={nt.id} className="rounded-lg bg-canvas px-3 py-2 text-sm">
+                  <li key={nt.id} className="border-l-2 border-gold/70 pl-3 text-sm">
                     <p className="whitespace-pre-line">{nt.body}</p>
                     <p className="mt-1 text-xs text-ink-3">
                       {nt.author_label} · {fmtDateTime(nt.created_at)}
@@ -363,7 +385,7 @@ export default function OrderDetail() {
           body={
             <>
               <p>{cfg.body}</p>
-              <p className="mt-2 font-medium text-ink">
+              <p className="mt-3 rounded-md bg-tint px-3 py-2 font-medium text-ink tabular-nums">
                 {o.reference} · {o.quantity} bottles · {rm(o.final_amount)}
               </p>
             </>

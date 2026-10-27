@@ -45,10 +45,10 @@ export default function ConfirmDialog({ open, title, body, confirmLabel, tone = 
         e.preventDefault()
         if (!busy) onClose()
       }}
-      className="m-auto w-[min(28rem,calc(100%-2rem))] rounded-2xl border border-line bg-surface p-0 text-ink shadow-2xl backdrop:bg-navy/40"
+      className="m-auto w-[min(28rem,calc(100%-2rem))] rounded-lg border border-line bg-surface p-0 text-ink shadow-[0_24px_60px_rgba(58,36,32,0.22)] backdrop:bg-espresso/45"
     >
       <form onSubmit={submit} className="p-6">
-        <h2 id={`${id}-t`} className="text-base font-semibold">
+        <h2 id={`${id}-t`} className="display text-xl leading-snug">
           {title}
         </h2>
         {body && <div className="mt-2 text-sm text-ink-2">{body}</div>}
@@ -65,7 +65,7 @@ export default function ConfirmDialog({ open, title, body, confirmLabel, tone = 
             {error}
           </p>
         )}
-        <div className="mt-6 flex justify-end gap-2">
+        <div className="mt-6 flex flex-col-reverse gap-2 border-t border-line pt-4 sm:flex-row sm:justify-end">
           <button type="button" className="btn btn-secondary" onClick={onClose} disabled={busy}>
             Cancel
           </button>

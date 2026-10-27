@@ -6,7 +6,7 @@ import DateRangeFilter from '../components/DateRangeFilter'
 import { fetchDashboard, fetchMembers, fetchOrders, fetchTimeseries } from '../lib/api'
 import { useQuery } from '../lib/data'
 import { DEFAULT_RANGE, resolveRange } from '../lib/dateRange'
-import { fmtDay, n, pct, rm, rmShort } from '../lib/format'
+import { fmtDate, fmtDay, n, pct, rm, rmShort } from '../lib/format'
 import { DISPLAY_STATUS, MEMBER_STATUS } from '../lib/status'
 import { downloadCsv, stamp } from '../lib/csv'
 import { MEMBER_CSV } from './Members'
@@ -25,6 +25,16 @@ export default function Reports() {
   const d = dash.data
   const v = d?.verified
   const loading = dash.loading && !d
+  // Say exactly which orders the figures cover, so the page and its exports agree.
+  const lastDay = r.to ? fmtDate(new Date(new Date(r.to).getTime() - 1)) : null
+  const periodLabel =
+    r.from && lastDay
+      ? `Orders placed ${fmtDate(r.from)} – ${lastDay}`
+      : r.from
+        ? `Orders placed from ${fmtDate(r.from)}`
+        : lastDay
+          ? `Orders placed up to ${lastDay}`
+          : 'All orders, all time'
 
   const bureaus = useMemo(() => {
     const map = new Map()
@@ -57,6 +67,7 @@ export default function Reports() {
   return (
     <>
       <PageHeader
+        eyebrow="Insights"
         title="Reports"
         description="Fundraising summary for the outbound programme. All figures use verified payments only, filtered by order date."
         actions={
@@ -70,20 +81,21 @@ export default function Reports() {
           </>
         }
       />
-      <div className="mb-5">
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <DateRangeFilter value={range} onChange={setRange} />
+        <p className="text-xs text-ink-3">{periodLabel}</p>
       </div>
       {dash.error && !d && <ErrorState error={dash.error} />}
 
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
-        <Kpi loading={loading} label="Verified bottles" info={DEFINITIONS.verifiedBottles} value={v && n(v.bottles)} sub={d && `${pct(d.target.completion_pct)} of ${n(d.target.campaign_target)} target`} />
+      <div className="grid grid-cols-1 gap-3 min-[420px]:grid-cols-2 md:grid-cols-3 xl:grid-cols-5">
+        <Kpi accent loading={loading} label="Verified bottles" info={DEFINITIONS.verifiedBottles} value={v && n(v.bottles)} sub={d && `${pct(d.target.completion_pct)} of ${n(d.target.campaign_target)} target`} />
         <Kpi loading={loading} label="Revenue collected" info={DEFINITIONS.net} value={v && rm(v.net)} sub={v && `Gross ${rm(v.gross)}`} />
         <Kpi loading={loading} label="Discounts given" info={DEFINITIONS.discounts} value={v && rm(v.discounts)} />
         <Kpi loading={loading} label="Campaign profit" info={DEFINITIONS.profit} value={v && rm(v.profit)} />
         <Kpi loading={loading} label="Pending payments" info={DEFINITIONS.pending} tone="muted" value={d && rm(d.pending.amount)} sub={d && `${n(d.pending.orders)} orders`} />
         <Kpi loading={loading} label="Paid orders" value={v && n(v.orders)} />
         <Kpi loading={loading} label="Avg bottles / paid order" value={v && (v.orders ? (v.bottles / v.orders).toFixed(2) : '—')} />
-        <Kpi loading={loading} label="Avg revenue / paid order" value={v && (v.orders ? rm(v.net / v.orders) : '—')} />
+        <Kpi loading={loading} label="Average order value" value={v && (v.orders ? rm(v.net / v.orders) : '—')} sub="Collected per paid order" />
         <Kpi loading={loading} label="AJK at target" value={d && `${d.members.reached} / ${d.members.total}`} sub={d && pct((d.members.reached / d.members.total) * 100)} />
         <Kpi loading={loading} label="Remaining to target" value={d && `${n(d.target.remaining)} bottles`} />
       </div>
@@ -127,7 +139,7 @@ export default function Reports() {
       <Card className="mt-4" title="Performance by bureau" bodyClass="p-0">
         <div className="relative overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="border-b border-line bg-canvas/60">
+            <thead className="table-head">
               <tr>
                 <th className="th">Jawatan / Biro</th>
                 <th className="th text-right">Members</th>
