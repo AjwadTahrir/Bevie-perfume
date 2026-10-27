@@ -30,7 +30,6 @@ export const brand = {
    */
   contact: {
     instagram: '', // full URL, e.g. 'https://www.instagram.com/<handle>/'
-    email: '', // e.g. 'hello@<domain>'
   },
 
   // Display handle shown next to Instagram once the URL is set, e.g. '@beavie'.

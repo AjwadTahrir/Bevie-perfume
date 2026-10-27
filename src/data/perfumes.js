@@ -5,8 +5,8 @@
  * (Bayu, Nirmala, ...). Descriptions, notes and bottle photos come from
  * the BeavieWeb catalogue (scents.js); the photo files keep their
  * original names. Prices are RM 35 per bottle, matching the Supabase
- * catalogue, which is the authoritative price at checkout. Sizes are
- * not confirmed yet (null shows "to be confirmed").
+ * catalogue, which is the authoritative price at checkout. Every bottle
+ * is 30 ml.
  *
  * FIELDS (one record = one card + its modal)
  *   id            unique, url-safe text; must equal the product id in Supabase
@@ -133,7 +133,7 @@ export const perfumes = [
       'Time of Day': 'Morning',
     },
     price: 35, // MYR; authoritative checkout price comes from Supabase
-    size: null, // TODO
+    size: '30 ml',
     notes: {
       top: ['Green Apple', 'Bergamot', 'Iced Aldehydes'],
       heart: ['Lavender', 'Aromatic Herbs', 'Rosemary'],
@@ -183,7 +183,7 @@ export const perfumes = [
       'Time of Day': 'Work / Evening',
     },
     price: 35,
-    size: null,
+    size: '30 ml',
     notes: {
       top: ['Mint', 'Bergamot', 'Cardamom'],
       heart: ['Lavender', 'Sage', 'Green Tea'],
@@ -234,7 +234,7 @@ export const perfumes = [
       'Time of Day': 'Evening',
     },
     price: 35,
-    size: null,
+    size: '30 ml',
     notes: {
       top: ['Rum', 'Chestnut', 'Saffron'],
       heart: ['Tobacco', 'Leather', 'Lavender'],
@@ -284,7 +284,7 @@ export const perfumes = [
       'Time of Day': 'Daytime',
     },
     price: 35,
-    size: null,
+    size: '30 ml',
     notes: {
       top: ['Lemon', 'Bergamot', 'Sea Salt'],
       heart: ['Marine Notes', 'Neroli', 'Aquatic Accord'],
@@ -333,7 +333,7 @@ export const perfumes = [
       'Time of Day': 'Evening / Night',
     },
     price: 35,
-    size: null,
+    size: '30 ml',
     notes: {
       top: ['Raspberry', 'Black Cherry', 'Pink Pepper'],
       heart: ['Rose', 'Jasmine', 'Peony'],
@@ -384,7 +384,7 @@ export const perfumes = [
       'Time of Day': 'Day / Evening',
     },
     price: 35,
-    size: null,
+    size: '30 ml',
     notes: {
       top: ['Frosted Lotus', 'Icy Accord', 'Pink Peony'],
       heart: ['Rose', 'Water Lily', 'Translucent Florals'],
@@ -435,7 +435,7 @@ export const perfumes = [
       'Time of Day': 'Evening',
     },
     price: 35,
-    size: null,
+    size: '30 ml',
     notes: {
       top: ['Grape', 'Plum', 'Red Berries'],
       heart: ['Violet', 'Heliotrope', 'Fruit Nectar'],
@@ -485,7 +485,7 @@ export const perfumes = [
       'Time of Day': 'Daytime',
     },
     price: 35,
-    size: null,
+    size: '30 ml',
     notes: {
       top: ['Vanilla Orchid', 'Neroli', 'Soft Pear'],
       heart: ['Lily of the Valley', 'Jasmine Petals', 'White Floral Accord'],

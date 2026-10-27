@@ -84,77 +84,80 @@ export default function Navbar() {
   const solid = scrolled || open
 
   return (
-    <header
-      className={`fixed inset-x-0 top-0 transition-[background-color,border-color] duration-500 ease-[var(--ease-batik)] ${
-        solid ? 'border-b border-brown/15 bg-cream/95 backdrop-blur-sm' : 'border-b border-transparent bg-transparent'
-      }`}
-      style={{ zIndex: 'var(--z-nav)' }}
-    >
-      <a
-        href="#main"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:bg-brown focus:px-4 focus:py-2 focus:text-cream"
+    <>
+      <header
+        className={`fixed inset-x-0 top-0 transition-[background-color,border-color] duration-500 ease-[var(--ease-batik)] ${
+          solid ? 'border-b border-brown/15 bg-cream/95 backdrop-blur-sm' : 'border-b border-transparent bg-transparent'
+        }`}
+        style={{ zIndex: 'var(--z-nav)' }}
       >
-        Skip to content
-      </a>
-      <nav aria-label="Main" className="mx-auto grid h-[var(--nav-h)] max-w-[1440px] grid-cols-[1fr_auto] items-center px-5 md:px-8 lg:grid-cols-[1fr_auto_1fr] lg:px-12">
-        <a href="#page-top" className="justify-self-start text-brown" aria-label={`${brand.name}, back to top`}>
-          <Wordmark />
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:bg-brown focus:px-4 focus:py-2 focus:text-cream"
+        >
+          Skip to content
         </a>
-
-        <ul className="hidden items-center lg:flex">
-          {links.map((l, i) => (
-            <li key={l.href} className="flex items-center">
-              {i > 0 && <span className="mx-6 size-[3px] rounded-full bg-ochre xl:mx-8" aria-hidden="true" />}
-              <a
-                href={l.href}
-                aria-current={active === l.key ? 'true' : undefined}
-                className={`link-underline py-1.5 text-[0.7rem] font-medium uppercase tracking-[0.24em] transition-colors ${
-                  active === l.key ? 'text-rust-deep' : 'text-brown hover:text-rust-deep'
-                }`}
-              >
-                {l.label}
-              </a>
-            </li>
-          ))}
-        </ul>
-
-        <div className="flex items-center gap-1 justify-self-end lg:gap-4">
-          <a href={`#${sections.contact}`} className="btn btn-outline btn-small hidden lg:inline-flex">
-            Contact
+        <nav aria-label="Main" className="mx-auto grid h-[var(--nav-h)] max-w-[1440px] grid-cols-[1fr_auto] items-center px-5 md:px-8 lg:grid-cols-[1fr_auto_1fr] lg:px-12">
+          <a href="#page-top" className="justify-self-start text-brown" aria-label={`${brand.name}, back to top`}>
+            <Wordmark />
           </a>
-          <button
-            type="button"
-            onClick={() => {
-              setOpen(false)
-              cart.open()
-            }}
-            className="relative inline-flex size-11 items-center justify-center rounded-full text-brown transition-colors hover:bg-brown/5"
-            aria-label={cart.count ? `Open cart, ${cart.count} ${cart.count === 1 ? 'item' : 'items'}` : 'Open cart, empty'}
-          >
-            <ShoppingBag size={21} strokeWidth={1.5} aria-hidden="true" />
-            {cart.count > 0 && (
-              <span
-                className="absolute right-0.5 top-0.5 inline-flex min-w-[1.15rem] items-center justify-center rounded-full bg-rust px-1 text-[0.62rem] font-semibold leading-[1.15rem] text-cream"
-                aria-hidden="true"
-              >
-                {cart.count}
-              </span>
-            )}
-          </button>
-          <button
-            ref={toggleRef}
-            type="button"
-            className="-mr-2 inline-flex size-11 items-center justify-center text-brown lg:hidden"
-            aria-expanded={open}
-            aria-controls="mobile-menu"
-            aria-label={open ? 'Close menu' : 'Open menu'}
-            onClick={() => setOpen((o) => !o)}
-          >
-            {open ? <X size={24} strokeWidth={1.5} /> : <Menu size={24} strokeWidth={1.5} />}
-          </button>
-        </div>
-      </nav>
 
+          <ul className="hidden items-center lg:flex">
+            {links.map((l, i) => (
+              <li key={l.href} className="flex items-center">
+                {i > 0 && <span className="mx-6 size-[3px] rounded-full bg-ochre xl:mx-8" aria-hidden="true" />}
+                <a
+                  href={l.href}
+                  aria-current={active === l.key ? 'true' : undefined}
+                  className={`link-underline py-1.5 text-[0.7rem] font-medium uppercase tracking-[0.24em] transition-colors ${
+                    active === l.key ? 'text-rust-deep' : 'text-brown hover:text-rust-deep'
+                  }`}
+                >
+                  {l.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+
+          <div className="flex items-center gap-1 justify-self-end lg:gap-4">
+            <a href={`#${sections.contact}`} className="btn btn-outline btn-small hidden lg:inline-flex">
+              Contact
+            </a>
+            <button
+              type="button"
+              onClick={() => {
+                setOpen(false)
+                cart.open()
+              }}
+              className="relative inline-flex size-11 items-center justify-center rounded-full text-brown transition-colors hover:bg-brown/5"
+              aria-label={cart.count ? `Open cart, ${cart.count} ${cart.count === 1 ? 'item' : 'items'}` : 'Open cart, empty'}
+            >
+              <ShoppingBag size={21} strokeWidth={1.5} aria-hidden="true" />
+              {cart.count > 0 && (
+                <span
+                  className="absolute right-0.5 top-0.5 inline-flex min-w-[1.15rem] items-center justify-center rounded-full bg-rust px-1 text-[0.62rem] font-semibold leading-[1.15rem] text-cream"
+                  aria-hidden="true"
+                >
+                  {cart.count}
+                </span>
+              )}
+            </button>
+            <button
+              ref={toggleRef}
+              type="button"
+              className="-mr-2 inline-flex size-11 items-center justify-center text-brown lg:hidden"
+              aria-expanded={open}
+              aria-controls="mobile-menu"
+              aria-label={open ? 'Close menu' : 'Open menu'}
+              onClick={() => setOpen((o) => !o)}
+            >
+              {open ? <X size={24} strokeWidth={1.5} /> : <Menu size={24} strokeWidth={1.5} />}
+            </button>
+          </div>
+        </nav>
+      </header>
+
+      {/* Outside the header: its backdrop-blur makes it the containing block for fixed children, which clipped this panel to the bar height. */}
       <div
         id="mobile-menu"
         ref={panelRef}
@@ -177,6 +180,6 @@ export default function Navbar() {
           ))}
         </ul>
       </div>
-    </header>
+    </>
   )
 }

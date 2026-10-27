@@ -1,5 +1,6 @@
-import { Mail, MessageCircle } from 'lucide-react'
+import { MessageCircle } from 'lucide-react'
 import { CornerFlourish } from '../assets/batik/Ornaments'
+import InstagramIcon from './InstagramIcon'
 import WhatsAppButton from './WhatsAppButton'
 import Reveal from './Reveal'
 import { brand, sections } from '../config/brand'
@@ -17,7 +18,7 @@ const displayNumber = (n) => (n ? `+${n}` : null)
  */
 export default function ContactSection() {
   const wa = normalizeWhatsAppNumber(brand.whatsappNumber)
-  const { instagram, email } = brand.contact
+  const { instagram } = brand.contact
 
   const channels = [
     {
@@ -30,16 +31,9 @@ export default function ContactSection() {
     {
       key: 'instagram',
       label: 'Instagram',
-      icon: null,
+      icon: InstagramIcon,
       value: instagram ? brand.instagramHandle || 'Instagram profile' : null,
       href: instagram || null,
-    },
-    {
-      key: 'email',
-      label: 'Email',
-      icon: Mail,
-      value: email || null,
-      href: email ? `mailto:${email}` : null,
     },
   ]
 
@@ -68,8 +62,7 @@ export default function ContactSection() {
                 {channels.map(({ key, label, icon: Icon, value, href }) => (
                   <div key={key} className="flex items-center justify-between gap-4 py-4">
                     <dt className="flex items-center gap-3 font-display text-xl text-brown">
-                      {Icon && <Icon size={18} strokeWidth={1.5} aria-hidden="true" />}
-                      {!Icon && <span className="inline-block size-[18px]" aria-hidden="true" />}
+                      <Icon size={18} strokeWidth={1.5} aria-hidden="true" />
                       {label}
                     </dt>
                     <dd className="text-right text-sm">

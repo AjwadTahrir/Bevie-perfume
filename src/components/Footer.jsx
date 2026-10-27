@@ -1,5 +1,6 @@
 import { brand, sections } from '../config/brand'
 import { copy } from '../config/content'
+import InstagramIcon from './InstagramIcon'
 
 const links = [
   { href: '#page-top', label: 'Home' },
@@ -9,16 +10,12 @@ const links = [
 ]
 
 /**
- * Cream footer on a single line: wordmark, statement, links and
- * copyright. Social and email links appear only once they are
- * configured in src/config/brand.js; nothing is invented.
+ * Cream footer on a single line: wordmark, statement, links, the
+ * Instagram icon and copyright. The icon appears only once the
+ * Instagram URL is configured in src/config/brand.js.
  */
 export default function Footer() {
-  const { instagram, email } = brand.contact
-  const channels = [
-    instagram && { href: instagram, label: brand.instagramHandle || 'Instagram', external: true },
-    email && { href: `mailto:${email}`, label: email },
-  ].filter(Boolean)
+  const { instagram } = brand.contact
 
   return (
     <footer className="border-t border-brown/15 bg-cream text-brown">
@@ -30,7 +27,7 @@ export default function Footer() {
         <p className="max-w-[17rem] text-[0.85rem] leading-relaxed text-brown-soft">{copy.footer.statement}</p>
 
         <nav aria-label="Footer" className="lg:ml-auto">
-          <ul className="flex flex-wrap gap-x-8 gap-y-1">
+          <ul className="flex flex-wrap items-center gap-x-8 gap-y-1">
             {links.map((l) => (
               <li key={l.href}>
                 <a href={l.href} className="link-underline inline-flex min-h-11 items-center text-[0.68rem] font-medium uppercase tracking-[0.22em]">
@@ -38,18 +35,19 @@ export default function Footer() {
                 </a>
               </li>
             ))}
-            {channels.map((c) => (
-              <li key={c.href}>
+            {instagram && (
+              <li>
                 <a
-                  href={c.href}
-                  target={c.external ? '_blank' : undefined}
-                  rel={c.external ? 'noopener noreferrer' : undefined}
-                  className="link-underline inline-flex min-h-11 items-center text-[0.68rem] font-medium uppercase tracking-[0.22em]"
+                  href={instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`${brand.name} on Instagram${brand.instagramHandle ? ` (${brand.instagramHandle})` : ''}`}
+                  className="inline-flex size-11 items-center justify-center rounded-full transition-colors hover:bg-brown/5 hover:text-rust-deep"
                 >
-                  {c.label}
+                  <InstagramIcon size={20} aria-hidden="true" />
                 </a>
               </li>
-            ))}
+            )}
           </ul>
         </nav>
 
