@@ -2,8 +2,8 @@
  * THE BEAVIE COLLECTION
  * ---------------------------------------------------------------
  * The eight Beavie perfumes. Names, descriptions, notes and bottle
- * photos come from the BeavieWeb catalogue (scents.js). Prices and
- * sizes have not been supplied yet, so they are null and show as
+ * photos come from the BeavieWeb catalogue (scents.js). Sizes
+ * have not been supplied yet, so they are null and show as
  * "to be announced" on the site.
  *
  * FIELDS (one record = one card + its modal)
@@ -78,7 +78,7 @@ export const perfumes = [
     family: 'fresh',
     description:
       'A revitalizing breath of cool clarity. Verdius captures freshly washed skin, chilled green apple, and morning air with effortless polish.',
-    price: null, // TODO: real price (MYR)
+    price: 35, // MYR; authoritative checkout price comes from Supabase
     size: null, // TODO
     notes: {
       top: ['Green Apple', 'Bergamot', 'Iced Aldehydes'],
@@ -98,7 +98,7 @@ export const perfumes = [
     family: 'woody',
     description:
       'Precision, composure, command. Cool mint meets warm vanilla and timeless woods, crafted for ambition without compromise.',
-    price: null,
+    price: 35,
     size: null,
     notes: {
       top: ['Mint', 'Bergamot', 'Cardamom'],
@@ -118,7 +118,7 @@ export const perfumes = [
     family: 'amber',
     description:
       'An evocative blend of warmth and sophistication: rum, spices, rich tobacco, smooth leather, vanilla, and amber.',
-    price: null,
+    price: 35,
     size: null,
     notes: {
       top: ['Rum', 'Chestnut', 'Saffron'],
@@ -138,7 +138,7 @@ export const perfumes = [
     family: 'fresh',
     description:
       'A surge of marine freshness. Sunlit citrus meets crystalline sea salt and airy waves: pure, invigorating, and clear.',
-    price: null,
+    price: 35,
     size: null,
     notes: {
       top: ['Lemon', 'Bergamot', 'Sea Salt'],
@@ -157,7 +157,7 @@ export const perfumes = [
     name: 'Seductress',
     family: 'fruity',
     description: 'A bold, magnetic fragrance where juicy dark fruits meet luxurious florals and smoldering base notes.',
-    price: null,
+    price: 35,
     size: null,
     notes: {
       top: ['Raspberry', 'Black Cherry', 'Pink Pepper'],
@@ -177,7 +177,7 @@ export const perfumes = [
     family: 'floral',
     description:
       'Frozen petals and luminous freshness. Rose and lotus meet crystalline air in an icy floral haute couture composition.',
-    price: null,
+    price: 35,
     size: null,
     notes: {
       top: ['Frosted Lotus', 'Icy Accord', 'Pink Peony'],
@@ -197,7 +197,7 @@ export const perfumes = [
     family: 'fruity',
     description:
       'A luscious celebration of whole frosted grapes and velvety sweetness with plush fruit and deep, indulgent warmth.',
-    price: null,
+    price: 35,
     size: null,
     notes: {
       top: ['Grape', 'Plum', 'Red Berries'],
@@ -217,7 +217,7 @@ export const perfumes = [
     family: 'floral',
     description:
       'A soft radiance of white florals and creamy vanilla blooming like morning light through a veil of pure serenity.',
-    price: null,
+    price: 35,
     size: null,
     notes: {
       top: ['Vanilla Orchid', 'Neroli', 'Soft Pear'],
