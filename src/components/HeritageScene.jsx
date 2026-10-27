@@ -13,8 +13,8 @@ import { copy } from '../config/content'
  * rule runs down the right of that group with the painted batik bouquet
  * beside it; narrower layouts keep the bouquet next to the link. In the
  * cinematic sequence the cloth wipes in from the left and the hero
- * bottle comes to rest on it. On phones and tablets the cloth is a 16:9
- * photo above the story and the bottle lands on it the same way, on
+ * bottle comes to rest on it. On phones the cloth is a square photo (16:9
+ * on tablets) above the story and the bottle lands on it the same way, on
  * normal scrolling. "Discover our story" swaps the intro
  * for the longer story in place.
  */
@@ -30,7 +30,7 @@ export default function HeritageScene() {
       aria-labelledby="heritage-title"
       className="scene scene-heritage relative grid grid-cols-1 bg-cream lg:min-h-[100dvh] lg:grid-cols-2"
     >
-      <div className="heritage-textile relative aspect-video overflow-hidden lg:aspect-auto lg:h-auto">
+      <div className="heritage-textile relative aspect-square overflow-hidden sm:aspect-video lg:aspect-auto lg:h-auto">
         <img
           src={pack.fabric.src}
           srcSet={pack.fabric.srcSet}
