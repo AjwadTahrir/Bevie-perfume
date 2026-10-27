@@ -80,9 +80,12 @@ export function useCart() {
   return ctx
 }
 
-/** Totals for checkout, applying the referral discount and delivery fee from src/config/brand.js. */
-export function orderTotals(subtotal, referralValid) {
-  const discount = referralValid && shop.referralDiscountPercent > 0 ? Math.round(subtotal * shop.referralDiscountPercent) / 100 : 0
-  const shipping = typeof shop.shippingFee === 'number' ? shop.shippingFee : 0
-  return { subtotal, discount, shipping, shippingKnown: typeof shop.shippingFee === 'number', total: subtotal - discount + shipping }
+/**
+ * Totals the site shows before the order exists. The backend
+ * recalculates them from database prices when the order is created,
+ * and checkout then shows the backend's figures.
+ */
+export function orderTotals(subtotal, count, codeApplied) {
+  const discount = codeApplied ? shop.committeeDiscountPerBottle * count : 0
+  return { subtotal, discount, total: Math.max(0, subtotal - discount) }
 }

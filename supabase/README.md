@@ -1,6 +1,6 @@
 # Supabase database setup
 
-This is the database foundation for guest checkout with bank QR payment and manual receipt review. It does not connect the frontend or implement checkout yet.
+This is the backend for guest checkout with bank QR payment and manual receipt review: the database (migrations 001-005), the `checkout` Edge Function the website talks to, and the frontend connection in `src/lib/orders.js`. Admin review of receipts is not built yet (see the end of this file).
 
 ## Apply to a new Supabase project
 
@@ -9,6 +9,19 @@ This is the database foundation for guest checkout with bank QR payment and manu
 3. In a new query, paste and run `migrations/20261027000200_seed_catalogue.sql`.
 4. Run `migrations/20261027000300_committee_distribution.sql`. Confirm the eight tables appear in Table Editor. Run each migration only once. If you already ran 001 and 002, run only 003.
 5. Run `migrations/20261027000400_fixed_prices_unlimited_stock.sql` (if 001-003 are already applied, run only 004). Then run `tests/access_and_constraints.sql` in SQL Editor. It rolls back its test data; an error means a check failed.
+6. Run `migrations/20261027000500_align_catalogue_and_checkout.sql` (if 001-004 are already applied, run only 005). It renames the seeded products to the website IDs (`verdius`, `tonvira`, ...), so 004's RM35 price actually applies, and adds the checkout functions.
+7. Load the committee codes: run `private/committee_codes.sql`. That file holds members' names, so it is kept out of git; ask for it rather than committing it.
+8. Create the receipt bucket (see **Create receipt storage** below).
+
+## Connect the website (checkout Edge Function)
+
+1. Install the [Supabase CLI](https://supabase.com/docs/guides/cli), then `supabase login` and `supabase link --project-ref <your project ref>`.
+2. Deploy: `supabase functions deploy checkout --no-verify-jwt`. Guests have no account, so the function authorises each order by its private guest token instead of a login. Supabase provides `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` to the function automatically; never put the service-role key in the website.
+3. Optional: `supabase secrets set ALLOWED_ORIGINS=https://your-site.example` to accept requests only from the live site (default: any origin).
+4. Copy `.env.example` to `.env` in the project root and fill in the project URL and the **anon** (public) key from **Project Settings -> API**. Rebuild the site (and set the same two variables on your host).
+5. Checkout is now live: the real QR from `src/config/payment.js` appears and orders are saved. Without these variables, local development runs a demo checkout (placeholder QR, nothing saved) and a public build says ordering opens soon.
+
+The function (`functions/checkout/index.ts`) offers three actions: `validate-code`, `create-order` (prices and the RM5-per-bottle discount come from the database; retries with the same request id return the same order) and `submit-receipt` (checks the order token, file size and the image's real type from its bytes, stores it privately at `<order>/<submission>.<ext>`, sets the order to `awaiting_verification`).
 
 No local CLI, Node.js or Docker installation is needed for this dashboard workflow. These files assume Supabase's existing `auth` schema and roles, not plain PostgreSQL. They have not been applied to a hosted project from this workspace.
 
@@ -59,7 +72,9 @@ RLS is enabled on every shop table. Visitors can read active products only. Ordi
 
 Guest checkout intentionally has no direct order-read policy. Backend endpoints must generate a cryptographically random guest token (at least 32 random bytes), save only its SHA-256 hash, and validate it before returning a safe order summary or authorizing uploads. Never return the hash or use an order number as a credential. Rate-limit guest endpoints.
 
-Next implement transactional backend operations that:
+Status: 1 and 2 below are implemented (migration 005 and `functions/checkout`). 3 (admin approval) and the expiry scheduling in 4 are still to build.
+
+The transactional backend operations:
 
 1. Create orders idempotently using `checkout_request_id`, validate quantities and an optional active committee code, calculate authoritative product totals, snapshot items, and skip inventory checks/reservations for products with `track_stock = false`. Use zero shipping fees for committee distribution. The database does not yet enforce that `subtotal_sen` equals the sum of the items; the checkout transaction must do so.
 2. Record verified receipt uploads and change payment status to `awaiting_verification`. Unlimited-stock orders do not need reservation windows.
