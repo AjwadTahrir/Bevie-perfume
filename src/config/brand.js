@@ -21,7 +21,7 @@ export const brand = {
    * While this is empty (or invalid), every WhatsApp button renders
    * as a disabled control and never links to an invalid wa.me URL.
    */
-  whatsappNumber: '',
+  whatsappNumber: '60199794283',
 
   /**
    * OFFICIAL CONTACT CHANNELS
