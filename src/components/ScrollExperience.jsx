@@ -39,9 +39,9 @@ function boxWithin(el, ancestor) {
  *   0.72-1.00  hold, then the stage releases into the collection
  *
  * Phones and tablets get lighter, unpinned effects instead: the hero
- * copy, bottle and bouquet drift apart as the hero scrolls away, the
- * bottle sinks into the first batik strip and fades, and the two strips
- * that frame Our Story wipe in as they arrive.
+ * copy and bouquet drift apart as the hero scrolls away, the batik
+ * cloth wipes in as it arrives, and the bottle comes down to land on it
+ * at its home-page size.
  *
  * Everything is reverted (inline styles removed, class dropped) when
  * a media query stops matching, e.g. resizing to mobile.
@@ -135,37 +135,29 @@ export default function ScrollExperience({ onSelect }) {
       const q = gsap.utils.selector(root)
       const hero = root.querySelector('.scene-hero')
       const bottle = root.querySelector('.hb-move')
-      const strip = root.querySelector('.heritage-textile')
+      const cloth = root.querySelector('.heritage-textile')
 
-      // Where the bottle comes to rest: the centre of the first batik strip, in page
-      // coordinates, so it meets the strip however fast the visitor scrolls.
+      // Where the bottle comes to rest: the middle of the cloth, in page coordinates,
+      // so it lands there however fast the visitor scrolls.
       const target = () => {
         const b = boxWithin(bottle, root)
-        const c = boxWithin(strip, root)
-        return { x: c.x + c.w / 2 - (b.x + b.w / 2), y: c.y + c.h / 2 - (b.y + b.h / 2), scale: (c.h * 0.9) / b.h }
+        const c = boxWithin(cloth, root)
+        return { x: c.x + c.w / 2 - (b.x + b.w / 2), y: c.y + c.h * 0.53 - (b.y + b.h / 2) }
       }
 
-      // Hero scrolls away: copy lifts and fades, bottle grows, bouquet swells at its own pace
+      // Hero scrolls away: copy lifts and fades, bouquet swells at its own pace
       gsap
         .timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: 0.6 } })
         .to(q('.hero-copy'), { y: -60, autoAlpha: 0.15 }, 0)
-        .to(q('.hb-tilt'), { scale: 1.12, yPercent: -6, transformOrigin: '50% 90%' }, 0)
         .fromTo(q('.layer-back'), { scale: 1 }, { scale: 1.18, yPercent: -14, rotation: -4 }, 0)
 
-      // The bottle drops: it drifts down and shrinks as the strip rises to meet it,
-      // rests on the cloth for a moment, then fades into it
+      // Our Story arrives: the batik cloth wipes in from the left and settles from a slow zoom,
+      // and the bottle comes down to land on it, staying on the cloth from then on
       gsap
-        .timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: strip, start: 'top bottom', end: 'center 30%', scrub: 0.6, invalidateOnRefresh: true } })
-        .to(bottle, { x: () => target().x, y: () => target().y, scale: () => target().scale, ease: 'power1.inOut', duration: 0.7 }, 0)
-        .to(bottle, { autoAlpha: 0, ease: 'power1.in', duration: 0.18 }, 0.82)
-
-      // Each batik strip around Our Story wipes in from the left and settles from a slow zoom
-      for (const strip of q('.heritage-textile, .heritage-divider')) {
-        gsap
-          .timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: strip, start: 'top 95%', end: 'top 55%', scrub: 0.6 } })
-          .fromTo(strip, { clipPath: 'inset(0% 100% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', ease: 'power2.out' }, 0)
-          .fromTo(strip.querySelector('img'), { scale: 1.25 }, { scale: 1 }, 0)
-      }
+        .timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: cloth, start: 'top bottom', end: 'center 50%', scrub: 0.6, invalidateOnRefresh: true } })
+        .fromTo(cloth, { clipPath: 'inset(0% 100% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', ease: 'power2.out', duration: 0.6 }, 0)
+        .fromTo(q('.heritage-textile img'), { scale: 1.25 }, { scale: 1, duration: 0.6 }, 0)
+        .to(bottle, { x: () => target().x, y: () => target().y, ease: 'power1.inOut', duration: 1 }, 0)
 
       return () => root.classList.remove('is-light')
     })

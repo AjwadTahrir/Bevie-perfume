@@ -351,8 +351,8 @@
   width: 1px;
   pointer-events: none;
 }
-/* Phones and tablets (.is-light): the hero bottle drops down into the first batik
-   strip, so the hero lets it out below its edge and paints above Our Story. */
+/* Phones and tablets (.is-light): the hero bottle comes down to land on the batik
+   cloth, so the hero lets it out below its edge and paints above Our Story. */
 .is-light .scene-hero {
   z-index: 2;
   overflow-x: clip;
@@ -558,20 +558,13 @@
 }
 
 /* Heritage: soften the cloth photo without washing it out.
-   Warm light from the upper left; side by side, a cream fade into the
-   text side. Below 1024px the cloth is a divider strip with ochre
-   hairlines along both edges. */
+   Warm light from the upper left, then a cream fade into the text side
+   (its bottom edge on stacked layouts, its right edge side by side). */
 .heritage-light {
   background:
     radial-gradient(ellipse 70% 60% at 22% 18%, rgb(250 241 228 / 0.28), transparent 70%),
+    linear-gradient(to bottom, transparent 62%, rgb(245 228 206 / 0.9) 100%),
     rgb(209 142 80 / 0.1);
-}
-@media (max-width: 1023px) {
-  .batik-strip .heritage-light {
-    box-shadow:
-      inset 0 1px 0 rgb(209 142 80 / 0.7),
-      inset 0 -1px 0 rgb(209 142 80 / 0.7);
-  }
 }
 @media (min-width: 1024px) {
   .heritage-light {
