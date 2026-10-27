@@ -28,6 +28,12 @@
  *   motif         small batik ornament on the card:
  *                 'bloom' | 'sprig' | 'seed' | 'tendril'
  *   motifPlacement 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
+ *   scene         optional still life behind the bottle in the detail
+ *                 pop-up: { src, srcSet, position, alt }. Supply it
+ *                 portrait, about 1060 x 1484 or larger (5:7, the
+ *                 pop-up's shape), ingredients in the lower right.
+ *                 position is a CSS object-position for narrow crops
+ *                 (phones). Without it the pop-up shows the batik bouquet.
  *   isPlaceholder  true only for stand-in records
  */
 
@@ -39,6 +45,22 @@ import seductressImg from '../assets/products/seductress-bottle-640.webp'
 import celestiaRoseImg from '../assets/products/celestia-rose-bottle-640.webp'
 import berryTeaseImg from '../assets/products/berry-tease-bottle-640.webp'
 import lilyValleyImg from '../assets/products/lily-valley-bottle-640.webp'
+import verdiusScene640 from '../assets/products/verdius-scene-640.webp'
+import verdiusScene1060 from '../assets/products/verdius-scene-1060.webp'
+import tonviraScene640 from '../assets/products/tonvira-scene-640.webp'
+import tonviraScene1060 from '../assets/products/tonvira-scene-1060.webp'
+import chestnutRushScene640 from '../assets/products/chestnut-rush-scene-640.webp'
+import chestnutRushScene1060 from '../assets/products/chestnut-rush-scene-1060.webp'
+import wavekissScene640 from '../assets/products/wavekiss-scene-640.webp'
+import wavekissScene1060 from '../assets/products/wavekiss-scene-1060.webp'
+import seductressScene640 from '../assets/products/seductress-scene-640.webp'
+import seductressScene1060 from '../assets/products/seductress-scene-1060.webp'
+import celestiaRoseScene640 from '../assets/products/celestia-rose-scene-640.webp'
+import celestiaRoseScene1060 from '../assets/products/celestia-rose-scene-1060.webp'
+import berryTeaseScene640 from '../assets/products/berry-tease-scene-640.webp'
+import berryTeaseScene1060 from '../assets/products/berry-tease-scene-1060.webp'
+import lilyValleyScene640 from '../assets/products/lily-valley-scene-640.webp'
+import lilyValleyScene1060 from '../assets/products/lily-valley-scene-1060.webp'
 import chestnutRushLarge from '../assets/products/chestnut-rush-bottle-1200.webp'
 
 export const fragranceFamilies = {
@@ -87,6 +109,12 @@ export const perfumes = [
     },
     image: verdiusImg,
     imageAlt: 'Verdius perfume bottle with a deep green botanical label',
+    scene: {
+      src: verdiusScene1060,
+      srcSet: `${verdiusScene640} 640w, ${verdiusScene1060} 1060w`,
+      position: '60% 82%',
+      alt: 'Green apple, lavender, mint and lime on a misty stone, beside the bottle',
+    },
     accent: 'teal',
     bottle: { shape: 'facet', liquid: 'forest', cap: 'gold' },
     motif: 'sprig',
@@ -107,6 +135,12 @@ export const perfumes = [
     },
     image: tonviraImg,
     imageAlt: 'Tonvira perfume bottle',
+    scene: {
+      src: tonviraScene1060,
+      srcSet: `${tonviraScene640} 640w, ${tonviraScene1060} 1060w`,
+      position: '60% 82%',
+      alt: 'Mint, bergamot, cardamom, lavender, vanilla and amber on cedar wood, beside the bottle',
+    },
     accent: 'cream',
     bottle: { shape: 'column', liquid: 'smoke', cap: 'espresso' },
     motif: 'seed',
@@ -127,6 +161,12 @@ export const perfumes = [
     },
     image: chestnutRushImg,
     imageAlt: 'Chestnut Rush perfume bottle',
+    scene: {
+      src: chestnutRushScene1060,
+      srcSet: `${chestnutRushScene640} 640w, ${chestnutRushScene1060} 1060w`,
+      position: '60% 82%',
+      alt: 'Rum, chestnuts, saffron, tobacco leaf, leather, vanilla and amber beside the bottle',
+    },
     accent: 'ochre',
     bottle: { shape: 'facet', liquid: 'amber', cap: 'espresso' },
     motif: 'seed',
@@ -147,6 +187,12 @@ export const perfumes = [
     },
     image: wavekissImg,
     imageAlt: 'Wavekiss perfume bottle',
+    scene: {
+      src: wavekissScene1060,
+      srcSet: `${wavekissScene640} 640w, ${wavekissScene1060} 1060w`,
+      position: '60% 82%',
+      alt: 'Lemons, sea salt in a shell, driftwood and neroli blossom on a wave-washed shore beside the bottle',
+    },
     accent: 'teal',
     bottle: { shape: 'flask', liquid: 'forest', cap: 'gold' },
     motif: 'tendril',
@@ -166,6 +212,12 @@ export const perfumes = [
     },
     image: seductressImg,
     imageAlt: 'Seductress perfume bottle',
+    scene: {
+      src: seductressScene1060,
+      srcSet: `${seductressScene640} 640w, ${seductressScene1060} 1060w`,
+      position: '60% 82%',
+      alt: 'Black cherries, raspberries, pink pepper, rose, peony, jasmine and vanilla beside the bottle',
+    },
     accent: 'rust',
     bottle: { shape: 'arch', liquid: 'smoke', cap: 'espresso' },
     motif: 'bloom',
@@ -186,6 +238,12 @@ export const perfumes = [
     },
     image: celestiaRoseImg,
     imageAlt: 'Celestia Rose perfume bottle',
+    scene: {
+      src: celestiaRoseScene1060,
+      srcSet: `${celestiaRoseScene640} 640w, ${celestiaRoseScene1060} 1060w`,
+      position: '60% 82%',
+      alt: 'Frosted pink rose, peony and lotus among ice crystals beside the bottle',
+    },
     accent: 'cream',
     bottle: { shape: 'arch', liquid: 'sage', cap: 'gold' },
     motif: 'bloom',
@@ -206,6 +264,12 @@ export const perfumes = [
     },
     image: berryTeaseImg,
     imageAlt: 'Berry Tease perfume bottle',
+    scene: {
+      src: berryTeaseScene1060,
+      srcSet: `${berryTeaseScene640} 640w, ${berryTeaseScene1060} 1060w`,
+      position: '60% 82%',
+      alt: 'Grapes, plums, red berries, violets, vanilla and amber beside the bottle',
+    },
     accent: 'rust',
     bottle: { shape: 'flask', liquid: 'amber', cap: 'forest' },
     motif: 'tendril',
@@ -226,6 +290,12 @@ export const perfumes = [
     },
     image: lilyValleyImg,
     imageAlt: 'Lily in the Valley perfume bottle',
+    scene: {
+      src: lilyValleyScene1060,
+      srcSet: `${lilyValleyScene640} 640w, ${lilyValleyScene1060} 1060w`,
+      position: '60% 82%',
+      alt: 'Lily of the valley, vanilla orchid, jasmine and pear on sandalwood beside the bottle',
+    },
     accent: 'cream',
     bottle: { shape: 'column', liquid: 'sage', cap: 'forest' },
     motif: 'sprig',

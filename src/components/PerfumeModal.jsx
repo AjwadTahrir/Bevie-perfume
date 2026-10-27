@@ -90,7 +90,20 @@ export default function PerfumeModal({ perfume, onClose }) {
           <div className="modal-scroll relative grid h-full w-full grid-cols-1 overflow-y-auto overscroll-contain bg-cream-light md:max-h-[min(52rem,calc(100dvh-3rem))] md:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
             {/* Visual */}
             <div className="relative flex min-h-[23rem] items-end justify-center overflow-hidden px-10 pt-16 md:min-h-full md:px-12 md:pt-20" style={{ background: tint }}>
-              <img src={pack.bouquet.src} srcSet={pack.bouquet.srcSet} sizes="(min-width: 768px) 34rem, 100vw" alt="" decoding="async" className="pointer-events-none absolute bottom-[20%] left-1/2 w-[118%] max-w-[36rem] -translate-x-1/2" />
+              {p.scene ? (
+                // The scent's own still life fills the panel; the props sit beside the bottle.
+                <img
+                  src={p.scene.src}
+                  srcSet={p.scene.srcSet}
+                  sizes="(min-width: 768px) 33rem, 100vw"
+                  alt={p.scene.alt}
+                  decoding="async"
+                  className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+                  style={{ objectPosition: p.scene.position }}
+                />
+              ) : (
+                <img src={pack.bouquet.src} srcSet={pack.bouquet.srcSet} sizes="(min-width: 768px) 34rem, 100vw" alt="" decoding="async" className="pointer-events-none absolute bottom-[20%] left-1/2 w-[118%] max-w-[36rem] -translate-x-1/2" />
+              )}
               <div className="relative aspect-square w-[min(92%,24rem)]">
                 <span className="absolute bottom-[7%] left-1/2 h-[5%] w-[50%] -translate-x-1/2 rounded-[50%] bg-brown-deep/40 blur-[10px]" aria-hidden="true" />
                 <ProductVisual perfume={p} decorative={false} loading="eager" className="absolute inset-0 h-full w-full" />
