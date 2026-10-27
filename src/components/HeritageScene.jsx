@@ -10,7 +10,7 @@ import { copy } from '../config/content'
  * Editorial split: draped batik cloth on the left, lifted by warm light
  * and fading into cream at its inner edge; on the right one left-aligned
  * group (eyebrow, heading, story, link) that ends with the painted batik
- * phoenix to the right of the link. In the
+ * bouquet to the right of the link. In the
  * cinematic sequence the cloth wipes in from the left and the hero
  * bottle comes to rest on it. "Discover our story" swaps the intro
  * for the longer story in place.
@@ -64,12 +64,12 @@ export default function HeritageScene() {
               ))}
             </div>
           </Reveal>
-          {/* Link and phoenix share one row: the link on the left, the phoenix hanging to its right */}
+          {/* Link and bouquet share one row: the link on the left, the bouquet hanging to its right */}
           <div className="heritage-cta-row">
-          <Reveal className="heritage-item" delay={240}>
+          <Reveal className="heritage-item shrink-0" delay={240}>
             <button
               type="button"
-              className="link-arrow mt-6"
+              className="link-arrow mt-6 whitespace-nowrap"
               aria-expanded={open}
               aria-controls={storyId}
               onClick={() => setOpen((o) => !o)}
@@ -79,18 +79,19 @@ export default function HeritageScene() {
             </button>
           </Reveal>
 
-          {/* The phoenix closes the composition at its lower right, with a faint bouquet behind it. */}
+          {/* The bouquet closes the composition at its lower right. */}
           <Reveal className="heritage-item heritage-art pointer-events-none relative ml-auto" delay={320}>
             <img
               src={pack.bouquet.src}
               srcSet={pack.bouquet.srcSet}
-              sizes="20rem"
+              sizes="(min-width: 640px) 27rem, 20rem"
               alt=""
+              width="1200"
+              height="800"
               loading="lazy"
               decoding="async"
-              className="absolute -right-[18%] top-1/2 w-[125%] max-w-none -translate-y-[46%] opacity-[0.22]"
+              className="relative w-full"
             />
-            <img src={pack.phoenix.src} alt="" width="900" height="591" loading="lazy" decoding="async" className="relative w-full" />
           </Reveal>
           </div>
         </div>

@@ -608,7 +608,7 @@
       rgb(209 142 80 / 0.1);
   }
 }
-/* Link and phoenix row. The phoenix shrinks to share the row on wider layouts;
+/* Link and bouquet row. The bouquet shrinks to share the row on wider layouts;
    on narrow phones it wraps below the link, aligned right. */
 .heritage-cta-row {
   display: flex;
@@ -618,7 +618,7 @@
   column-gap: 1.25rem;
 }
 .heritage-art {
-  flex: 0 1 15rem;
+  flex: 0 1 19rem;
   min-width: 0;
   margin-top: 1rem;
 }
@@ -627,24 +627,32 @@
     flex-wrap: nowrap;
   }
   .heritage-art {
-    flex-basis: 19rem;
-    margin-top: 1.5rem;
+    flex-basis: 27rem;
+    /* Hang past the text column into the panel's right margin */
+    margin-right: -6rem;
+    margin-top: 0.5rem;
   }
 }
-/* Short desktop windows: a smaller phoenix so the group fits the pinned stage */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .heritage-art {
+    margin-right: 0;
+  }
+}
+/* Short desktop windows: a smaller bouquet so the group fits the pinned stage */
 @media (min-width: 1024px) and (max-height: 760px) {
   .heritage-art {
-    flex-basis: 14rem;
+    flex-basis: 20rem;
+    margin-right: -4rem;
   }
 }
-/* Stacked pinned layout on phones: room is tight, keep the phoenix compact beside the link */
+/* Stacked pinned layout on phones: room is tight, keep the bouquet compact beside the link */
 @media (max-width: 639px) {
   .is-cinematic .heritage-cta-row {
     flex-wrap: nowrap;
   }
   .is-cinematic .heritage-art {
-    flex-basis: 7.5rem;
-    margin-top: 1.5rem;
+    flex-basis: 10.5rem;
+    margin-top: 0.75rem;
   }
 }
 @media (max-width: 1023px) and (max-height: 800px) {
