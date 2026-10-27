@@ -16,7 +16,7 @@ export default function Collection({ onSelect }) {
   return (
     <section id={sections.collection} data-nav="collection" aria-labelledby="collection-title" className="overflow-x-clip bg-cream py-24 md:py-32 lg:py-36">
       <div className="mx-auto max-w-[1440px] px-5 md:px-8 lg:px-12">
-        <Reveal className="mx-auto max-w-2xl text-center">
+        <Reveal data-scroll-anchor className="mx-auto max-w-2xl text-center">
           <p className="type-eyebrow">{c.eyebrow}</p>
           <h2 id="collection-title" className="type-h2 mt-5 text-balance text-brown">
             {c.title}

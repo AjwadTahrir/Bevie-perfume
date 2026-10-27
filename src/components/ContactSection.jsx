@@ -46,7 +46,7 @@ export default function ContactSection() {
   return (
     <section id={sections.contact} data-nav="contact" aria-labelledby="contact-title" className="py-24 md:py-32 lg:py-40">
       <div className="mx-auto max-w-[1400px] px-5 md:px-8 lg:px-12">
-        <Reveal className="relative px-6 py-14 md:px-14 md:py-20 lg:px-20 lg:py-24">
+        <Reveal data-scroll-anchor className="relative px-6 py-14 md:px-14 md:py-20 lg:px-20 lg:py-24">
           <CornerFlourish className="pointer-events-none absolute left-0 top-0 size-24 md:size-32" />
           <CornerFlourish className="pointer-events-none absolute bottom-0 right-0 size-24 rotate-180 md:size-32" />
           <div className="pointer-events-none absolute inset-0 border border-ochre/50" aria-hidden="true" />
