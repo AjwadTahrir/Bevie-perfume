@@ -576,12 +576,23 @@
   .heritage-light {
     background:
       radial-gradient(ellipse 70% 60% at 22% 18%, rgb(250 241 228 / 0.28), transparent 70%),
-      linear-gradient(to right, transparent 64%, rgb(245 228 206 / 0.55) 86%, var(--color-cream) 100%),
+      /* Eased stops, solid cream before the edge: no visible seam where the cloth meets the panel */
+      linear-gradient(
+        to right,
+        transparent 46%,
+        rgb(245 228 206 / 0.06) 54%,
+        rgb(245 228 206 / 0.18) 62%,
+        rgb(245 228 206 / 0.36) 70%,
+        rgb(245 228 206 / 0.58) 78%,
+        rgb(245 228 206 / 0.8) 86%,
+        rgb(245 228 206 / 0.95) 92%,
+        var(--color-cream) 97%
+      ),
       rgb(209 142 80 / 0.1);
   }
 }
 /* Link and bouquet row. The bouquet shrinks to share the row on wider layouts;
-   on narrow phones it wraps below the link, aligned right. */
+   on narrow phones it wraps below the link, centred. */
 .heritage-cta-row {
   display: flex;
   flex-wrap: wrap;
@@ -593,6 +604,11 @@
   flex: 0 1 19rem;
   min-width: 0;
   margin-top: 1rem;
+}
+@media (max-width: 639px) {
+  .heritage-art {
+    margin-inline: auto;
+  }
 }
 @media (min-width: 640px) {
   .heritage-cta-row {
