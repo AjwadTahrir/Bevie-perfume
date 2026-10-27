@@ -57,7 +57,7 @@ This UUID must belong to an existing Auth user. Admin membership is stored in a 
 
 In **Storage**, create a bucket:
 
-- Name: `payment-receipts`
+- Name: `payment_receipts` (the checkout function uses this exact name)
 - Public: **off**
 - File size limit: **5 MB** (5,242,880 bytes)
 - Allowed MIME types: `image/jpeg`, `image/png`, `image/webp`

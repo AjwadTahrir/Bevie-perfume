@@ -17,7 +17,7 @@
 
 import { createClient } from 'npm:@supabase/supabase-js@2.45.4'
 
-const BUCKET = 'payment-receipts'
+const BUCKET = 'payment_receipts'
 const MAX_RECEIPT_BYTES = 5 * 1024 * 1024
 const ALLOWED_ORIGINS = (Deno.env.get('ALLOWED_ORIGINS') ?? '*').split(',').map((s) => s.trim())
 

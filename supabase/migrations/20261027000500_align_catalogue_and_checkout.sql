@@ -3,7 +3,8 @@
 --    products. 004 priced verdius, tonvira, ..., IDs that 002 never created, so its
 --    RM35 update matched no rows and nothing was purchasable. If an earlier draft of
 --    this file renamed the products to those English IDs, they are renamed back.
--- 2. Adds the transactional checkout functions the Edge Function calls
+-- 2. Makes committee_codes have both is_active and position, then adds the
+--    transactional checkout functions the Edge Function calls
 --    (supabase/functions/checkout). Only service_role may execute them.
 begin;
 
@@ -51,6 +52,12 @@ update public.products set price_sen = 3500, track_stock = false, is_purchasable
 where id in ('bayu', 'nirmala', 'senja', 'samudera', 'purnama', 'ratna', 'ranum', 'seroja');
 
 -- ---------------------------------------------------------------- 2. checkout functions
+
+-- Some projects ran a variant of 003 whose committee_codes has a position column
+-- instead of is_active. Add whichever is missing so every project has both.
+alter table public.committee_codes add column if not exists is_active boolean not null default true;
+alter table public.committee_codes add column if not exists position text;
+
 
 -- Valid code -> true. Codes are never listed; the Edge Function rate-limits calls.
 create or replace function public.checkout_code_is_active(p_code text)
