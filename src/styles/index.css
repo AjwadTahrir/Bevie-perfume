@@ -351,6 +351,13 @@
   width: 1px;
   pointer-events: none;
 }
+/* Phones and tablets (.is-light): the hero bottle drops down into the first batik
+   strip, so the hero lets it out below its edge and paints above Our Story. */
+.is-light .scene-hero {
+  z-index: 2;
+  overflow-x: clip;
+  overflow-y: visible;
+}
 /* GSAP owns these elements while cinematic: no CSS transitions fighting the scrub. */
 .is-cinematic .reveal {
   transition: none !important;
