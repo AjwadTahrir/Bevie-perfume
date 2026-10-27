@@ -7,6 +7,7 @@ import { fragranceFamilies, perfumes, tintOf } from '../data/perfumes'
 import { formatPrice } from '../lib/format'
 import { orderMessage } from '../lib/whatsapp'
 import { useCart } from '../lib/cart'
+import { useCampaign } from '../lib/campaign'
 import { lockScroll, unlockScroll } from '../lib/scrollLock'
 
 const NOTE_TIERS = [
@@ -37,6 +38,7 @@ export default function PerfumeModal({ perfume, onClose, onNavigate }) {
     setAdded(false)
   }
   const cart = useCart()
+  const campaign = useCampaign()
 
   useEffect(() => {
     const dialog = dialogRef.current
@@ -243,7 +245,10 @@ export default function PerfumeModal({ perfume, onClose, onNavigate }) {
               <dl className="mt-12 grid grid-cols-2 gap-6 border-y border-ochre/60 py-6">
                 <div>
                   <dt className="type-label text-brown-soft">Price</dt>
-                  <dd className="mt-1.5 font-display text-2xl text-brown">{formatPrice(p.price, 'To be announced')}</dd>
+                  <dd className="mt-1.5 font-display text-2xl text-brown">{formatPrice(campaign.sellingPrice)}</dd>
+                  {campaign.discountedPrice < campaign.sellingPrice && (
+                    <dd className="mt-1 text-xs text-brown-soft">{formatPrice(campaign.discountedPrice)} with an AJK promo code</dd>
+                  )}
                 </div>
                 <div>
                   <dt className="type-label text-brown-soft">Size</dt>
@@ -274,7 +279,6 @@ export default function PerfumeModal({ perfume, onClose, onNavigate }) {
                   <button
                     type="button"
                     className="btn btn-primary"
-                    disabled={typeof p.price !== 'number'}
                     onClick={() => {
                       cart.add(p.id)
                       setAdded(true)

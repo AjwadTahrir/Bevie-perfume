@@ -1,0 +1,117 @@
+@import 'tailwindcss';
+
+/* Admin console tokens: neutral surfaces, navy ink, brand rust used sparingly. */
+@theme {
+  --font-sans: 'DM Sans Variable', 'Segoe UI', system-ui, sans-serif;
+  --color-canvas: #f6f6f4;
+  --color-surface: #ffffff;
+  --color-line: #e6e4df;
+  --color-line-strong: #d3d0c9;
+  --color-ink: #0f1b2d;
+  --color-ink-2: #4a5565;
+  --color-ink-3: #7b8491;
+  --color-navy: #13233d;
+  --color-navy-soft: #e9edf4;
+  --color-brand: #c0502e;
+  --color-brand-soft: #f8e9e3;
+  --color-series-1: #2a78d6;
+  --color-series-2: #eb6834;
+  --color-good: #157f3c;
+  --color-good-soft: #e5f4ea;
+  --color-warn: #a35d00;
+  --color-warn-soft: #fdf1dc;
+  --color-bad: #b42318;
+  --color-bad-soft: #fde8e6;
+  --color-info: #1d5fb0;
+  --color-info-soft: #e6f0fb;
+  --color-gold: #b88a00;
+  --color-gold-soft: #fbf3d9;
+  --color-silver: #6b7480;
+  --color-silver-soft: #eef0f3;
+  --color-bronze: #a0582c;
+  --color-bronze-soft: #f6e8de;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-series-1);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .card {
+    @apply rounded-xl border border-line bg-surface shadow-[0_1px_2px_rgba(15,27,45,0.04)];
+  }
+  .btn {
+    @apply inline-flex h-9 items-center justify-center gap-2 rounded-lg px-3.5 text-sm font-medium whitespace-nowrap transition-colors disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply bg-navy text-white hover:bg-[#1d3256];
+  }
+  .btn-secondary {
+    @apply border border-line-strong bg-surface text-ink hover:bg-canvas;
+  }
+  .btn-ghost {
+    @apply text-ink-2 hover:bg-canvas hover:text-ink;
+  }
+  .btn-danger {
+    @apply bg-bad text-white hover:bg-[#912018];
+  }
+  .btn-good {
+    @apply bg-good text-white hover:bg-[#106030];
+  }
+  .input {
+    @apply h-9 w-full rounded-lg border border-line-strong bg-surface px-3 text-sm text-ink placeholder:text-ink-3 focus:border-series-1 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-series-1/20;
+  }
+  textarea.input {
+    @apply h-auto py-2;
+  }
+  .label {
+    @apply mb-1.5 block text-xs font-medium text-ink-2;
+  }
+  .th {
+    @apply px-4 py-2.5 text-left text-xs font-medium whitespace-nowrap text-ink-3;
+  }
+  .td {
+    @apply px-4 py-3 align-middle whitespace-nowrap;
+  }
+}
+
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+.skeleton {
+  background: linear-gradient(90deg, #efeee9 25%, #f7f6f2 50%, #efeee9 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+  border-radius: 6px;
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+.rise {
+  animation: rise 0.25s ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .skeleton,
+  .rise {
+    animation: none;
+  }
+}

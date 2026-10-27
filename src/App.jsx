@@ -9,6 +9,7 @@ import Footer from './components/Footer'
 import PerfumeModal from './components/PerfumeModal'
 import CartDrawer from './components/CartDrawer'
 import { CartProvider } from './lib/cart'
+import { CampaignProvider } from './lib/campaign'
 import { installAnchorScroll } from './lib/anchorScroll'
 
 export default function App() {
@@ -17,18 +18,20 @@ export default function App() {
   useEffect(installAnchorScroll, [])
 
   return (
-    <CartProvider>
-      <Navbar />
-      <main id="main">
-        <ScrollExperience onSelect={setSelected} />
-        <Collection onSelect={setSelected} />
-        <CallToAction />
-        <FragranceFinder onSelect={setSelected} />
-        <ContactSection />
-      </main>
-      <Footer />
-      <PerfumeModal perfume={selected} onClose={close} onNavigate={setSelected} />
-      <CartDrawer />
-    </CartProvider>
+    <CampaignProvider>
+      <CartProvider>
+        <Navbar />
+        <main id="main">
+          <ScrollExperience onSelect={setSelected} />
+          <Collection onSelect={setSelected} />
+          <CallToAction />
+          <FragranceFinder onSelect={setSelected} />
+          <ContactSection />
+        </main>
+        <Footer />
+        <PerfumeModal perfume={selected} onClose={close} onNavigate={setSelected} />
+        <CartDrawer />
+      </CartProvider>
+    </CampaignProvider>
   )
 }

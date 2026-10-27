@@ -5,8 +5,8 @@ import { shop } from '../config/brand'
 /**
  * CART
  * Lines are { id, quantity }; product details always come from
- * src/data/perfumes.js, so a price change can't leave a stale price in
- * someone's cart. The cart is kept in this browser's localStorage
+ * src/data/perfumes.js and prices from the campaign settings, so
+ * nothing stale is kept in someone's cart. The cart is kept in this browser's localStorage
  * between visits (a convenience only: the order itself is created at
  * checkout by src/lib/orders.js).
  */
@@ -66,9 +66,7 @@ export function CartProvider({ children }) {
   const value = useMemo(() => {
     const items = lines.map((l) => ({ ...l, perfume: byId.get(l.id) })).filter((l) => l.perfume)
     const count = items.reduce((n, l) => n + l.quantity, 0)
-    // Items without a price (null) count as 0 until priced.
-    const subtotal = items.reduce((sum, l) => sum + (typeof l.perfume.price === 'number' ? l.perfume.price * l.quantity : 0), 0)
-    return { items, count, subtotal, add, setQuantity, remove, clear, isOpen, open, close }
+    return { items, count, add, setQuantity, remove, clear, isOpen, open, close }
   }, [lines, add, setQuantity, remove, clear, isOpen, open, close])
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>
@@ -78,11 +76,4 @@ export function useCart() {
   const ctx = useContext(CartContext)
   if (!ctx) throw new Error('useCart must be used inside <CartProvider>')
   return ctx
-}
-
-/** Totals for checkout, applying the referral discount and delivery fee from src/config/brand.js. */
-export function orderTotals(subtotal, referralValid) {
-  const discount = referralValid && shop.referralDiscountPercent > 0 ? Math.round(subtotal * shop.referralDiscountPercent) / 100 : 0
-  const shipping = typeof shop.shippingFee === 'number' ? shop.shippingFee : 0
-  return { subtotal, discount, shipping, shippingKnown: typeof shop.shippingFee === 'number', total: subtotal - discount + shipping }
 }

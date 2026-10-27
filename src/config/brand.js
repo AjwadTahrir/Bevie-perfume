@@ -48,12 +48,13 @@ export const brand = {
 }
 
 /**
- * SHOP AND CHECKOUT (PLACEHOLDERS)
+ * SHOP AND CHECKOUT
  * ---------------------------------------------------------------
- * Customers pay by scanning a QR code with their banking app, then
- * upload a screenshot of the payment. Nothing here is a payment
- * gateway. Orders are not saved anywhere yet: src/lib/orders.js is
- * the single place to connect a database and file storage.
+ * Customers pay by bank transfer or by scanning a QR code with their
+ * banking app, then enter the transfer reference and upload proof.
+ * Nothing here is a payment gateway: an admin checks each payment by
+ * hand in the dashboard. Prices and the promo discount come from the
+ * campaign settings in the database (admin -> Settings).
  */
 export const shop = {
   payment: {
@@ -69,13 +70,9 @@ export const shop = {
   // Flat delivery fee in ringgit, or null to show "Calculated after checkout".
   shippingFee: null,
 
-  // Referral codes come from src/data/referralCodes.js. A valid code is
-  // recorded with the order; set a percentage here to also give a discount.
-  referralDiscountPercent: 0,
-
-  // Proof of payment upload limits.
+  // Proof of payment upload limits (the server checks them again).
   proof: {
-    maxSizeMB: 5,
+    maxSizeMB: 4,
     accept: 'image/jpeg,image/png,image/webp,application/pdf',
   },
 

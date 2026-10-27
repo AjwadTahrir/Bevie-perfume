@@ -2,10 +2,11 @@ import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { ArrowLeft, ArrowRight, Check, Minus, Plus, Trash2, Upload, X } from 'lucide-react'
 import ProductVisual from './ProductVisual'
 import PaymentQr from './PaymentQr'
-import { useCart, orderTotals } from '../lib/cart'
-import { createOrderReference, submitOrder } from '../lib/orders'
+import { useCart } from '../lib/cart'
+import { useCampaign } from '../lib/campaign'
+import { createOrder, submitPayment, validatePromo, withdrawOrder } from '../lib/orders'
 import { lockScroll, unlockScroll } from '../lib/scrollLock'
-import { isValidReferralCode, normalizeReferralCode } from '../data/referralCodes'
+import { normalizePromoCode, priceOrder, PROMO_CODE_PATTERN } from '../../shared/campaign'
 import { shop } from '../config/brand'
 import { formatPrice } from '../lib/format'
 
@@ -17,31 +18,38 @@ const STEPS = [
 const EMPTY_CUSTOMER = { name: '', phone: '', email: '', address: '', notes: '' }
 const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
 const rm = (n) => formatPrice(n, 'RM 0')
+const todayLocal = () => new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10)
 
 /**
  * CART AND CHECKOUT
  * A side panel (full screen on phones) built on the native <dialog>:
- *   cart -> details -> payment (scan QR, upload proof) -> done
- * Orders go through src/lib/orders.js, which is a placeholder until a
- * database is connected.
+ *   cart -> details -> payment (pay, add transfer reference, upload proof) -> done
+ * Continuing from details creates the order on the server, which
+ * returns its reference (BEV-2026-0001) and the amounts to pay. Prices
+ * shown before that are a preview of the same rule (shared/campaign.js).
  */
 export default function CartDrawer() {
   const cart = useCart()
+  const campaign = useCampaign()
   const dialogRef = useRef(null)
   const scrollRef = useRef(null)
   const [step, setStep] = useState('cart')
   const [customer, setCustomer] = useState(EMPTY_CUSTOMER)
-  const [referralInput, setReferralInput] = useState('')
-  const [referral, setReferral] = useState('') // applied, valid code
-  const [referralError, setReferralError] = useState('')
-  const [reference, setReference] = useState('')
+  const [promoInput, setPromoInput] = useState('')
+  const [promo, setPromo] = useState(null) // { code, member: { name, role } } once the server accepts it
+  const [promoError, setPromoError] = useState('')
+  const [promoChecking, setPromoChecking] = useState(false)
+  const [order, setOrder] = useState(null) // server response from createOrder, plus the signature it was made for
+  const [transfer, setTransfer] = useState({ reference: '', paidOn: todayLocal() })
   const [proof, setProof] = useState(null) // { file, url }
   const [paid, setPaid] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
   const [placed, setPlaced] = useState(null) // { reference, total }
 
-  const totals = orderTotals(cart.subtotal, !!referral)
+  const totals = priceOrder(cart.count, !!promo, campaign)
+  // What the current order would be made from; a change means a new order.
+  const signature = JSON.stringify([cart.items.map((l) => [l.id, l.quantity]), customer, promo?.code ?? null])
 
   // Open / close the native dialog with the cart state.
   useEffect(() => {
@@ -83,34 +91,69 @@ export default function CartDrawer() {
 
   const go = (next) => {
     setError('')
-    if (next === 'payment' && !reference) setReference(createOrderReference())
     setStep(next)
     scrollRef.current?.scrollTo(0, 0)
   }
 
-  const applyReferral = () => {
-    const code = normalizeReferralCode(referralInput)
-    if (!code) return setReferralError('Enter a referral code.')
-    if (!isValidReferralCode(code)) {
-      setReferral('')
-      return setReferralError('That code was not recognised. Check it and try again.')
+  const applyPromo = async () => {
+    const code = normalizePromoCode(promoInput)
+    if (!code) return setPromoError('Enter a promo code.')
+    if (!PROMO_CODE_PATTERN.test(code)) return setPromoError('Promo codes are five letters or numbers.')
+    setPromoChecking(true)
+    try {
+      const res = await validatePromo(code)
+      setPromo({ code: res.code, member: res.member })
+      setPromoInput(res.code)
+      setPromoError('')
+    } catch (e) {
+      setPromo(null)
+      setPromoError(e.message)
+    } finally {
+      setPromoChecking(false)
     }
-    setReferral(code)
-    setReferralInput(code)
-    setReferralError('')
+  }
+
+  const clearPromo = () => {
+    setPromo(null)
+    setPromoInput('')
+    setPromoError('')
+  }
+
+  // Details -> payment: create the order (or reuse it if nothing changed).
+  const continueToPayment = async () => {
+    if (order?.signature === signature) return go('payment')
+    setSubmitting(true)
+    setError('')
+    try {
+      if (order) withdrawOrder(order)
+      setOrder(null)
+      const res = await createOrder({ customer, items: cart.items, promoCode: promo?.code })
+      setOrder({ ...res, signature })
+      setPaid(false)
+      go('payment')
+    } catch (e) {
+      if (e.code === 'invalid_promo_code') {
+        clearPromo()
+        setPromoError(e.message)
+        return go('cart')
+      }
+      setError(e.message)
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   const placeOrder = async () => {
     setSubmitting(true)
     setError('')
     try {
-      const res = await submitOrder({ reference, customer, items: cart.items, totals, referralCode: referral, proofFile: proof.file })
-      setPlaced({ reference: res.reference, total: totals.total })
+      await submitPayment({ orderId: order.orderId, token: order.token, transferReference: transfer.reference.trim(), paidOn: transfer.paidOn, file: proof.file })
+      setPlaced({ reference: order.reference, total: order.finalAmount })
       cart.clear()
       setCustomer(EMPTY_CUSTOMER)
-      setReferral('')
-      setReferralInput('')
-      setReference('')
+      clearPromo()
+      setOrder(null)
+      setTransfer({ reference: '', paidOn: todayLocal() })
       setProof(null)
       setPaid(false)
       go('done')
@@ -177,28 +220,27 @@ export default function CartDrawer() {
           {step === 'cart' && (
             <CartStep
               cart={cart}
+              campaign={campaign}
               totals={totals}
-              referral={referral}
-              referralInput={referralInput}
-              setReferralInput={(v) => {
-                setReferralInput(v)
-                setReferralError('')
+              promo={promo}
+              promoInput={promoInput}
+              setPromoInput={(v) => {
+                setPromoInput(v)
+                setPromoError('')
               }}
-              referralError={referralError}
-              applyReferral={applyReferral}
-              clearReferral={() => {
-                setReferral('')
-                setReferralInput('')
-              }}
+              promoError={promoError}
+              promoChecking={promoChecking}
+              applyPromo={applyPromo}
+              clearPromo={clearPromo}
               onClose={requestClose}
             />
           )}
-          {step === 'details' && <DetailsStep customer={customer} setCustomer={setCustomer} onNext={() => go('payment')} />}
-          {step === 'payment' && (
+          {step === 'details' && <DetailsStep customer={customer} setCustomer={setCustomer} onNext={continueToPayment} />}
+          {step === 'payment' && order && (
             <PaymentStep
-              totals={totals}
-              reference={reference}
-              referral={referral}
+              order={order}
+              transfer={transfer}
+              setTransfer={setTransfer}
               proof={proof}
               setProof={setProof}
               paid={paid}
@@ -211,17 +253,22 @@ export default function CartDrawer() {
         {/* Footer actions */}
         {step === 'cart' && cart.items.length > 0 && (
           <Footer>
-            <button type="button" className="btn btn-primary w-full" onClick={() => go('details')}>
-              Checkout · {rm(totals.total)}
+            <button type="button" className="btn btn-primary w-full" onClick={() => go('details')} disabled={promoChecking}>
+              Checkout · {rm(totals.finalAmount)}
               <ArrowRight size={16} strokeWidth={1.5} aria-hidden="true" />
             </button>
           </Footer>
         )}
         {step === 'details' && (
           <Footer>
-            <button type="submit" form="checkout-details" className="btn btn-primary w-full">
-              Continue to Payment
-              <ArrowRight size={16} strokeWidth={1.5} aria-hidden="true" />
+            {error && (
+              <p role="alert" className="mb-3 text-sm text-rust-deep">
+                {error}
+              </p>
+            )}
+            <button type="submit" form="checkout-details" className="btn btn-primary w-full" disabled={submitting}>
+              {submitting ? 'Creating your order…' : 'Continue to Payment'}
+              {!submitting && <ArrowRight size={16} strokeWidth={1.5} aria-hidden="true" />}
             </button>
           </Footer>
         )}
@@ -232,12 +279,17 @@ export default function CartDrawer() {
                 {error}
               </p>
             )}
-            <button type="button" className="btn btn-primary w-full" disabled={!proof || !paid || submitting} onClick={placeOrder}>
-              {submitting ? 'Placing order…' : 'Place Order'}
+            <button
+              type="button"
+              className="btn btn-primary w-full"
+              disabled={!proof || !paid || transfer.reference.trim().length < 3 || submitting}
+              onClick={placeOrder}
+            >
+              {submitting ? 'Sending payment…' : 'Submit Payment'}
               {!submitting && <Check size={16} strokeWidth={1.5} aria-hidden="true" />}
             </button>
-            {(!proof || !paid) && (
-              <p className="mt-2 text-center text-xs text-brown-soft">Upload your proof of payment and confirm to place the order.</p>
+            {(!proof || !paid || transfer.reference.trim().length < 3) && (
+              <p className="mt-2 text-center text-xs text-brown-soft">Add the transfer reference, upload your proof and confirm to finish.</p>
             )}
           </Footer>
         )}
@@ -250,32 +302,36 @@ function Footer({ children }) {
   return <div className="border-t border-brown/15 bg-cream-light px-5 py-4 md:px-7">{children}</div>
 }
 
-function Summary({ totals, referral }) {
+function Summary({ totals, promo }) {
   return (
     <dl className="space-y-2 text-sm">
       <div className="flex justify-between">
-        <dt className="text-brown-soft">Subtotal</dt>
-        <dd className="tabular-nums">{rm(totals.subtotal)}</dd>
+        <dt className="text-brown-soft">
+          Subtotal ({totals.quantity} × {rm(totals.originalUnitPrice)})
+        </dt>
+        <dd className="tabular-nums">{rm(totals.originalSubtotal)}</dd>
       </div>
-      {referral && (
+      {promo && totals.discountTotal > 0 && (
         <div className="flex justify-between">
-          <dt className="text-brown-soft">Referral code {referral}</dt>
-          <dd className="tabular-nums">{totals.discount ? `− ${rm(totals.discount)}` : 'Applied'}</dd>
+          <dt className="text-brown-soft">
+            Promo {promo} ({totals.quantity} × {rm(totals.discountPerBottle)} off)
+          </dt>
+          <dd className="tabular-nums">− {rm(totals.discountTotal)}</dd>
         </div>
       )}
       <div className="flex justify-between">
         <dt className="text-brown-soft">Delivery</dt>
-        <dd>{totals.shippingKnown ? rm(totals.shipping) : 'Calculated after checkout'}</dd>
+        <dd>{typeof shop.shippingFee === 'number' ? rm(shop.shippingFee) : 'Arranged after checkout'}</dd>
       </div>
       <div className="flex justify-between border-t border-brown/15 pt-3 font-display text-xl text-brown">
         <dt>Total</dt>
-        <dd className="tabular-nums">{rm(totals.total)}</dd>
+        <dd className="tabular-nums">{rm(totals.finalAmount)}</dd>
       </div>
     </dl>
   )
 }
 
-function CartStep({ cart, totals, referral, referralInput, setReferralInput, referralError, applyReferral, clearReferral, onClose }) {
+function CartStep({ cart, campaign, totals, promo, promoInput, setPromoInput, promoError, promoChecking, applyPromo, clearPromo, onClose }) {
   const inputId = useId()
   if (!cart.items.length) {
     return (
@@ -302,7 +358,16 @@ function CartStep({ cart, totals, referral, referralInput, setReferralInput, ref
                   <p className="font-display text-lg leading-tight text-brown">{perfume.name}</p>
                   <p className="text-xs text-brown-soft">{perfume.size ?? 'Size to be confirmed'}</p>
                 </div>
-                <p className="text-sm tabular-nums">{rm((perfume.price ?? 0) * quantity)}</p>
+                <p className="text-right text-sm tabular-nums">
+                  {promo ? (
+                    <>
+                      <s className="block text-xs text-brown-soft">{rm(totals.originalUnitPrice * quantity)}</s>
+                      {rm(totals.appliedUnitPrice * quantity)}
+                    </>
+                  ) : (
+                    rm(campaign.sellingPrice * quantity)
+                  )}
+                </p>
               </div>
               <div className="mt-3 flex items-center justify-between">
                 <div className="inline-flex items-center rounded-full border border-brown/25" role="group" aria-label={`Quantity of ${perfume.name}`}>
@@ -344,43 +409,52 @@ function CartStep({ cart, totals, referral, referralInput, setReferralInput, ref
 
       <div className="mt-6 border-t border-brown/15 pt-6">
         <label htmlFor={inputId} className="type-label text-brown-soft">
-          Referral code (optional)
+          AJK promo code (optional)
         </label>
-        {referral ? (
-          <p className="mt-2 flex items-center justify-between rounded-lg border border-ochre/60 bg-cream px-3 py-2.5 text-sm">
-            <span className="inline-flex items-center gap-2">
-              <Check size={15} className="text-rust-deep" aria-hidden="true" />
-              <span>
-                <strong className="font-medium tracking-[0.12em]">{referral}</strong> applied
+        {promo ? (
+          <div className="mt-2 rounded-lg border border-ochre/60 bg-cream px-3 py-2.5 text-sm" role="status">
+            <p className="flex items-center justify-between gap-3">
+              <span className="inline-flex items-center gap-2">
+                <Check size={15} className="text-rust-deep" aria-hidden="true" />
+                <span>
+                  <strong className="font-medium tracking-[0.12em]">{promo.code}</strong> applied: {rm(totals.appliedUnitPrice)} per bottle (save{' '}
+                  {rm(totals.discountPerBottle)} each)
+                </span>
               </span>
-            </span>
-            <button type="button" className="text-xs text-brown-soft underline underline-offset-4" onClick={clearReferral}>
-              Remove
-            </button>
-          </p>
+              <button type="button" className="shrink-0 text-xs text-brown-soft underline underline-offset-4" onClick={clearPromo}>
+                Remove
+              </button>
+            </p>
+            <p className="mt-1 pl-[23px] text-xs text-brown-soft">
+              Supporting {promo.member.name} ({promo.member.role})
+            </p>
+          </div>
         ) : (
           <>
             <div className="mt-2 flex gap-2">
               <input
                 id={inputId}
-                value={referralInput}
-                onChange={(e) => setReferralInput(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && applyReferral()}
+                value={promoInput}
+                onChange={(e) => setPromoInput(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && applyPromo()}
                 placeholder="e.g. AB12C"
                 maxLength={12}
                 autoCapitalize="characters"
                 autoComplete="off"
-                aria-invalid={!!referralError}
-                aria-describedby={referralError ? `${inputId}-err` : undefined}
+                aria-invalid={!!promoError}
+                aria-describedby={`${inputId}-hint${promoError ? ` ${inputId}-err` : ''}`}
                 className="field flex-1 uppercase tracking-[0.12em] placeholder:normal-case placeholder:tracking-normal"
               />
-              <button type="button" className="btn btn-outline btn-small" onClick={applyReferral}>
-                Apply
+              <button type="button" className="btn btn-outline btn-small" onClick={applyPromo} disabled={promoChecking}>
+                {promoChecking ? 'Checking…' : 'Apply'}
               </button>
             </div>
-            {referralError && (
+            <p id={`${inputId}-hint`} className="mt-2 text-xs text-brown-soft">
+              With a committee member's code each bottle is {rm(campaign.discountedPrice)} instead of {rm(campaign.sellingPrice)}.
+            </p>
+            {promoError && (
               <p id={`${inputId}-err`} role="alert" className="mt-2 text-xs text-rust-deep">
-                {referralError}
+                {promoError}
               </p>
             )}
           </>
@@ -388,7 +462,7 @@ function CartStep({ cart, totals, referral, referralInput, setReferralInput, ref
       </div>
 
       <div className="mt-6">
-        <Summary totals={totals} referral={referral} />
+        <Summary totals={totals} promo={promo?.code} />
       </div>
     </>
   )
@@ -452,8 +526,10 @@ function DetailsStep({ customer, setCustomer, onNext }) {
   )
 }
 
-function PaymentStep({ totals, reference, referral, proof, setProof, paid, setPaid }) {
+function PaymentStep({ order, transfer, setTransfer, proof, setProof, paid, setPaid }) {
   const fileId = useId()
+  const refId = useId()
+  const dateId = useId()
   const [fileError, setFileError] = useState('')
   const pay = shop.payment
 
@@ -470,7 +546,7 @@ function PaymentStep({ totals, reference, referral, proof, setProof, paid, setPa
     <div className="space-y-7">
       <section aria-labelledby="pay-1">
         <h3 id="pay-1" className="type-label text-brown">
-          1 · Scan and pay
+          1 · Pay by transfer
         </h3>
         <div className="mt-4 flex flex-col items-center rounded-xl border border-ochre/50 bg-cream px-5 py-6 text-center">
           <PaymentQr />
@@ -478,21 +554,59 @@ function PaymentStep({ totals, reference, referral, proof, setProof, paid, setPa
           {(pay.accountName || pay.bankName) && (
             <p className="mt-1 text-sm text-brown">{[pay.accountName, pay.bankName].filter(Boolean).join(' · ')}</p>
           )}
-          <p className="mt-4 font-display text-3xl text-brown tabular-nums">{rm(totals.total)}</p>
-          {!totals.shippingKnown && <p className="mt-1 text-xs text-brown-soft">Excludes delivery, which we'll confirm with you.</p>}
+          <p className="mt-4 font-display text-3xl text-brown tabular-nums">{rm(order.finalAmount)}</p>
+          {typeof shop.shippingFee !== 'number' && <p className="mt-1 text-xs text-brown-soft">Excludes delivery, which we'll confirm with you.</p>}
         </div>
         <p className="mt-4 text-sm">
-          Add this reference to your transfer:
+          Your order reference. Add it to the transfer's recipient reference:
           <span className="mt-2 block rounded-lg border border-dashed border-brown/35 bg-cream px-3 py-2 text-center font-medium tracking-[0.18em] select-all">
-            {reference}
+            {order.reference}
           </span>
         </p>
-        {referral && <p className="mt-2 text-xs text-brown-soft">Referral code {referral} will be recorded with this order.</p>}
+        {order.promoCode && (
+          <p className="mt-2 text-xs text-brown-soft">
+            Promo code {order.promoCode} applied{order.memberName ? `, credited to ${order.memberName}` : ''}.
+          </p>
+        )}
       </section>
 
-      <section aria-labelledby="pay-2">
+      <section aria-labelledby="pay-2" className="space-y-5">
         <h3 id="pay-2" className="type-label text-brown">
-          2 · Upload proof of payment
+          2 · Transfer details
+        </h3>
+        <div>
+          <label htmlFor={refId} className="type-label text-brown-soft">
+            Transfer reference number
+          </label>
+          <input
+            id={refId}
+            value={transfer.reference}
+            onChange={(e) => setTransfer((t) => ({ ...t, reference: e.target.value }))}
+            maxLength={80}
+            required
+            autoComplete="off"
+            placeholder="From your banking app's receipt"
+            className="field mt-2 w-full"
+          />
+        </div>
+        <div>
+          <label htmlFor={dateId} className="type-label text-brown-soft">
+            Payment date
+          </label>
+          <input
+            id={dateId}
+            type="date"
+            value={transfer.paidOn}
+            max={todayLocal()}
+            onChange={(e) => setTransfer((t) => ({ ...t, paidOn: e.target.value }))}
+            className="field mt-2 w-full"
+          />
+        </div>
+      </section>
+
+      <section aria-labelledby="pay-3">
+        <h3 id="pay-3" className="type-label text-brown">
+          3 · Upload proof of payment
         </h3>
         <label
           htmlFor={fileId}
@@ -541,11 +655,11 @@ function PaymentStep({ totals, reference, referral, proof, setProof, paid, setPa
 
       <label className="flex items-start gap-3 text-sm">
         <input type="checkbox" checked={paid} onChange={(e) => setPaid(e.target.checked)} className="mt-0.5 size-4 accent-[var(--color-rust)]" />
-        <span>I have paid {rm(totals.total)} and uploaded my proof of payment.</span>
+        <span>I have paid {rm(order.finalAmount)} and uploaded my proof of payment.</span>
       </label>
 
       <div className="rounded-xl bg-cream px-4 py-4">
-        <Summary totals={totals} referral={referral} />
+        <Summary totals={order} promo={order.promoCode} />
       </div>
     </div>
   )
@@ -559,11 +673,12 @@ function DoneStep({ placed, onClose }) {
       </span>
       <p className="mt-6 font-display text-3xl text-brown">Thank you!</p>
       <p className="mt-3 max-w-xs text-sm text-brown-soft">
-        We've received your order and proof of payment. We'll verify the payment and contact you to arrange delivery.
+        We've received your order and proof of payment. A committee member will check the transfer and contact you to arrange delivery. Keep
+        your order reference for any questions.
       </p>
       <p className="mt-6 text-xs uppercase tracking-[0.2em] text-brown-soft">Order reference</p>
       <p className="mt-1 font-medium tracking-[0.18em]">{placed.reference}</p>
-      <p className="mt-1 text-sm text-brown-soft">Total paid {rm(placed.total)}</p>
+      <p className="mt-1 text-sm text-brown-soft">Amount transferred {rm(placed.total)} · awaiting verification</p>
       <button type="button" className="btn btn-outline mt-8" onClick={onClose}>
         Continue Browsing
       </button>
