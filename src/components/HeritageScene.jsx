@@ -42,6 +42,8 @@ export default function HeritageScene() {
         />
         {/* Lift the cloth: warm daylight from the upper left and a soft cream fade into the text side */}
         <div className="heritage-light pointer-events-none absolute inset-0" aria-hidden="true" />
+        {/* Phones and tablets: the shadow the landing bottle casts on the cloth (placed by ScrollExperience) */}
+        <span className="heritage-landing-shadow pointer-events-none absolute left-1/2 rounded-[50%] bg-brown-deep/60 blur-[10px]" aria-hidden="true" />
       </div>
 
       <div className="heritage-panel relative flex items-center overflow-hidden bg-cream px-5 lg:-ml-[2px] py-14 md:px-12 md:py-16 lg:pb-6 lg:pl-14 lg:pt-[var(--nav-h)] xl:pl-20">

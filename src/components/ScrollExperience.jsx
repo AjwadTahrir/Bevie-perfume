@@ -41,7 +41,9 @@ function boxWithin(el, ancestor) {
  * Phones and tablets get lighter, unpinned effects instead: the hero
  * copy and bouquet drift apart as the hero scrolls away, the batik
  * cloth wipes in as it arrives, and the bottle comes down to land on it
- * at its home-page size.
+ * at its home-page size: it drifts on a slight curve, sways and turns
+ * as it falls, its shadow gathers on the cloth below, and it settles
+ * with a small dip when it touches down.
  *
  * Everything is reverted (inline styles removed, class dropped) when
  * a media query stops matching, e.g. resizing to mobile.
@@ -136,6 +138,8 @@ export default function ScrollExperience({ onSelect }) {
       const hero = root.querySelector('.scene-hero')
       const bottle = root.querySelector('.hb-move')
       const cloth = root.querySelector('.heritage-textile')
+      const body = bottle.firstElementChild
+      const landing = root.querySelector('.heritage-landing-shadow')
 
       // Where the bottle comes to rest: the middle of the cloth, in page coordinates,
       // so it lands there however fast the visitor scrolls.
@@ -144,6 +148,19 @@ export default function ScrollExperience({ onSelect }) {
         const c = boxWithin(cloth, root)
         return { x: c.x + c.w / 2 - (b.x + b.w / 2), y: c.y + c.h * 0.53 - (b.y + b.h / 2) }
       }
+      // The shadow it casts on the cloth: where its own contact shadow sits once landed
+      const shadowBox = () => {
+        const h = bottle.offsetHeight
+        return { top: cloth.offsetHeight * 0.53 + h * 0.39, width: body.offsetWidth * 0.58, height: h * 0.06 }
+      }
+      // Touchdown: a small dip and spring back, played once in real time when the
+      // bottle arrives, so it never stalls half-squashed if scrolling stops.
+      let landed = false
+      const settle = () =>
+        gsap
+          .timeline()
+          .to(body, { y: 6, scaleY: 0.97, scaleX: 1.02, transformOrigin: '50% 95%', duration: 0.14, ease: 'power2.out' })
+          .to(body, { y: 0, scaleY: 1, scaleX: 1, duration: 0.7, ease: 'elastic.out(1, 0.45)' })
 
       // Hero scrolls away: copy lifts and fades, bouquet swells at its own pace
       gsap
@@ -153,11 +170,35 @@ export default function ScrollExperience({ onSelect }) {
 
       // Our Story arrives: the batik cloth wipes in from the left and settles from a slow zoom,
       // and the bottle comes down to land on it, staying on the cloth from then on
-      gsap
-        .timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: cloth, start: 'top bottom', end: 'center 50%', scrub: 0.6, invalidateOnRefresh: true } })
-        .fromTo(cloth, { clipPath: 'inset(0% 100% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', ease: 'power2.out', duration: 0.6 }, 0)
+      const tl = gsap.timeline({
+        defaults: { ease: 'none' },
+        scrollTrigger: { trigger: cloth, start: 'top bottom', end: 'center 50%', scrub: 0.6, invalidateOnRefresh: true },
+        onUpdate: () => {
+          const p = tl.progress()
+          if (p > 0.985 && !landed) {
+            landed = true
+            settle()
+          } else if (p < 0.9) landed = false
+        },
+      })
+      tl.fromTo(cloth, { clipPath: 'inset(0% 100% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', ease: 'power2.out', duration: 0.6 }, 0)
         .fromTo(q('.heritage-textile img'), { scale: 1.25 }, { scale: 1, duration: 0.6 }, 0)
-        .to(bottle, { x: () => target().x, y: () => target().y, ease: 'power1.inOut', duration: 1 }, 0)
+        // The fall: straight down, while it drifts out to the right and back on a gentle curve
+        .to(bottle, { y: () => target().y, ease: 'power1.inOut', duration: 1 }, 0)
+        .to(bottle, { x: () => target().x + bottle.offsetHeight * 0.14, ease: 'sine.out', duration: 0.5 }, 0)
+        .to(bottle, { x: () => target().x, ease: 'sine.inOut', duration: 0.5 }, 0.5)
+        // Sway and a slight turn in the air, upright and facing front again before touchdown
+        .to(q('.hb-tilt'), { rotation: -7, rotationY: -16, transformPerspective: 1000, transformOrigin: '50% 50%', ease: 'sine.inOut', duration: 0.35 }, 0)
+        .to(q('.hb-tilt'), { rotation: 5, rotationY: 8, ease: 'sine.inOut', duration: 0.35 }, 0.35)
+        .to(q('.hb-tilt'), { rotation: 0, rotationY: 0, ease: 'sine.inOut', duration: 0.25 }, 0.7)
+        // Its floor shadow lifts away with it; a shadow on the cloth gathers as it nears
+        .to(body.firstElementChild, { autoAlpha: 0, duration: 0.12 }, 0)
+        .fromTo(
+          landing,
+          { xPercent: -50, top: () => shadowBox().top, width: () => shadowBox().width, height: () => shadowBox().height, autoAlpha: 0, scaleX: 1.9, scaleY: 1.6 },
+          { autoAlpha: 1, scaleX: 1, scaleY: 1, ease: 'power2.in', duration: 0.6 },
+          0.4,
+        )
 
       return () => root.classList.remove('is-light')
     })

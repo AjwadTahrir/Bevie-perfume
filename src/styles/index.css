@@ -358,6 +358,12 @@
   overflow-x: clip;
   overflow-y: visible;
 }
+.heritage-landing-shadow {
+  display: none;
+}
+.is-light .heritage-landing-shadow {
+  display: block;
+}
 /* GSAP owns these elements while cinematic: no CSS transitions fighting the scrub. */
 .is-cinematic .reveal {
   transition: none !important;
