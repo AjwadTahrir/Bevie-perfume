@@ -13,7 +13,9 @@ import { copy } from '../config/content'
  * rule runs down the right of that group with the painted batik bouquet
  * beside it; narrower layouts keep the bouquet next to the link. In the
  * cinematic sequence the cloth wipes in from the left and the hero
- * bottle comes to rest on it. "Discover our story" swaps the intro
+ * bottle comes to rest on it. On phones and tablets the cloth is a thin
+ * strip instead, and a second strip closes the section, so the story
+ * sits between two batik dividers. "Discover our story" swaps the intro
  * for the longer story in place.
  */
 export default function HeritageScene() {
@@ -28,7 +30,7 @@ export default function HeritageScene() {
       aria-labelledby="heritage-title"
       className="scene scene-heritage relative grid grid-cols-1 bg-cream lg:min-h-[100dvh] lg:grid-cols-2"
     >
-      <div className="heritage-textile relative h-[22rem] overflow-hidden sm:h-[28rem] lg:h-auto">
+      <div className="heritage-textile batik-strip relative h-24 overflow-hidden sm:h-32 lg:h-auto">
         <img
           src={pack.fabric.src}
           srcSet={pack.fabric.srcSet}
@@ -42,7 +44,7 @@ export default function HeritageScene() {
         <div className="heritage-light pointer-events-none absolute inset-0" aria-hidden="true" />
       </div>
 
-      <div className="heritage-panel relative flex items-center overflow-hidden bg-cream px-5 lg:-ml-[2px] py-20 md:px-12 lg:pb-6 lg:pl-14 lg:pt-[var(--nav-h)] xl:pl-20">
+      <div className="heritage-panel relative flex items-center overflow-hidden bg-cream px-5 lg:-ml-[2px] py-14 md:px-12 md:py-16 lg:pb-6 lg:pl-14 lg:pt-[var(--nav-h)] xl:pl-20">
         <div className="relative z-10 flex w-full min-w-0 items-stretch">
         <div className="heritage-copy w-full min-w-0 max-w-[33rem]">
           <Reveal className="heritage-item">
@@ -104,6 +106,12 @@ export default function HeritageScene() {
           <img src={pack.bouquet.src} srcSet={pack.bouquet.srcSet} sizes="20rem" alt="" width="1200" height="800" loading="lazy" decoding="async" className="heritage-side-art" />
         </Reveal>
         </div>
+      </div>
+
+      {/* Phones and tablets: a second batik strip divides the story from the collection */}
+      <div className="heritage-divider batik-strip relative h-24 overflow-hidden sm:h-32 lg:hidden" aria-hidden="true">
+        <img src={pack.fabric.src} srcSet={pack.fabric.srcSet} sizes="100vw" alt="" loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-cover object-[30%_70%]" />
+        <div className="heritage-light pointer-events-none absolute inset-0" />
       </div>
     </section>
   )

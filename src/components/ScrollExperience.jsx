@@ -7,16 +7,10 @@ import { sections } from '../config/brand'
 
 gsap.registerPlugin(ScrollTrigger)
 
-/**
- * Where the pinned sequence runs: desktops at least 560px tall, and phones
- * and tablets at least 720px tall (where the stacked heritage scene fits).
- */
-const CINEMATIC = {
-  wide: '(min-width: 1024px) and (min-height: 560px) and (prefers-reduced-motion: no-preference)',
-  stacked: '(max-width: 1023px) and (min-height: 720px) and (prefers-reduced-motion: no-preference)',
-}
-/** Shorter phones and tablets get lighter, unpinned scroll effects. */
-const LIGHT = '(max-width: 1023px) and (max-height: 719px) and (prefers-reduced-motion: no-preference)'
+/** Where the pinned sequence runs: desktops at least 560px tall. */
+const CINEMATIC = '(min-width: 1024px) and (min-height: 560px) and (prefers-reduced-motion: no-preference)'
+/** Phones and tablets get lighter, unpinned scroll effects. */
+const LIGHT = '(max-width: 1023px) and (prefers-reduced-motion: no-preference)'
 
 /** Box of `el` relative to `ancestor`, ignoring CSS transforms. */
 function boxWithin(el, ancestor) {
@@ -44,11 +38,9 @@ function boxWithin(el, ancestor) {
  *              rises in on the right
  *   0.72-1.00  hold, then the stage releases into the collection
  *
- * Phones and tablets run the same sequence with the scenes stacked
- * (see index.css): the cloth is a band across the top and the bottle
- * lands on it. Phones shorter than 720px get lighter, unpinned effects
- * instead: the hero copy, bottle and bouquet drift apart as the hero
- * scrolls away, and the heritage cloth wipes in as it arrives.
+ * Phones and tablets get lighter, unpinned effects instead: the hero
+ * copy, bottle and bouquet drift apart as the hero scrolls away, and
+ * the two batik strips that frame Our Story wipe in as they arrive.
  *
  * Everything is reverted (inline styles removed, class dropped) when
  * a media query stops matching, e.g. resizing to mobile.
@@ -60,9 +52,7 @@ export default function ScrollExperience({ onSelect }) {
     const root = rootRef.current
     const mm = gsap.matchMedia()
 
-    mm.add(CINEMATIC, (ctx) => {
-      const { wide, stacked } = ctx.conditions
-      if (!wide && !stacked) return
+    mm.add(CINEMATIC, () => {
       root.classList.add('is-cinematic')
       const stage = root.querySelector('.scroll-stage')
       const heritage = root.querySelector('.scene-heritage')
@@ -70,18 +60,13 @@ export default function ScrollExperience({ onSelect }) {
       const cloth = root.querySelector('.heritage-textile')
       const q = gsap.utils.selector(root)
 
-      // Resting place for the bottle. On desktop the cloth is the full-height left
-      // side: the bottle keeps its home-page size and sits in the middle of the
-      // visible batik (the cloth's right edge fades into cream). On phones the
-      // cloth is a band across the top and the bottle is fitted and centred in it.
+      // Resting place for the bottle: the cloth is the full-height left side, and
+      // the bottle keeps its home-page size in the middle of the visible batik
+      // (the cloth's right edge fades into cream).
       const target = () => {
         const b = boxWithin(bottle, stage)
         const c = boxWithin(cloth, stage)
-        return {
-          x: c.x + c.w * (stacked ? 0.5 : 0.42) - (b.x + b.w / 2),
-          y: c.y + c.h * 0.53 - (b.y + b.h / 2),
-          scale: stacked ? (c.h * 0.84) / b.h : 1,
-        }
+        return { x: c.x + c.w * 0.42 - (b.x + b.w / 2), y: c.y + c.h * 0.53 - (b.y + b.h / 2) }
       }
 
       const tl = gsap.timeline({
@@ -114,13 +99,12 @@ export default function ScrollExperience({ onSelect }) {
           0.4,
         )
         .to(q('.hb-tilt'), { scale: 1, rotationY: 0, ease: 'sine.inOut', duration: 0.3 }, 0.4)
-        .to(bottle, { x: () => target().x, y: () => target().y, scale: () => target().scale, ease: 'power2.inOut', duration: 0.32 }, 0.4)
+        .to(bottle, { x: () => target().x, y: () => target().y, ease: 'power2.inOut', duration: 0.32 }, 0.4)
         .fromTo(
           q('.heritage-item'),
           { y: 48, autoAlpha: 0 },
           { y: 0, autoAlpha: 1, stagger: 0.035, ease: 'power2.out', duration: 0.16 },
-          // Stacked, the bottle rises through the text area, so the text waits for it to land.
-          stacked ? 0.68 : 0.56,
+          0.56,
         )
 
         // Hold the finished composition before releasing
@@ -148,7 +132,6 @@ export default function ScrollExperience({ onSelect }) {
     mm.add(LIGHT, () => {
       const q = gsap.utils.selector(root)
       const hero = root.querySelector('.scene-hero')
-      const heritage = root.querySelector('.scene-heritage')
 
       // Hero scrolls away: copy lifts and fades, bottle grows, bouquet swells at its own pace
       gsap
@@ -157,11 +140,13 @@ export default function ScrollExperience({ onSelect }) {
         .to(q('.hb-tilt'), { scale: 1.12, yPercent: -6, transformOrigin: '50% 90%' }, 0)
         .fromTo(q('.layer-back'), { scale: 1 }, { scale: 1.18, yPercent: -14, rotation: -4 }, 0)
 
-      // Our Story arrives: the batik cloth wipes in from the left and settles from a slow zoom
-      gsap
-        .timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: heritage, start: 'top 90%', end: 'top 30%', scrub: 0.6 } })
-        .fromTo(q('.heritage-textile'), { clipPath: 'inset(0% 100% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', ease: 'power2.out' }, 0)
-        .fromTo(q('.heritage-textile img'), { scale: 1.25 }, { scale: 1 }, 0)
+      // Each batik strip around Our Story wipes in from the left and settles from a slow zoom
+      for (const strip of q('.heritage-textile, .heritage-divider')) {
+        gsap
+          .timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: strip, start: 'top 95%', end: 'top 55%', scrub: 0.6 } })
+          .fromTo(strip, { clipPath: 'inset(0% 100% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', ease: 'power2.out' }, 0)
+          .fromTo(strip.querySelector('img'), { scale: 1.25 }, { scale: 1 }, 0)
+      }
     })
 
     return () => mm.revert()
