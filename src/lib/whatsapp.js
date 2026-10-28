@@ -2,11 +2,11 @@ import { brand } from '../config/brand'
 
 /** Prefilled message used when a visitor orders a specific perfume. */
 export function orderMessage(productName) {
-  return `Hi Beavie! I'm interested in ${productName}. Could you share the ordering details?`
+  return `Hi JETHA! I'm interested in ${productName}. Could you share the ordering details?`
 }
 
 /** Prefilled message for general enquiries from the contact section. */
-export const enquiryMessage = "Hi Beavie! I'd like to know more about your perfumes."
+export const enquiryMessage = "Hi JETHA! I'd like to know more about your perfumes."
 
 /**
  * Returns a wa.me-ready number (digits only) or null when the value

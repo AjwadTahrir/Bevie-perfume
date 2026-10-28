@@ -86,7 +86,7 @@ export default function Payments() {
                 aria-selected={selected}
                 onClick={() => setTab(t.key)}
                 className={`relative rounded-lg border px-4 py-3 text-left transition-colors duration-150 ${
-                  selected ? 'border-brand/50 bg-surface shadow-[0_1px_0_rgba(63,41,37,0.04)]' : 'border-line bg-surface/50 hover:border-line-strong hover:bg-surface'
+                  selected ? 'border-brand/50 bg-surface shadow-[0_1px_2px_rgba(12,12,16,0.04)]' : 'border-line bg-surface/50 hover:border-line-strong hover:bg-surface'
                 }`}
               >
                 {selected && <span className="absolute inset-x-4 -bottom-px h-0.5 rounded-full bg-brand" aria-hidden="true" />}

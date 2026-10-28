@@ -19,6 +19,8 @@ const METRICS = {
 }
 
 const PLACE = ['First', 'Second', 'Third']
+// Medal treatment for the podium: the label carries the place, the colour only decorates it.
+const MEDAL = ['bg-gold-soft text-gold', 'bg-silver-soft text-silver', 'bg-bronze-soft text-bronze']
 
 /** Short label for chart axes: first two words of the title-cased name. */
 const shortName = (name) => displayName(name).split(' ').slice(0, 2).join(' ')
@@ -53,7 +55,7 @@ export default function Leaderboard() {
         title="Leaderboard"
         description="Ranked by verified bottles sold. Equal counts share a rank; the next rank skips accordingly (1, 1, 3)."
         actions={
-          <button type="button" className="btn btn-secondary" disabled={!all.length} onClick={() => downloadCsv(`beavie-leaderboard-${stamp()}.csv`, MEMBER_CSV, all)}>
+          <button type="button" className="btn btn-secondary" disabled={!all.length} onClick={() => downloadCsv(`jetha-leaderboard-${stamp()}.csv`, MEMBER_CSV, all)}>
             <Download size={15} /> Export CSV
           </button>
         }
@@ -81,11 +83,12 @@ export default function Leaderboard() {
                 <button type="button" onClick={() => navigate(`/members/${m.member_id}`)} className="group flex h-full w-full flex-col p-5 text-left transition-colors duration-150 hover:bg-tint/50 sm:p-6">
                   <span className="flex items-baseline justify-between gap-3">
                     <span className={`display text-[2.75rem] leading-none ${first ? 'text-brand-deep' : 'text-ink-3'}`}>{m.rank}</span>
-                    <span className="eyebrow">
+                    <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ${MEDAL[m.rank - 1] ?? 'bg-tint text-ink-2'}`}>
+                      <Trophy size={12} aria-hidden="true" />
                       {PLACE[m.rank - 1] ?? `Rank ${m.rank}`} place{tied ? ' · tied' : ''}
                     </span>
                   </span>
-                  <span className={`mt-4 block h-px w-10 ${first ? 'bg-gold' : 'bg-line-strong'}`} aria-hidden="true" />
+                  <span className={`mt-4 block h-0.5 w-10 rounded-full ${['bg-gold', 'bg-silver', 'bg-bronze'][m.rank - 1] ?? 'bg-line-strong'}`} aria-hidden="true" />
                   <span className="display mt-4 block text-lg leading-snug group-hover:text-brand-deep">{displayName(m.full_name)}</span>
                   <span className="mt-0.5 text-xs text-ink-3">{m.committee_role}</span>
                   <span className="mt-5 flex items-baseline gap-1.5">
@@ -140,13 +143,13 @@ export default function Leaderboard() {
             caption={`Top ten sellers by ${METRICS[metric].label.toLowerCase()}`}
           />
         </Card>
-        <Card className="xl:col-span-2" title="Sales distribution" description="How many code holders have sold each number of verified bottles">
+        <Card className="xl:col-span-2" title="Sales distribution" description="Members (up) by verified bottles sold (across, 0 to 5+)">
           <ColumnChart
             data={distribution}
             x="bucket"
             y="members"
             name="Members"
-            xFormat={(b) => `${b} bottle${b === '1' ? '' : 's'}`}
+            xFormat={(b) => b}
             height={220}
             caption="Number of members by verified bottles sold"
           />

@@ -8,8 +8,13 @@ import ContactSection from './components/ContactSection'
 import Footer from './components/Footer'
 import PerfumeModal from './components/PerfumeModal'
 import CartDrawer from './components/CartDrawer'
+import AboutPage from './components/AboutPage'
 import { CartProvider } from './lib/cart'
 import { installAnchorScroll } from './lib/anchorScroll'
+import { aboutPath } from './config/brand'
+
+// Two pages share the shell: the one-page store at / and the programme story at /about.
+const page = window.location.pathname.replace(/\/+$/, '') === aboutPath ? 'about' : 'home'
 
 export default function App() {
   const [selected, setSelected] = useState(null)
@@ -18,16 +23,22 @@ export default function App() {
 
   return (
     <CartProvider>
-      <Navbar />
+      <Navbar page={page} />
       <main id="main">
-        <ScrollExperience onSelect={setSelected} />
-        <Collection onSelect={setSelected} />
-        <CallToAction />
-        <FragranceFinder onSelect={setSelected} />
-        <ContactSection />
+        {page === 'about' ? (
+          <AboutPage />
+        ) : (
+          <>
+            <ScrollExperience onSelect={setSelected} />
+            <Collection onSelect={setSelected} />
+            <CallToAction />
+            <FragranceFinder onSelect={setSelected} />
+            <ContactSection />
+          </>
+        )}
       </main>
-      <Footer />
-      <PerfumeModal perfume={selected} onClose={close} onNavigate={setSelected} />
+      <Footer page={page} />
+      {page === 'home' && <PerfumeModal perfume={selected} onClose={close} onNavigate={setSelected} />}
       <CartDrawer />
     </CartProvider>
   )

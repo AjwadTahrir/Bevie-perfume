@@ -1,7 +1,7 @@
 /**
- * THE BEAVIE COLLECTION
+ * THE JETHA COLLECTION
  * ---------------------------------------------------------------
- * The eight Beavie perfumes. IDs and names match the Supabase catalogue
+ * The eight JETHA perfumes, four For Him and four For Her. IDs and names match the Supabase catalogue
  * (Bayu, Nirmala, ...). Descriptions, notes and bottle photos come from
  * the BeavieWeb catalogue (scents.js); the photo files keep their
  * original names. Prices are RM 35 per bottle, matching the Supabase
@@ -11,12 +11,18 @@
  * FIELDS (one record = one card + its modal)
  *   id            unique, url-safe text; must equal the product id in Supabase
  *   name          the perfume's name as it should appear on the site
+ *   category      'him' | 'her': which collection it belongs to
+ *                 (see `categories` below)
  *   family        one key from `fragranceFamilies` below
  *   description   one or two short sentences for the card and modal
  *   price         number in ringgit, e.g. 189 (or null if unknown)
  *   size          e.g. '50 ml Eau de Parfum' (or null)
  *   notes         { top: [...], heart: [...], base: [...] } arrays of
- *                 strings, or null for any tier that is unknown
+ *                 strings. Kept as reference data for the descriptions;
+ *                 no longer shown as a pyramid on the site.
+ *   story         DRAFT, please confirm: one or two sentences on the
+ *                 scent, its mood and why the name suits it. Written
+ *                 only from the notes above. Shown in the pop-up.
  *   tagline       short personality line, e.g. 'Post-Shower Crispness'
  *   mood          one line describing the scent's atmosphere
  *   accords       [label, strength 0-100, colour] for the accord bars;
@@ -99,17 +105,20 @@ export const heroProduct = {
   perfumeId: 'senja',
   src: chestnutRushLarge,
   srcSet: `${chestnutRushImg} 640w, ${chestnutRushLarge} 1200w`,
-  alt: 'Beavie Senja perfume bottle with a cream label framed by batik-style borders',
+  alt: 'JETHA Senja perfume bottle with a cream label framed by batik-style borders',
 }
 
 export const perfumes = [
   {
     id: 'bayu',
+    category: 'him',
     name: 'Bayu',
     family: 'fresh',
     description:
       'A revitalizing breath of cool clarity. Bayu captures freshly washed skin, chilled green apple, and morning air with effortless polish.',
     tagline: 'Post-Shower Crispness',
+    story:
+      'Named after the breeze, Bayu feels like cool air after a shower: crisp green apple and bergamot, aromatic lavender and rosemary, then clean cedarwood and musk. Light, fresh and easy to wear every day.',
     mood: 'Clean cold lighting, green apple glow, crushed ice, and slate mist.',
     accords: [
       ['Aromatic', 94, '#4fc9ad'],
@@ -154,11 +163,14 @@ export const perfumes = [
   },
   {
     id: 'nirmala',
+    category: 'him',
     name: 'Nirmala',
     family: 'woody',
     description:
       'Precision, composure, command. Cool mint meets warm vanilla and timeless woods, crafted for ambition without compromise.',
     tagline: 'The Peak / CEO',
+    story:
+      'Nirmala means pure and clear, and it wears that way: cool mint and bergamot with sage and green tea, grounded by smooth vanilla, amberwood and cedar. Calm, polished and quietly confident.',
     mood: 'Midnight executive office, marble columns, frozen mint, and data-screen glow.',
     accords: [
       ['Vanilla', 96, '#f0dfbd'],
@@ -204,11 +216,14 @@ export const perfumes = [
   },
   {
     id: 'senja',
+    category: 'him',
     name: 'Senja',
     family: 'amber',
     description:
       'An evocative blend of warmth and sophistication: rum, spices, rich tobacco, smooth leather, vanilla, and amber.',
     tagline: 'The Gentleman’s Lounge',
+    story:
+      'Senja is dusk in a bottle. Warm rum, chestnut and saffron deepen into tobacco and leather before settling on vanilla, amber and sandalwood, as rich and relaxed as the last light of the day.',
     mood: 'Dark mahogany library, leather books, amber rum glow, and cigar smoke.',
     accords: [
       ['Warm Spicy', 96, '#d94f2d'],
@@ -255,11 +270,14 @@ export const perfumes = [
   },
   {
     id: 'samudera',
+    category: 'him',
     name: 'Samudera',
     family: 'fresh',
     description:
       'A surge of marine freshness. Sunlit citrus meets crystalline sea salt and airy waves: pure, invigorating, and clear.',
     tagline: 'Aegean Zenith',
+    story:
+      'Inspired by the open ocean, Samudera pairs bright lemon and sea salt with marine notes and neroli over driftwood and soft ambergris. Fresh, airy and wide open, like standing at the water\'s edge.',
     mood: 'Ocean wave splash, sea salt crystals, lemon peels, and frozen droplets.',
     accords: [
       ['Citrus', 96, '#f1dc61'],
@@ -305,10 +323,13 @@ export const perfumes = [
   },
   {
     id: 'purnama',
+    category: 'her',
     name: 'Purnama',
     family: 'fruity',
     description: 'A bold, magnetic fragrance where juicy dark fruits meet luxurious florals and smoldering base notes.',
     tagline: 'Midnight Raspberry CEO',
+    story:
+      'Purnama is the full moon on a dark night: juicy raspberry and black cherry glow over rose, jasmine and peony, held by warm vanilla, patchouli and amber. Bold, luminous and magnetic.',
     mood: 'Black obsidian marble, silver veins, lace texture, raspberries, and black cherries.',
     accords: [
       ['Fruity', 94, '#ea474d'],
@@ -353,63 +374,15 @@ export const perfumes = [
     motifPlacement: 'top-right',
   },
   {
-    id: 'ratna',
-    name: 'Ratna',
-    family: 'floral',
-    description:
-      'Frozen petals and luminous freshness. Rose and lotus meet crystalline air in an icy floral haute couture composition.',
-    tagline: 'Glacial Floral / Lotus / Ice',
-    mood: 'Glacial ice wall, frozen pink peony, lotus petals, and trapped air bubbles.',
-    accords: [
-      ['Floral', 96, '#f0a0cf'],
-      ['Fresh', 82, '#aee7f2'],
-      ['Aquatic', 74, '#7bbcff'],
-      ['Icy', 64, '#c8e6ff'],
-      ['Rose', 56, '#d84b8a'],
-      ['Lotus', 50, '#d7b2ef'],
-      ['Watery', 44, '#7fbbe8'],
-      ['Clean', 38, '#d7edf5'],
-      ['Airy', 34, '#c8dff0'],
-      ['White Floral', 32, '#efe2d2'],
-      ['Mineral', 28, '#9bc9cb'],
-      ['Musky', 26, '#cfc3dc'],
-      ['Soft Green', 24, '#a8cfa4'],
-    ],
-    facts: {
-      Family: 'Floral Aquatic',
-      Intensity: 'Luminous',
-      Longevity: '7–9 Hours',
-      Sillage: 'Refined',
-      Season: 'Winter / Spring',
-      'Time of Day': 'Day / Evening',
-    },
-    price: 35,
-    size: '30 ml',
-    notes: {
-      top: ['Frosted Lotus', 'Icy Accord', 'Pink Peony'],
-      heart: ['Rose', 'Water Lily', 'Translucent Florals'],
-      base: ['White Musk', 'Pale Woods', 'Clean Amber'],
-    },
-    image: celestiaRoseImg,
-    imageAlt: 'Ratna perfume bottle',
-    scene: {
-      src: celestiaRoseScene1060,
-      srcSet: `${celestiaRoseScene640} 640w, ${celestiaRoseScene1060} 1060w`,
-      position: '60% 82%',
-      alt: 'Frosted pink rose, peony and lotus among ice crystals beside the bottle',
-    },
-    accent: 'cream',
-    bottle: { shape: 'arch', liquid: 'sage', cap: 'gold' },
-    motif: 'bloom',
-    motifPlacement: 'bottom-left',
-  },
-  {
     id: 'ranum',
+    category: 'her',
     name: 'Ranum',
     family: 'fruity',
     description:
       'A luscious celebration of whole frosted grapes and velvety sweetness with plush fruit and deep, indulgent warmth.',
     tagline: 'Vineyard Opulence / Grape',
+    story:
+      'Ranum describes fruit at its ripest, and this scent is exactly that: grape, plum and red berries with soft violet and heliotrope, warmed by vanilla and amber. Lush, sweet and full of life.',
     mood: 'Rich violet velvet drapery, whole frosted grapes, and plush silver light.',
     accords: [
       ['Sweet', 96, '#d84b8a'],
@@ -455,12 +428,69 @@ export const perfumes = [
     motifPlacement: 'top-left',
   },
   {
+    id: 'ratna',
+    category: 'her',
+    name: 'Ratna',
+    family: 'floral',
+    description:
+      'Frozen petals and luminous freshness. Rose and lotus meet crystalline air in an icy floral haute couture composition.',
+    tagline: 'Glacial Floral / Lotus / Ice',
+    story:
+      'Like a jewel catching the light, Ratna is clear and precious: frosted lotus and pink peony with rose and water lily, set on white musk and pale woods. Cool, radiant and elegant.',
+    mood: 'Glacial ice wall, frozen pink peony, lotus petals, and trapped air bubbles.',
+    accords: [
+      ['Floral', 96, '#f0a0cf'],
+      ['Fresh', 82, '#aee7f2'],
+      ['Aquatic', 74, '#7bbcff'],
+      ['Icy', 64, '#c8e6ff'],
+      ['Rose', 56, '#d84b8a'],
+      ['Lotus', 50, '#d7b2ef'],
+      ['Watery', 44, '#7fbbe8'],
+      ['Clean', 38, '#d7edf5'],
+      ['Airy', 34, '#c8dff0'],
+      ['White Floral', 32, '#efe2d2'],
+      ['Mineral', 28, '#9bc9cb'],
+      ['Musky', 26, '#cfc3dc'],
+      ['Soft Green', 24, '#a8cfa4'],
+    ],
+    facts: {
+      Family: 'Floral Aquatic',
+      Intensity: 'Luminous',
+      Longevity: '7–9 Hours',
+      Sillage: 'Refined',
+      Season: 'Winter / Spring',
+      'Time of Day': 'Day / Evening',
+    },
+    price: 35,
+    size: '30 ml',
+    notes: {
+      top: ['Frosted Lotus', 'Icy Accord', 'Pink Peony'],
+      heart: ['Rose', 'Water Lily', 'Translucent Florals'],
+      base: ['White Musk', 'Pale Woods', 'Clean Amber'],
+    },
+    image: celestiaRoseImg,
+    imageAlt: 'Ratna perfume bottle',
+    scene: {
+      src: celestiaRoseScene1060,
+      srcSet: `${celestiaRoseScene640} 640w, ${celestiaRoseScene1060} 1060w`,
+      position: '60% 82%',
+      alt: 'Frosted pink rose, peony and lotus among ice crystals beside the bottle',
+    },
+    accent: 'cream',
+    bottle: { shape: 'arch', liquid: 'sage', cap: 'gold' },
+    motif: 'bloom',
+    motifPlacement: 'bottom-left',
+  },
+  {
     id: 'seroja',
+    category: 'her',
     name: 'Seroja',
     family: 'floral',
     description:
       'A soft radiance of white florals and creamy vanilla blooming like morning light through a veil of pure serenity.',
     tagline: 'Ethereal Vanilla / White Floral',
+    story:
+      'Seroja is the lotus, a flower of grace and calm. That grace comes through in soft white florals, vanilla orchid, neroli and lily of the valley, resting on creamy vanilla and sandalwood. Serene and gentle.',
     mood: 'Vanilla-white architectural garden, lily petals, orchids, silver spheres, and mist.',
     accords: [
       ['White Floral', 96, '#d9d2c0'],
@@ -504,6 +534,12 @@ export const perfumes = [
     motif: 'sprig',
     motifPlacement: 'bottom-right',
   },
+]
+
+/** The two collections, in display order. */
+export const categories = [
+  { key: 'him', label: 'For Him', anchor: 'for-him', intro: 'Fresh, woody and warm: breeze, clarity, dusk and ocean.' },
+  { key: 'her', label: 'For Her', anchor: 'for-her', intro: 'Fruity, floral and luminous: moonlight, ripeness, jewels and lotus.' },
 ]
 
 /** Families that at least one perfume actually uses (drives the finder). */

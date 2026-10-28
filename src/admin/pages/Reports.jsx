@@ -58,7 +58,7 @@ export default function Reports() {
   const exportOrders = async () => {
     setExporting(true)
     try {
-      downloadCsv(`beavie-orders-${range.preset}-${stamp()}.csv`, ORDER_CSV, await fetchOrders(r))
+      downloadCsv(`jetha-orders-${range.preset}-${stamp()}.csv`, ORDER_CSV, await fetchOrders(r))
     } finally {
       setExporting(false)
     }
@@ -72,7 +72,7 @@ export default function Reports() {
         description="Fundraising summary for the outbound programme. All figures use verified payments only, filtered by order date."
         actions={
           <>
-            <button type="button" className="btn btn-secondary" disabled={!members.data} onClick={() => downloadCsv(`beavie-leaderboard-${range.preset}-${stamp()}.csv`, MEMBER_CSV, members.data)}>
+            <button type="button" className="btn btn-secondary" disabled={!members.data} onClick={() => downloadCsv(`jetha-leaderboard-${range.preset}-${stamp()}.csv`, MEMBER_CSV, members.data)}>
               <Download size={15} /> Leaderboard CSV
             </button>
             <button type="button" className="btn btn-secondary" disabled={exporting} onClick={exportOrders}>

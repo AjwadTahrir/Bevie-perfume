@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useMemo, useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Copy, Download, ShoppingBag } from 'lucide-react'
 import { Card, EmptyState, ErrorState, PageHeader, Pagination, SearchInput, Select, SortTh, StatusBadge, TableScroll, TableSkeleton, Toolbar, sortRows, usePaged } from '../components/ui'
 import DateRangeFilter from '../components/DateRangeFilter'
@@ -39,7 +39,12 @@ const opts = (map, all) => [{ value: '', label: all }, ...Object.entries(map).ma
 export default function Orders() {
   const navigate = useNavigate()
   const [range, setRange] = useState(DEFAULT_RANGE)
-  const [q, setQ] = useState('')
+  // ?q= comes from the search box in the top bar.
+  const [params] = useSearchParams()
+  const [q, setQ] = useState(() => params.get('q') ?? '')
+  useEffect(() => {
+    if (params.has('q')) setQ(params.get('q'))
+  }, [params])
   const [pay, setPay] = useState('')
   const [status, setStatus] = useState('')
   const [member, setMember] = useState('')
@@ -75,7 +80,7 @@ export default function Orders() {
         title="Orders"
         description="Every customer order, newest first. Click a row for details and actions."
         actions={
-          <button type="button" className="btn btn-secondary" disabled={!filtered.length} onClick={() => downloadCsv(`beavie-orders-${stamp()}.csv`, ORDER_CSV, filtered)}>
+          <button type="button" className="btn btn-secondary" disabled={!filtered.length} onClick={() => downloadCsv(`jetha-orders-${stamp()}.csv`, ORDER_CSV, filtered)}>
             <Download size={15} /> Export CSV
           </button>
         }
@@ -147,7 +152,7 @@ export default function Orders() {
               <table className="w-full text-sm">
                 <thead className="table-head">
                   <tr>
-                    <th className="th sticky left-0 z-10 bg-[#f4eadb]">Reference</th>
+                    <th className="th sticky left-0 z-10 bg-tint">Reference</th>
                     <SortTh label="Date" k="created_at" sort={sort} setSort={setSort} />
                     <th className="th">Customer</th>
                     <SortTh label="Bottles" k="quantity" sort={sort} setSort={setSort} className="text-right" />
@@ -166,7 +171,7 @@ export default function Orders() {
                       onKeyDown={(e) => e.key === 'Enter' && navigate(`/orders/${o.id}`)}
                       className="row-link group"
                     >
-                      <td className="td sticky left-0 z-10 bg-surface font-medium tabular-nums transition-colors duration-150 group-hover:bg-[#f3e8d8]">
+                      <td className="td sticky left-0 z-10 bg-surface font-medium tabular-nums transition-colors duration-150 group-hover:bg-tint">
                         {o.reference}
                         {o.duplicate_transfer_reference && <Copy size={12} className="ml-1.5 inline text-warn" aria-label="Duplicate transfer reference" role="img" />}
                       </td>

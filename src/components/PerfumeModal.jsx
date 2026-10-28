@@ -9,11 +9,6 @@ import { orderMessage } from '../lib/whatsapp'
 import { useCart } from '../lib/cart'
 import { lockScroll, unlockScroll } from '../lib/scrollLock'
 
-const NOTE_TIERS = [
-  { key: 'top', label: 'Top notes' },
-  { key: 'heart', label: 'Heart notes' },
-  { key: 'base', label: 'Base notes' },
-]
 const ACCORDS_SHOWN = 6
 
 const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -79,7 +74,6 @@ export default function PerfumeModal({ perfume, onClose, onNavigate }) {
   const next = index >= 0 ? perfumes[(index + 1) % perfumes.length] : null
   const family = p ? fragranceFamilies[p.family] : null
   const tint = p ? tintOf(p) : undefined
-  const hasNotes = p?.notes && NOTE_TIERS.some((t) => p.notes[t.key]?.length)
   const accords = p?.accords ? [...p.accords].sort((a, b) => b[1] - a[1]).slice(0, ACCORDS_SHOWN) : []
 
   const iconBtn =
@@ -166,35 +160,15 @@ export default function PerfumeModal({ perfume, onClose, onNavigate }) {
               <p className="mt-5 max-w-prose text-[1.05rem] leading-relaxed">{p.description}</p>
               {p.mood && <p className="mt-4 max-w-prose border-l border-ochre pl-4 text-sm italic leading-relaxed text-brown-soft">{p.mood}</p>}
 
-              {/* Fragrance pyramid */}
-              <section className="mt-12" aria-labelledby="pyramid-title">
-                <h3 id="pyramid-title" className="type-label text-brown-soft">
-                  Fragrance pyramid
-                </h3>
-                {hasNotes ? (
-                  <div className="relative mt-5 px-2 pb-6 pt-4">
-                    <span className="pyramid-shape absolute inset-x-[8%] inset-y-0 bg-cream-deep/70" aria-hidden="true" />
-                    <dl className="relative space-y-4">
-                      {NOTE_TIERS.map((tier) =>
-                        p.notes?.[tier.key]?.length ? (
-                          <div key={tier.key} className="text-center">
-                            <dt className="text-[0.62rem] font-medium uppercase tracking-[0.24em] text-rust-deep">{tier.label}</dt>
-                            <dd className="mt-2 flex flex-wrap justify-center gap-1.5">
-                              {p.notes[tier.key].map((note) => (
-                                <span key={note} className="rounded-full border border-brown/20 bg-cream-light px-3 py-1 text-[0.82rem] text-brown">
-                                  {note}
-                                </span>
-                              ))}
-                            </dd>
-                          </div>
-                        ) : null,
-                      )}
-                    </dl>
-                  </div>
-                ) : (
-                  <p className="mt-4 text-sm text-brown-soft">Notes will be published with the final product details.</p>
-                )}
-              </section>
+              {/* The scent and its name (replaces the fragrance pyramid) */}
+              {p.story && (
+                <section className="mt-10 border-t border-ochre/50 pt-8" aria-labelledby="story-title">
+                  <h3 id="story-title" className="type-label text-brown-soft">
+                    Why {p.name}
+                  </h3>
+                  <p className="mt-4 max-w-prose font-display text-[1.2rem] leading-relaxed text-brown">{p.story}</p>
+                </section>
+              )}
 
               {/* Main accords */}
               {accords.length > 0 && (

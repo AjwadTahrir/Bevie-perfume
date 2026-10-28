@@ -1,14 +1,14 @@
 import { useId, useState } from 'react'
 import { AlertCircle, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, ChevronsUpDown, Info, Inbox, Search } from 'lucide-react'
 
-/** Page title block: tracked eyebrow, Playfair heading, one-line description, actions on the right. */
+/** Page title block: large semibold title, one quiet line under it, controls on the right. */
 export function PageHeader({ eyebrow, title, description, actions }) {
   return (
-    <header className="mb-7 flex flex-wrap items-end justify-between gap-x-6 gap-y-4 border-b border-line pb-5">
+    <header className="mb-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
       <div className="min-w-0">
-        {eyebrow && <p className="eyebrow mb-2">{eyebrow}</p>}
-        <h1 className="display text-[1.75rem] leading-tight text-ink sm:text-[2rem]">{title}</h1>
-        {description && <p className="mt-1.5 max-w-2xl text-sm text-ink-2">{description}</p>}
+        {eyebrow && <p className="eyebrow mb-1.5">{eyebrow}</p>}
+        <h1 className="display text-[1.625rem] leading-tight text-ink sm:text-[1.75rem]">{title}</h1>
+        {description && <p className="mt-1 max-w-2xl text-[0.9375rem] text-ink-2">{description}</p>}
       </div>
       {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
     </header>
@@ -20,7 +20,7 @@ export function SectionTitle({ title, description, actions, className = '' }) {
   return (
     <div className={`mb-3 flex flex-wrap items-end justify-between gap-3 ${className}`}>
       <div>
-        <h2 className="display text-lg text-ink">{title}</h2>
+        <h2 className="text-base font-semibold text-ink">{title}</h2>
         {description && <p className="mt-0.5 text-xs text-ink-3">{description}</p>}
       </div>
       {actions}
@@ -32,9 +32,9 @@ export function Card({ title, description, actions, children, className = '', bo
   return (
     <section className={`card min-w-0 ${className}`}>
       {(title || actions) && (
-        <header className="flex flex-wrap items-start justify-between gap-3 border-b border-line px-5 py-4">
+        <header className="flex flex-wrap items-start justify-between gap-3 px-5 pt-5 pb-1">
           <div className="min-w-0">
-            <h2 className="display text-[1.0625rem] leading-snug text-ink">{title}</h2>
+            <h2 className="text-[0.9375rem] leading-snug font-semibold text-ink">{title}</h2>
             {description && <p className="mt-0.5 text-xs text-ink-3">{description}</p>}
           </div>
           {actions}
@@ -75,59 +75,59 @@ export function InfoTip({ text }) {
 }
 
 /**
- * Key figure: tracked label, Playfair value, one supporting line.
- * `accent` draws a short terracotta rule above the value for the figure that matters most.
+ * Key figure: quiet label, large semibold value, one supporting line.
+ * `accent` marks the figure that matters most with a small lime dot.
  */
 export function Kpi({ label, value, sub, info, loading, tone, accent, className = '' }) {
   return (
-    <div className={`card flex flex-col p-4 sm:p-5 ${className}`}>
-      <p className="eyebrow flex items-center gap-1.5">
+    <div className={`card flex flex-col p-5 ${className}`}>
+      <p className="kpi-label flex items-center gap-1.5">
+        {accent && <span className="size-2 rounded-full bg-lime-deep" aria-hidden="true" />}
         {label}
         {info && <InfoTip text={info} />}
       </p>
-      {accent && <span className="mt-3 block h-px w-8 bg-brand" aria-hidden="true" />}
       {loading ? (
         <div className="skeleton mt-3 h-8 w-28" />
       ) : (
-        <p className={`display mt-2.5 text-[1.625rem] leading-none sm:text-[1.75rem] ${tone === 'muted' ? 'text-ink-2' : 'text-ink'}`}>{value}</p>
+        <p className={`display mt-2 text-[1.625rem] leading-none sm:text-[1.875rem] ${tone === 'muted' ? 'text-ink-2' : 'text-ink'}`}>{value}</p>
       )}
       {sub && !loading && <p className="mt-2 text-xs text-ink-3">{sub}</p>}
     </div>
   )
 }
 
-/** Progress towards a target. Complete bars turn green and are also marked in text by callers. */
+/** Progress towards a target: black while in progress, lime once complete (callers also say so in text). */
 export function ProgressBar({ value, max, size = 'md', label }) {
   const p = max > 0 ? Math.min(100, (value / max) * 100) : 0
   const done = max > 0 && value >= max
   return (
     <div
-      className={`w-full overflow-hidden rounded-full bg-[#e6d4bd] ${size === 'lg' ? 'h-2.5' : size === 'sm' ? 'h-1.5' : 'h-2'}`}
+      className={`w-full overflow-hidden rounded-full bg-[#ececf0] ${size === 'lg' ? 'h-2.5' : size === 'sm' ? 'h-1.5' : 'h-2'}`}
       role="progressbar"
       aria-valuemin={0}
       aria-valuemax={max}
       aria-valuenow={Math.min(value, max)}
       aria-label={label}
     >
-      <div className={`h-full rounded-full transition-[width] duration-500 ${done ? 'bg-good' : 'bg-brand'}`} style={{ width: `${p}%` }} />
+      <div className={`h-full rounded-full transition-[width] duration-500 ${done ? 'bg-lime-deep' : 'bg-ink'}`} style={{ width: `${p}%` }} />
     </div>
   )
 }
 
 const TONES = {
-  neutral: 'bg-tint text-ink-2 ring-line-strong',
-  info: 'bg-info-soft text-info ring-info/25',
-  good: 'bg-good-soft text-good ring-good/25',
-  warn: 'bg-warn-soft text-warn ring-warn/25',
-  bad: 'bg-bad-soft text-bad ring-bad/25',
-  brand: 'bg-brand-soft text-brand-deep ring-brand/25',
+  neutral: 'bg-[#f0f0f3] text-ink-2 ring-transparent',
+  info: 'bg-info-soft text-info ring-transparent',
+  good: 'bg-good-soft text-good ring-transparent',
+  warn: 'bg-warn-soft text-warn ring-transparent',
+  bad: 'bg-bad-soft text-bad ring-transparent',
+  brand: 'bg-lime-soft text-ink ring-lime-deep/40',
 }
 const DOTS = { neutral: 'bg-ink-3', info: 'bg-info', good: 'bg-good', warn: 'bg-warn', bad: 'bg-bad', brand: 'bg-brand' }
 
 /** Status pill. The leading dot and the label carry the meaning, so colour is never the only cue. */
 export function Badge({ tone = 'neutral', children, icon: Icon }) {
   return (
-    <span className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-medium whitespace-nowrap ring-1 ring-inset ${TONES[tone]}`}>
+    <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs leading-none font-medium whitespace-nowrap ring-1 ring-inset ${TONES[tone]}`}>
       {Icon ? <Icon size={12} aria-hidden="true" /> : <span className={`size-1.5 rounded-full ${DOTS[tone]}`} aria-hidden="true" />}
       {children}
     </span>
@@ -163,7 +163,7 @@ export function EmptyState({ icon: Icon = Inbox, title, children, action }) {
       <span className="flex size-10 items-center justify-center rounded-full bg-tint text-ink-3">
         <Icon size={18} strokeWidth={1.75} />
       </span>
-      <p className="display mt-4 text-base text-ink">{title}</p>
+      <p className="mt-4 text-[0.9375rem] font-semibold text-ink">{title}</p>
       {children && <p className="mt-1 max-w-sm text-sm text-ink-3">{children}</p>}
       {action && <div className="mt-5">{action}</div>}
     </div>

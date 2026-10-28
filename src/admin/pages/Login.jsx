@@ -31,13 +31,11 @@ export default function Login() {
     <main className="flex min-h-dvh items-center justify-center bg-canvas px-4 py-10">
       <div className="w-full max-w-sm">
         <div className="mb-9 flex flex-col items-center text-center">
-          <span className="font-display text-[2rem] leading-none font-semibold tracking-[0.32em] text-ink">BEAVIE</span>
-          <span className="mt-2 flex items-center gap-2.5 text-[0.625rem] font-medium tracking-[0.5em] text-ink-3">
-            <span className="h-px w-5 bg-gold" aria-hidden="true" />
-            PERFUME
-            <span className="h-px w-5 bg-gold" aria-hidden="true" />
+          <span className="flex size-12 items-center justify-center rounded-[14px] bg-ink" aria-hidden="true">
+            <span className="size-5 rounded-full border-4 border-lime" />
           </span>
-          <h1 className="display mt-8 text-2xl">Beavie Fundraising Console</h1>
+          <span className="mt-3 text-xl font-bold tracking-tight">JETHA</span>
+          <h1 className="display mt-6 text-2xl">Fundraising Console</h1>
           <p className="mt-1.5 text-sm text-ink-2">Sign in to manage orders and campaign sales.</p>
         </div>
         <form onSubmit={submit} className="card space-y-4 p-6 sm:p-7" noValidate>
