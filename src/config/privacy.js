@@ -14,7 +14,7 @@ export const privacy = {
     title: 'Privacy Policy',
     updated: 'Last updated: 29 October 2026',
     intro: [
-      'This notice explains how JETHA Fragrance ("JETHA", "we", "us") collects and uses your personal data on jethafragrance.store, in line with Malaysia\'s Personal Data Protection Act 2010 (PDPA).',
+      'This notice explains how JETHA Fragrance ("JETHA", "we", "us") collects and uses your personal data on jethafragrance.vercel.app, in line with Malaysia\'s Personal Data Protection Act 2010 (PDPA).',
       'JETHA Fragrance is a student fundraiser run by the organising committee of the Titian Serantau: Thailand Mobility Programme, Kolej Kediaman Tun Ahmad Zaidi (KK10), Universiti Malaya. It is not a registered business. By placing an order, you agree to this notice.',
     ],
     sections: [
@@ -116,7 +116,7 @@ export const privacy = {
     title: 'Dasar Privasi',
     updated: 'Dikemas kini: 29 Oktober 2026',
     intro: [
-      'Notis ini menerangkan bagaimana JETHA Fragrance ("JETHA", "kami") mengumpul dan menggunakan data peribadi anda di jethafragrance.store, selaras dengan Akta Perlindungan Data Peribadi 2010 (PDPA) Malaysia.',
+      'Notis ini menerangkan bagaimana JETHA Fragrance ("JETHA", "kami") mengumpul dan menggunakan data peribadi anda di jethafragrance.vercel.app, selaras dengan Akta Perlindungan Data Peribadi 2010 (PDPA) Malaysia.',
       'JETHA Fragrance ialah projek kutipan dana pelajar yang dikendalikan oleh jawatankuasa penganjur Titian Serantau: Thailand Mobility Programme, Kolej Kediaman Tun Ahmad Zaidi (KK10), Universiti Malaya. Ia bukan perniagaan berdaftar. Dengan membuat pesanan, anda bersetuju dengan notis ini.',
     ],
     sections: [
