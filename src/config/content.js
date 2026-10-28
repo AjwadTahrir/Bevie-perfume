@@ -9,8 +9,8 @@
  * collection has eight scents (four For Him, four For Her), the
  * creative direction (contemporary perfumery inspired by Malaysian
  * batik) and, in `about`, the programme details supplied by the
- * committee (Titian Serantau, KK10 Universiti Malaya, Chulalongkorn
- * University, Bangkok, 30 Nov - 5 Dec 2026).
+ * committee (Titian Serantau, KK10 Universiti Malaya, partner university
+ * to be confirmed, Bangkok, 30 Nov - 4 Dec 2026).
  */
 
 export const copy = {
@@ -67,13 +67,13 @@ export const copy = {
     tagline: 'Connecting cultures, creating meaningful experiences.',
     facts: [
       ['Organiser', 'Kolej Kediaman Tun Ahmad Zaidi (KK10), Universiti Malaya'],
-      ['In collaboration with', 'Chulalongkorn University, Thailand'],
-      ['Dates', '30 November – 5 December 2026'],
+      ['In collaboration with', 'TBD'],
+      ['Dates', '30 November – 4 December 2026'],
       ['Location', 'Bangkok, Thailand'],
     ],
     intro: [
-      'Titian Serantau is an international student mobility programme organised by Kolej Kediaman Tun Ahmad Zaidi (KK10), Universiti Malaya, in collaboration with Chulalongkorn University, Thailand.',
-      'Taking place in Bangkok from 30 November to 5 December 2026, the programme aims to strengthen regional connections through cultural exchange, academic engagement, community involvement, and sports.',
+      'Titian Serantau is an international student mobility programme organised by Kolej Kediaman Tun Ahmad Zaidi (KK10), Universiti Malaya.',
+      'Taking place in Bangkok from 30 November to 4 December 2026, the programme aims to strengthen regional connections through cultural exchange, academic engagement, community involvement, and sports.',
       'The programme provides students with opportunities to explore different cultures, exchange ideas, and develop meaningful connections beyond borders.',
     ],
     support: {
