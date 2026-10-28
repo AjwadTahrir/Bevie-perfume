@@ -691,11 +691,6 @@
   }
 }
 
-/* Soft triangle behind the fragrance pyramid */
-.pyramid-shape {
-  clip-path: polygon(50% 0, 100% 100%, 0 100%);
-}
-
 /* Native dialog base */
 .modal {
   background: transparent;

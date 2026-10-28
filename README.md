@@ -1,60 +1,70 @@
-# Beavie Perfume
+# JETHA Perfume
 
-Single-page catalogue for Beavie Perfume: contemporary perfumery inspired by Malaysian batik.
-React 19 + Vite + Tailwind CSS v4, Lucide icons, self-hosted fonts. No backend, cart or payments.
+Storefront and fundraising console for JETHA Perfume, sold to support **Titian Serantau: Thailand Mobility Programme**
+(KK10, Universiti Malaya × Chulalongkorn University, Bangkok, 30 Nov – 5 Dec 2026).
+React 19 + Vite + Tailwind CSS v4, Lucide icons, self-hosted fonts, Supabase backend.
 
 ```bash
 npm install      # install dependencies
-npm run dev      # local development (http://localhost:5173)
+npm run dev      # local development (http://localhost:5173, /about, /admin)
 npm run build    # production build into dist/
 npm run preview  # serve the production build
 ```
+
+## Pages
+
+| URL | What | Entry |
+| --- | --- | --- |
+| `/` | The store: hero, Our Story, the collection (For Him / For Her), fragrance finder, contact | `src/App.jsx` |
+| `/about` | The fundraising programme and why JETHA is sold | `src/components/AboutPage.jsx` |
+| `/admin` | Fundraising console (Supabase sign-in, admins only) | `src/admin/` |
+
+`vercel.json` rewrites `/about` and `/admin/*` to their HTML entries.
 
 ## Where things live
 
 | What | File |
 | --- | --- |
-| WhatsApp number, Instagram, email, placeholder notices | `src/config/brand.js` |
-| All marketing copy (proposed, not verified) | `src/config/content.js` |
-| The eight perfumes and fragrance families | `src/data/perfumes.js` |
+| Brand name, wordmark, WhatsApp, Instagram, checkout display rules | `src/config/brand.js` |
+| All site copy, including the About page (`copy.about`) | `src/config/content.js` |
+| The eight perfumes, their collection (`category`) and descriptions (`story`) | `src/data/perfumes.js` |
+| Payment QR and bank details | `src/config/payment.js` |
 | Colours, fonts, type scale, motion tokens | `src/styles/index.css` (`@theme`) |
-| WhatsApp link builder | `src/lib/whatsapp.js` |
-| Batik artwork (original SVG, generated from shared geometry) | `src/assets/batik/` |
-| Placeholder bottle illustration | `src/assets/products/BottleIllustration.jsx` |
-| Page sections | `src/components/` |
+| Admin colours and type (grey canvas, black, lime) | `src/admin/admin.css` (`@theme`) |
+| Checkout backend, database, admin views | `supabase/` (see `supabase/README.md`) |
 
-## Configure WhatsApp
+## The collection
 
-In `src/config/brand.js` set `whatsappNumber` to the business number in international format,
-digits only, with no `+` and no spaces (Malaysia example: `'60123456789'`).
-While it is empty or invalid, every WhatsApp button is disabled and links nowhere.
-Product messages read: *"Hi Beavie! I'm interested in [Perfume Name]. Could you share the ordering details?"*
+Each perfume in `src/data/perfumes.js` has a `category`: `'him'` (Bayu, Nirmala, Senja, Samudera) or `'her'`
+(Purnama, Ranum, Ratna, Seroja). The collection section shows both groups with an All / For Him / For Her filter, and
+`#for-him` / `#for-her` link straight to a group (used by the navigation, footer and About page).
 
-## Replace the eight perfumes
+`story` is the short description shown in each perfume's pop-up under "Why …". The current text is a **draft written
+only from the recorded notes**; confirm or edit it in `perfumes.js`. The `notes` stay in the data as the source for
+these descriptions but are no longer displayed.
 
-Edit the records in `src/data/perfumes.js` (each field is documented at the top of the file):
+## Admin console
 
-1. Set `name`, `family` (one of the keys in `fragranceFamilies`, add a family there if needed) and `description`.
-2. Set `price` as a number in ringgit (e.g. `189`), `size` (e.g. `'50 ml Eau de Parfum'`) and `notes`
-   (`{ top: ['...'], heart: ['...'], base: ['...'] }`).
-3. For a photo: put the file in `src/assets/products/`, import it at the top of `perfumes.js`
-   (`import melurImg from '../assets/products/melur.webp'`), then set `image: melurImg` and a descriptive `imageAlt`.
-   Transparent or light-background images around 900 x 1200 px (WebP) suit the arched frames.
-4. Remove `isPlaceholder: true`. When all are real, set `showPlaceholderNotices: false` in `brand.js`.
+Overview (greeting, campaign fund, bottles this week/month/quarter, target, sales trend, top three, recent orders),
+Analytics (sales by bureau, bottles per week/month/quarter, top AJK sellers), Orders, Payments, AJK Performance,
+Leaderboard, Promo Codes, Reports and Settings. Every figure comes from the Supabase views and `admin_*` functions in
+`supabase/migrations/20261027000600_admin_dashboard.sql`; only verified payments count as sales.
+The top-bar search (⌘K) searches orders.
 
-The cards, the fragrance finder and the detail modal all update automatically.
-The finder only offers families that at least one perfume uses.
+Run `supabase/migrations/20261028000700_rename_campaign_jetha.sql` once after 006: it renames the stored campaign from
+"Beavie Perfume Outbound Fundraiser" to "Titian Serantau Fundraiser" (only if it still has that old default).
 
-## Still placeholder
+## Still to confirm
 
-- Wordmark `BEAVIE` (typographic stand-in for the logo)
-- Hero product image (`src/components/Hero.jsx`, marked `TODO`)
-- All eight perfume records: names, families, descriptions, prices, sizes, notes, photos
-- WhatsApp number, Instagram URL/handle, email
-- Marketing copy in `src/config/content.js` (proposed, needs brand approval)
+- The `story` descriptions for all eight perfumes (drafts).
+- Bottle photographs still print the old **BEAVIE** name on the labels (`src/assets/products/`); replace them when
+  JETHA-labelled photos are ready.
+- The wordmark `JETHA` is typographic; swap in the real logo when there is one.
 
 ## Notes
 
-- Fonts: Cormorant Garamond and Outfit, both SIL Open Font License, bundled via Fontsource (no Google Fonts requests).
+- Internal identifiers keep their old names on purpose (`beavie-perfume` package, `beavie-cart-v1` cart storage,
+  `bevie-admin-session`): renaming them would empty customers' carts and sign admins out, and nobody sees them.
+- Fonts: Playfair Display and DM Sans on the store, Inter in the admin; all SIL Open Font License, bundled via Fontsource.
 - Illustrations are original artwork inspired by batik florals. They do not reproduce any specific traditional motif.
-- Motion respects `prefers-reduced-motion`. The page is light-theme only by design (ivory is the brand background).
+- Motion respects `prefers-reduced-motion`.

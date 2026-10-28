@@ -14,23 +14,40 @@ function documentTop(el) {
   return y
 }
 
+/** Scrolls to the section named by `hash` ('#collection'). Returns false if it has no anchor. */
+function scrollToSection(hash, smooth) {
+  if (!hash || hash.length < 2) return false
+  const section = document.getElementById(decodeURIComponent(hash.slice(1)))
+  const anchor = section?.querySelector('[data-scroll-anchor]')
+  if (!anchor) return false
+  const nav = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) * 16 || 0
+  window.scrollTo({ top: documentTop(anchor) - nav - GAP, behavior: smooth ? 'smooth' : 'auto' })
+  return true
+}
+
 export function installAnchorScroll() {
   const onClick = (e) => {
     if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
     const link = e.target.closest?.('a[href^="#"]')
     if (!link) return
     const hash = link.getAttribute('href')
-    if (hash.length < 2) return
-    const section = document.getElementById(decodeURIComponent(hash.slice(1)))
-    const anchor = section?.querySelector('[data-scroll-anchor]')
-    if (!anchor) return
-
-    e.preventDefault()
-    const nav = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) * 16 || 0
     const smooth = window.matchMedia('(prefers-reduced-motion: no-preference)').matches
-    window.scrollTo({ top: documentTop(anchor) - nav - GAP, behavior: smooth ? 'smooth' : 'auto' })
+    if (!scrollToSection(hash, smooth)) return
+    e.preventDefault()
     history.pushState(null, '', hash)
   }
   document.addEventListener('click', onClick)
-  return () => document.removeEventListener('click', onClick)
+
+  // Arriving with a hash (e.g. /#for-her from the About page): land again once
+  // the pinned hero has laid itself out, since that shifts everything below it.
+  let timer
+  if (window.location.hash) {
+    const land = () => (timer = setTimeout(() => scrollToSection(window.location.hash, false), 350))
+    if (document.readyState === 'complete') land()
+    else window.addEventListener('load', land, { once: true })
+  }
+  return () => {
+    clearTimeout(timer)
+    document.removeEventListener('click', onClick)
+  }
 }

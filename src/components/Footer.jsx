@@ -1,26 +1,31 @@
-import { brand, sections } from '../config/brand'
+import { aboutPath, brand, sections } from '../config/brand'
 import { copy } from '../config/content'
 import InstagramIcon from './InstagramIcon'
 
-const links = [
-  { href: '#page-top', label: 'Home' },
-  { href: `#${sections.story}`, label: 'Our Story' },
-  { href: `#${sections.collection}`, label: 'Collection' },
-  { href: `#${sections.contact}`, label: 'Contact' },
-]
+const linksFor = (page) => {
+  const p = page === 'home' ? '' : '/'
+  return [
+    { href: page === 'home' ? '#page-top' : '/', label: 'Home' },
+    { href: `${p}#${sections.forHim}`, label: 'For Him' },
+    { href: `${p}#${sections.forHer}`, label: 'For Her' },
+    { href: aboutPath, label: 'About' },
+    { href: `${p}#${sections.contact}`, label: 'Contact' },
+  ]
+}
 
 /**
  * Cream footer on a single line: wordmark, statement, links, the
  * Instagram icon and copyright. The icon appears only once the
  * Instagram URL is configured in src/config/brand.js.
  */
-export default function Footer() {
+export default function Footer({ page = 'home' }) {
   const { instagram } = brand.contact
+  const links = linksFor(page)
 
   return (
     <footer className="border-t border-brown/15 bg-cream text-brown">
       <div className="mx-auto flex max-w-[1440px] flex-col gap-8 px-5 py-12 md:px-8 lg:flex-row lg:items-center lg:gap-12 lg:px-12">
-        <a href="#page-top" className="inline-flex shrink-0 flex-col leading-none" aria-label={`${brand.name}, back to top`}>
+        <a href={page === 'home' ? '#page-top' : '/'} className="inline-flex shrink-0 flex-col leading-none" aria-label={`${brand.name}, home`}>
           <span className="font-display text-[1.9rem] tracking-[0.3em]">{brand.wordmark}</span>
           <span className="mt-1.5 pl-1 text-[0.55rem] font-medium tracking-[0.62em]">PERFUME</span>
         </a>

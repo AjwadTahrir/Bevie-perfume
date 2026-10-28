@@ -45,7 +45,7 @@ export default function ConfirmDialog({ open, title, body, confirmLabel, tone = 
         e.preventDefault()
         if (!busy) onClose()
       }}
-      className="m-auto w-[min(28rem,calc(100%-2rem))] rounded-lg border border-line bg-surface p-0 text-ink shadow-[0_24px_60px_rgba(58,36,32,0.22)] backdrop:bg-espresso/45"
+      className="m-auto w-[min(28rem,calc(100%-2rem))] rounded-2xl border border-line bg-surface p-0 text-ink shadow-[0_24px_60px_rgba(12,12,16,0.18)] backdrop:bg-espresso/45"
     >
       <form onSubmit={submit} className="p-6">
         <h2 id={`${id}-t`} className="display text-xl leading-snug">

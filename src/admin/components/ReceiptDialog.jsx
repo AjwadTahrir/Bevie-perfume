@@ -42,7 +42,7 @@ export default function ReceiptDialog({ order, onClose, onReview }) {
         onClose()
       }}
       onClick={(e) => e.target === ref.current && onClose()}
-      className="m-auto max-h-[calc(100dvh-2rem)] w-[min(40rem,calc(100%-2rem))] overflow-hidden rounded-lg border border-line bg-surface p-0 text-ink shadow-[0_24px_60px_rgba(58,36,32,0.22)] backdrop:bg-espresso/55"
+      className="m-auto max-h-[calc(100dvh-2rem)] w-[min(40rem,calc(100%-2rem))] overflow-hidden rounded-2xl border border-line bg-surface p-0 text-ink shadow-[0_24px_60px_rgba(12,12,16,0.18)] backdrop:bg-espresso/55"
     >
       {order && (
         <div className="flex max-h-[calc(100dvh-2rem)] flex-col">

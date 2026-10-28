@@ -1,5 +1,5 @@
 /**
- * BEAVIE BRAND CONFIGURATION
+ * JETHA BRAND CONFIGURATION
  * ---------------------------------------------------------------
  * The single place to edit contact details and site-wide switches.
  * Colours, fonts and the type scale live in src/styles/index.css
@@ -7,10 +7,10 @@
  */
 
 export const brand = {
-  name: 'Beavie Perfume',
+  name: 'JETHA Perfume',
 
   // Temporary typographic wordmark. Replace with the real logo when available.
-  wordmark: 'BEAVIE',
+  wordmark: 'JETHA',
 
   /**
    * WHATSAPP BUSINESS NUMBER
@@ -32,7 +32,7 @@ export const brand = {
     instagram: 'https://www.instagram.com/jelajahnusantara_kk10/',
   },
 
-  // Display handle shown next to Instagram once the URL is set, e.g. '@beavie'.
+  // Display handle shown next to Instagram once the URL is set, e.g. '@jetha'.
   instagramHandle: '@jelajahnusantara_kk10',
 
   /**
@@ -72,10 +72,15 @@ export const shop = {
   maxQuantityPerItem: 10,
 }
 
+/** The About page (the fundraising programme), a separate path from the one-page store. */
+export const aboutPath = '/about'
+
 /** Section anchors used by the navigation and in-page links. */
 export const sections = {
   story: 'our-story',
   collection: 'collection',
+  forHim: 'for-him',
+  forHer: 'for-her',
   finder: 'find-your-scent',
   contact: 'contact',
 }

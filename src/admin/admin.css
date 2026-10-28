@@ -1,47 +1,55 @@
 @import 'tailwindcss';
 
 /* ================================================================
-   BEAVIE ADMIN TOKENS
-   The operational counterpart of the storefront: the same champagne,
-   espresso and terracotta, Playfair Display for headings and key
-   figures, DM Sans for data. No batik or florals here; the brand
-   comes through colour, type and spacing. Text colours are checked
-   for at least 4.5:1 on the surfaces they sit on.
+   JETHA ADMIN TOKENS
+   A quiet analytics console: light grey canvas, white cards with
+   hairline borders, near-black ink and actions, and one restrained
+   lime accent for highlights (active icon, current period, the
+   campaign-fund card). Lime is never used for text on white; text
+   colours are checked for at least 4.5:1 on the surfaces they sit on.
    ================================================================ */
 @theme {
-  --font-sans: 'DM Sans Variable', 'Segoe UI', system-ui, sans-serif;
-  --font-display: 'Playfair Display', 'Iowan Old Style', Georgia, serif;
+  --font-sans: 'Inter Variable', 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: var(--font-sans);
+  --font-mono: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace;
 
   /* Surfaces */
-  --color-canvas: #f4e6d3; /* page background: warm champagne */
-  --color-sidebar: #eedbc2; /* navigation: a shade deeper */
-  --color-surface: #fbf5ec; /* raised panels, tables, dialogs */
-  --color-tint: #f0e2cf; /* row hover, table headers, quiet fills */
-  --color-line: #e5d2bd; /* dividers and borders */
-  --color-line-strong: #d3bba1; /* inputs, controls */
+  --color-canvas: #f4f4f6; /* page background */
+  --color-sidebar: #fafafa; /* navigation column */
+  --color-surface: #ffffff; /* cards, tables, dialogs */
+  --color-tint: #f4f4f6; /* row hover, table headers, segmented track */
+  --color-line: #ebebef; /* card borders and dividers */
+  --color-line-strong: #dcdce2; /* inputs, controls */
 
   /* Ink */
-  --color-ink: #3f2925; /* espresso: text, headings, icons (11:1) */
-  --color-ink-2: #6b4a42; /* secondary text (6.4:1) */
-  --color-ink-3: #785c4e; /* metadata, captions (5:1 on canvas) */
-  --color-espresso: #3a2420; /* dark fills: toasts, tooltips */
+  --color-ink: #0c0c10; /* text, headings, icons */
+  --color-ink-2: #52525c; /* secondary text (7.6:1 on white) */
+  --color-ink-3: #6e6e78; /* metadata, captions (5:1 on white) */
+  --color-espresso: #111114; /* dark fills: tooltips, toasts, fund card */
 
-  /* Brand accents */
-  --color-brand: #b94d32; /* terracotta: primary actions, active nav, chart marks */
-  --color-brand-deep: #9c3f22; /* terracotta text and links (5.4:1) */
-  --color-brand-soft: #f3dccf;
-  --color-gold: #c99455; /* restrained decorative accents only */
-  --color-gold-soft: #f1e1c8;
+  /* Actions and accent */
+  --color-brand: #111114; /* primary buttons, active navigation */
+  --color-brand-deep: #111114; /* links */
+  --color-brand-soft: #f0f0f3;
+  --color-lime: #d7f26b; /* highlights only, never text on white */
+  --color-lime-deep: #b9dc34; /* lime marks that sit on white */
+  --color-lime-soft: #f4fbd9;
+  --color-gold: #b8860b;
+  --color-gold-soft: #fbf3d8;
+  --color-silver: #6b7280;
+  --color-silver-soft: #eef0f3;
+  --color-bronze: #a0582c;
+  --color-bronze-soft: #f7e9df;
 
   /* Status: used for meaning only */
-  --color-good: #3e6b3a;
-  --color-good-soft: #e4ebd8;
-  --color-warn: #8a5410;
-  --color-warn-soft: #f6e4c6;
-  --color-bad: #a3352a;
-  --color-bad-soft: #f6ded7;
-  --color-info: #3d6a6e;
-  --color-info-soft: #dfeae8;
+  --color-good: #157f3c;
+  --color-good-soft: #e7f6ec;
+  --color-warn: #9a5b00;
+  --color-warn-soft: #fdf2d8;
+  --color-bad: #b42318;
+  --color-bad-soft: #fdecea;
+  --color-info: #1d5fb8;
+  --color-info-soft: #e8f0fc;
 
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -57,53 +65,64 @@
     font-family: var(--font-sans);
     font-size: 0.875rem;
     line-height: 1.5;
+    font-feature-settings: 'cv11', 'ss01';
     -webkit-font-smoothing: antialiased;
   }
   :focus-visible {
-    outline: 2px solid var(--color-brand);
+    outline: 2px solid var(--color-ink);
     outline-offset: 2px;
   }
   ::selection {
-    background: var(--color-brand-soft);
+    background: var(--color-lime);
   }
 }
 
 @layer components {
-  /* Display type: Playfair with lining, even-width figures for numbers */
+  /* Headings and key figures: tight, semibold, tabular */
   .display {
-    font-family: var(--font-display);
-    font-weight: 500;
-    letter-spacing: -0.01em;
-    font-variant-numeric: lining-nums tabular-nums;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    font-variant-numeric: tabular-nums;
   }
-  /* Small tracked uppercase section labels */
+  /* Small uppercase section labels (sidebar groups, table heads) */
   .eyebrow {
-    @apply text-[0.6875rem] font-medium tracking-[0.16em] text-ink-3 uppercase;
+    @apply text-[0.6875rem] font-medium tracking-[0.08em] text-ink-3 uppercase;
+  }
+  /* Quiet label above a figure, as in the reference cards */
+  .kpi-label {
+    @apply text-[0.8125rem] text-ink-2;
   }
 
   .card {
-    @apply rounded-lg border border-line bg-surface shadow-[0_1px_0_rgba(63,41,37,0.03)];
+    @apply rounded-2xl border border-line bg-surface;
   }
   .btn {
-    @apply inline-flex h-9 items-center justify-center gap-2 rounded-md px-3.5 text-sm font-medium whitespace-nowrap transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex h-9 items-center justify-center gap-2 rounded-xl px-3.5 text-sm font-medium whitespace-nowrap transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-50;
   }
   .btn-primary {
-    @apply bg-brand text-white hover:bg-brand-deep;
+    @apply bg-brand text-white hover:bg-[#2a2a30];
   }
   .btn-secondary {
-    @apply border border-line-strong bg-surface text-ink hover:border-ink-3/50 hover:bg-tint;
+    @apply border border-line bg-surface text-ink hover:border-line-strong hover:bg-tint;
   }
   .btn-ghost {
     @apply text-ink-2 hover:bg-tint hover:text-ink;
   }
+  .btn-lime {
+    @apply bg-lime text-ink hover:bg-[#cbeb52];
+  }
   .btn-danger {
-    @apply bg-bad text-white hover:bg-[#86281f];
+    @apply bg-bad text-white hover:bg-[#912018];
   }
   .btn-good {
-    @apply bg-good text-white hover:bg-[#30552d];
+    @apply bg-good text-white hover:bg-[#106531];
+  }
+  /* Square icon button in the top bar */
+  .icon-btn {
+    @apply relative inline-flex size-10 items-center justify-center rounded-xl border border-line bg-surface text-ink transition-colors duration-150 hover:border-line-strong hover:bg-tint;
   }
   .input {
-    @apply h-9 w-full rounded-md border border-line-strong bg-surface px-3 text-sm text-ink transition-colors duration-150 placeholder:text-ink-3 hover:border-ink-3/50 focus:border-brand focus:ring-2 focus:ring-brand/15 focus:outline-none focus-visible:outline-none;
+    @apply h-9 w-full rounded-xl border border-line bg-surface px-3 text-sm text-ink transition-colors duration-150 placeholder:text-ink-3 hover:border-line-strong focus:border-ink/40 focus:ring-4 focus:ring-ink/5 focus:outline-none focus-visible:outline-none;
   }
   textarea.input {
     @apply h-auto py-2;
@@ -112,27 +131,30 @@
     @apply mb-1.5 block text-xs font-medium text-ink-2;
   }
   .th {
-    @apply px-3 py-2.5 text-left min-[90rem]:px-3.5 text-[0.6875rem] font-medium tracking-[0.08em] whitespace-nowrap text-ink-3 uppercase;
+    @apply px-3 py-2.5 text-left text-xs font-medium whitespace-nowrap text-ink-3 min-[90rem]:px-3.5;
   }
   .td {
-    @apply px-3 py-3 align-middle whitespace-nowrap min-[90rem]:px-3.5;
+    @apply px-3 py-3.5 align-middle whitespace-nowrap min-[90rem]:px-3.5;
   }
-  /* Table shell: header band and row rules shared by every table */
   .table-head {
-    @apply border-b border-line bg-tint/60;
+    @apply border-b border-line;
   }
   .row-link {
     @apply cursor-pointer transition-colors duration-150 hover:bg-tint/70 focus-visible:bg-tint/70;
   }
   .text-link {
-    @apply text-brand-deep underline-offset-2 hover:underline;
+    @apply font-medium text-ink underline decoration-line-strong underline-offset-2 hover:decoration-ink;
   }
-  /* Segmented control (date presets, chart metric) */
+  /* Segmented control (Week / Month / Quarter, date presets, chart metric) */
   .segmented {
-    @apply inline-flex rounded-md border border-line-strong bg-surface p-0.5;
+    @apply inline-flex rounded-xl bg-[#ebebef] p-1;
   }
   .segment {
-    @apply h-8 rounded-[5px] px-3 text-xs font-medium whitespace-nowrap text-ink-2 transition-colors duration-150 hover:text-ink aria-pressed:bg-ink aria-pressed:text-surface;
+    @apply h-8 rounded-lg px-3 text-[0.8125rem] font-medium whitespace-nowrap text-ink-2 transition-[color,background-color,box-shadow] duration-150 hover:text-ink aria-pressed:bg-surface aria-pressed:text-ink aria-pressed:shadow-[0_1px_2px_rgba(12,12,16,0.08),0_0_0_1px_rgba(12,12,16,0.04)];
+  }
+  /* Coloured initial tile used for people in lists */
+  .avatar {
+    @apply inline-flex size-9 shrink-0 items-center justify-center rounded-[10px] text-sm font-semibold text-white;
   }
 }
 
@@ -142,10 +164,10 @@
   }
 }
 .skeleton {
-  background: linear-gradient(90deg, #ecdcc7 25%, #f5eadb 50%, #ecdcc7 75%);
+  background: linear-gradient(90deg, #ececf0 25%, #f6f6f8 50%, #ececf0 75%);
   background-size: 200% 100%;
   animation: shimmer 1.4s linear infinite;
-  border-radius: 6px;
+  border-radius: 10px;
 }
 @keyframes rise {
   from {
@@ -154,7 +176,7 @@
   }
 }
 .rise {
-  animation: rise 0.22s var(--ease-out);
+  animation: rise 0.25s var(--ease-out) both;
 }
 @keyframes slide-in {
   from {

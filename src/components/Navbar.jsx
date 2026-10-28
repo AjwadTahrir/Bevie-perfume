@@ -1,15 +1,21 @@
 import { useEffect, useRef, useState } from 'react'
 import { Menu, ShoppingBag, X } from 'lucide-react'
-import { brand, sections } from '../config/brand'
+import { aboutPath, brand, sections } from '../config/brand'
 import { useCart } from '../lib/cart'
 
-// No journal, search or cart exist yet, so they are not offered.
-const links = [
-  { href: '#page-top', key: 'home', label: 'Home' },
+// Store sections are in-page anchors; on the About page they point back to the store.
+const storeLinks = [
   { href: `#${sections.story}`, key: 'our-story', label: 'Our Story' },
-  { href: `#${sections.collection}`, key: 'collection', label: 'Collection' },
+  { href: `#${sections.forHim}`, key: sections.forHim, label: 'For Him' },
+  { href: `#${sections.forHer}`, key: sections.forHer, label: 'For Her' },
   { href: `#${sections.finder}`, key: 'find-your-scent', label: 'Find Your Scent' },
 ]
+const aboutLink = { href: aboutPath, key: 'about', label: 'About' }
+
+function linksFor(page) {
+  const prefix = page === 'home' ? '' : '/'
+  return [...storeLinks.map((l) => ({ ...l, href: prefix + l.href })), aboutLink]
+}
 
 function Wordmark({ className = '' }) {
   return (
@@ -20,10 +26,13 @@ function Wordmark({ className = '' }) {
   )
 }
 
-export default function Navbar() {
+export default function Navbar({ page = 'home' }) {
+  const links = linksFor(page)
+  const home = page === 'home' ? '#page-top' : '/'
+  const contact = page === 'home' ? `#${sections.contact}` : `/#${sections.contact}`
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
-  const [active, setActive] = useState('home')
+  const [active, setActive] = useState(page === 'home' ? 'home' : page)
   const toggleRef = useRef(null)
   const panelRef = useRef(null)
   const cart = useCart()
@@ -41,6 +50,7 @@ export default function Navbar() {
   // While the cinematic stage is pinned, its scenes are always on screen, so the
   // scroll-track markers stand in for them (see ScrollExperience).
   useEffect(() => {
+    if (page !== 'home') return
     const visible = new Set()
     const pick = () => {
       const valid = [...visible].filter((el) => (el.classList.contains('nav-marker') ? true : !el.closest('.is-cinematic')))
@@ -55,7 +65,7 @@ export default function Navbar() {
     )
     document.querySelectorAll('[data-nav]').forEach((el) => io.observe(el))
     return () => io.disconnect()
-  }, [])
+  }, [page])
 
   // Mobile menu: lock scroll, focus first link, Escape closes, close at desktop width.
   useEffect(() => {
@@ -98,18 +108,18 @@ export default function Navbar() {
           Skip to content
         </a>
         <nav aria-label="Main" className="mx-auto grid h-[var(--nav-h)] max-w-[1440px] grid-cols-[1fr_auto] items-center px-5 md:px-8 lg:grid-cols-[1fr_auto_1fr] lg:px-12">
-          <a href="#page-top" className="justify-self-start text-brown" aria-label={`${brand.name}, back to top`}>
+          <a href={home} className="justify-self-start text-brown" aria-label={page === 'home' ? `${brand.name}, back to top` : `${brand.name}, home`}>
             <Wordmark />
           </a>
 
           <ul className="hidden items-center lg:flex">
             {links.map((l, i) => (
               <li key={l.href} className="flex items-center">
-                {i > 0 && <span className="mx-6 size-[3px] rounded-full bg-ochre xl:mx-8" aria-hidden="true" />}
+                {i > 0 && <span className="mx-3.5 size-[3px] rounded-full bg-ochre xl:mx-6" aria-hidden="true" />}
                 <a
                   href={l.href}
-                  aria-current={active === l.key ? 'true' : undefined}
-                  className={`link-underline py-1.5 text-[0.7rem] font-medium uppercase tracking-[0.24em] transition-colors ${
+                  aria-current={active === l.key ? (l.key === 'about' ? 'page' : 'true') : undefined}
+                  className={`link-underline py-1.5 text-[0.7rem] font-medium uppercase tracking-[0.2em] whitespace-nowrap transition-colors xl:tracking-[0.24em] ${
                     active === l.key ? 'text-rust-deep' : 'text-brown hover:text-rust-deep'
                   }`}
                 >
@@ -120,7 +130,7 @@ export default function Navbar() {
           </ul>
 
           <div className="flex items-center gap-1 justify-self-end lg:gap-4">
-            <a href={`#${sections.contact}`} className="btn btn-outline btn-small hidden lg:inline-flex">
+            <a href={contact} className="btn btn-outline btn-small hidden xl:inline-flex">
               Contact
             </a>
             <button
@@ -166,7 +176,7 @@ export default function Navbar() {
         style={{ zIndex: 'var(--z-menu)' }}
       >
         <ul className="flex flex-col">
-          {[...links, { href: `#${sections.contact}`, key: 'contact', label: 'Contact' }].map((l) => (
+          {[{ href: home, key: 'home', label: 'Home' }, ...links, { href: contact, key: 'contact', label: 'Contact' }].map((l) => (
             <li key={l.href} className="border-b border-brown/15">
               <a
                 href={l.href}

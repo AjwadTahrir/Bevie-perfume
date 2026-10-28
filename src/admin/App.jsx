@@ -6,6 +6,7 @@ import { ToastProvider } from './components/Toasts'
 import Layout from './components/Layout'
 import Login from './pages/Login'
 import Overview from './pages/Overview'
+import Analytics from './pages/Analytics'
 import Orders from './pages/Orders'
 import OrderDetail from './pages/OrderDetail'
 import Members from './pages/Members'
@@ -62,6 +63,7 @@ export default function App() {
               }
             >
               <Route index element={<Overview />} />
+              <Route path="analytics" element={<Analytics />} />
               <Route path="orders" element={<Orders />} />
               <Route path="orders/:id" element={<OrderDetail />} />
               <Route path="members" element={<Members />} />

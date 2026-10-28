@@ -94,7 +94,7 @@ export async function createOrder({ requestId, customer, code, items }) {
 /** Uploads the proof of payment for an order created by createOrder. */
 export async function submitReceipt({ order, file, bankReference }) {
   if (checkoutMode !== 'live') {
-    if (import.meta.env.DEV) console.info('[Beavie] Demo checkout: order and receipt are not saved.', { order, file: file?.name })
+    if (import.meta.env.DEV) console.info('[JETHA] Demo checkout: order and receipt are not saved.', { order, file: file?.name })
     await new Promise((r) => setTimeout(r, 600))
     return { status: 'awaiting_verification' }
   }
