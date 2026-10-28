@@ -1,4 +1,4 @@
-import { aboutPath, brand, sections } from '../config/brand'
+import { aboutPath, brand, privacyPath, sections } from '../config/brand'
 import { copy } from '../config/content'
 import InstagramIcon from './InstagramIcon'
 import JethaSymbol from './JethaSymbol'
@@ -63,6 +63,9 @@ export default function Footer({ page = 'home' }) {
 
         <p className="text-[0.75rem] text-brown-soft lg:ml-4">
           © {new Date().getFullYear()} {brand.name}. All rights reserved.
+          <a href={privacyPath} className="link-underline mt-1 block w-fit">
+            Privacy Policy
+          </a>
         </p>
       </div>
     </footer>

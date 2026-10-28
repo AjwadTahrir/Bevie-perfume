@@ -35,6 +35,9 @@ export const brand = {
   // Display handle shown next to Instagram once the URL is set, e.g. '@jetha'.
   instagramHandle: '@jelajahnusantara_kk10',
 
+  // Email for privacy requests, listed on /privacy. Leave empty to show WhatsApp and Instagram only.
+  privacyEmail: '',
+
   /**
    * Development notices that flag sample data on the page
    * ("Placeholder catalogue", "Demonstration families").
@@ -74,6 +77,9 @@ export const shop = {
 
 /** The About page (the fundraising programme), a separate path from the one-page store. */
 export const aboutPath = '/about'
+
+/** The privacy policy (PDPA notice), linked from the footer and checkout. */
+export const privacyPath = '/privacy'
 
 /** Section anchors used by the navigation and in-page links. */
 export const sections = {

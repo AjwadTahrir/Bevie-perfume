@@ -6,7 +6,7 @@ import { useCart, orderTotals } from '../lib/cart'
 import { checkoutMode, createOrder, submitReceipt, validateReferralCode } from '../lib/orders'
 import { lockScroll, unlockScroll } from '../lib/scrollLock'
 import { normalizeReferralCode } from '../data/referralCodes'
-import { shop } from '../config/brand'
+import { privacyPath, shop } from '../config/brand'
 import { payment } from '../config/payment'
 import { formatPrice } from '../lib/format'
 import { compressReceipt } from '../lib/compressImage'
@@ -265,6 +265,13 @@ export default function CartDrawer() {
               {creating ? 'Creating your order…' : 'Continue to Payment'}
               {!creating && <ArrowRight size={16} strokeWidth={1.5} aria-hidden="true" />}
             </button>
+            <p className="mt-2 text-center text-xs text-brown-soft">
+              By continuing you agree to our{' '}
+              <a href={privacyPath} target="_blank" rel="noopener" className="underline underline-offset-2 hover:text-brown">
+                Privacy Policy
+              </a>
+              .
+            </p>
           </Footer>
         )}
         {step === 'payment' && (
