@@ -20,7 +20,7 @@ export default function AboutPage() {
 
   useEffect(() => {
     const previous = document.title
-    document.title = `About · ${brand.name}`
+    document.title = brand.name
     return () => {
       document.title = previous
     }
