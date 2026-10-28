@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Check, ChevronLeft, ChevronRight, ShoppingBag, X } from 'lucide-react'
 import { pack } from '../assets/pack'
-import ProductVisual from './ProductVisual'
+import FloatingBottle from './FloatingBottle'
 import WhatsAppButton from './WhatsAppButton'
-import { fragranceFamilies, perfumes, tintOf } from '../data/perfumes'
+import { fragranceFamilies, perfumes, toneOf } from '../data/perfumes'
 import { formatPrice } from '../lib/format'
 import { orderMessage } from '../lib/whatsapp'
 import { useCart } from '../lib/cart'
@@ -73,7 +73,7 @@ export default function PerfumeModal({ perfume, onClose, onNavigate }) {
   const prev = index >= 0 ? perfumes[(index - 1 + perfumes.length) % perfumes.length] : null
   const next = index >= 0 ? perfumes[(index + 1) % perfumes.length] : null
   const family = p ? fragranceFamilies[p.family] : null
-  const tint = p ? tintOf(p) : undefined
+  const tint = p ? toneOf(p)[0] : undefined
   const accords = p?.accords ? [...p.accords].sort((a, b) => b[1] - a[1]).slice(0, ACCORDS_SHOWN) : []
 
   const iconBtn =
@@ -136,9 +136,9 @@ export default function PerfumeModal({ perfume, onClose, onNavigate }) {
               ) : (
                 <img src={pack.bouquet.src} srcSet={pack.bouquet.srcSet} sizes="(min-width: 768px) 34rem, 100vw" alt="" decoding="async" className="pointer-events-none absolute bottom-[20%] left-1/2 w-[118%] max-w-[36rem] -translate-x-1/2" />
               )}
-              <div className="relative aspect-square w-[min(92%,24rem)]">
-                <span className="absolute bottom-[7%] left-1/2 h-[5%] w-[50%] -translate-x-1/2 rounded-[50%] bg-brown-deep/40 blur-[10px]" aria-hidden="true" />
-                <ProductVisual perfume={p} decorative={false} loading="eager" className="absolute inset-0 h-full w-full" />
+              {/* The 3D viewer frame: on desktop the bottle follows the pointer only inside this box */}
+              <div data-bottle-area className="relative aspect-square w-[min(92%,24rem)]">
+                <FloatingBottle perfume={p} mode="viewer" active={Boolean(perfume)} decorative={false} sizes="(min-width: 768px) 20rem, 74vw" />
               </div>
             </div>
 
@@ -159,6 +159,56 @@ export default function PerfumeModal({ perfume, onClose, onNavigate }) {
               {p.tagline && <p className="mt-2 font-display text-xl italic text-rust-deep">{p.tagline}</p>}
               <p className="mt-5 max-w-prose text-[1.05rem] leading-relaxed">{p.description}</p>
               {p.mood && <p className="mt-4 max-w-prose border-l border-ochre pl-4 text-sm italic leading-relaxed text-brown-soft">{p.mood}</p>}
+
+              {/* Price, size and buying, straight after the description so the purchase is never a long scroll away */}
+              <dl className="mt-8 grid grid-cols-2 gap-6 border-y border-ochre/60 py-5">
+                <div>
+                  <dt className="type-label text-brown-soft">Price</dt>
+                  <dd className="mt-1.5 font-display text-2xl text-brown">{formatPrice(p.price, 'To be announced')}</dd>
+                </div>
+                <div>
+                  <dt className="type-label text-brown-soft">Size</dt>
+                  <dd className="mt-1.5 font-display text-2xl text-brown">{p.size ?? 'To be confirmed'}</dd>
+                </div>
+              </dl>
+
+              <div className="mt-6 flex flex-wrap items-center gap-3">
+                {added ? (
+                  <>
+                    <p className="inline-flex min-h-[3.25rem] items-center gap-2 text-sm text-brown" role="status">
+                      <Check size={16} className="text-rust-deep" aria-hidden="true" />
+                      Added to your cart
+                    </p>
+                    <button
+                      type="button"
+                      className="btn btn-primary"
+                      onClick={() => {
+                        requestClose()
+                        cart.open()
+                      }}
+                    >
+                      View Cart
+                      <ShoppingBag size={16} strokeWidth={1.5} aria-hidden="true" />
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    disabled={typeof p.price !== 'number'}
+                    onClick={() => {
+                      cart.add(p.id)
+                      setAdded(true)
+                    }}
+                  >
+                    Add to Cart
+                    <ShoppingBag size={16} strokeWidth={1.5} aria-hidden="true" />
+                  </button>
+                )}
+              </div>
+              <div className="mt-4">
+                <WhatsAppButton message={orderMessage(p.name)} label="Ask on WhatsApp" variant="outline" />
+              </div>
 
               {/* The scent and its name (replaces the fragrance pyramid) */}
               {p.story && (
@@ -213,55 +263,6 @@ export default function PerfumeModal({ perfume, onClose, onNavigate }) {
                 </section>
               )}
 
-              {/* Price, size and buying, at the end of the details */}
-              <dl className="mt-12 grid grid-cols-2 gap-6 border-y border-ochre/60 py-6">
-                <div>
-                  <dt className="type-label text-brown-soft">Price</dt>
-                  <dd className="mt-1.5 font-display text-2xl text-brown">{formatPrice(p.price, 'To be announced')}</dd>
-                </div>
-                <div>
-                  <dt className="type-label text-brown-soft">Size</dt>
-                  <dd className="mt-1.5 font-display text-2xl text-brown">{p.size ?? 'To be confirmed'}</dd>
-                </div>
-              </dl>
-
-              <div className="mt-8 flex flex-wrap items-center gap-3">
-                {added ? (
-                  <>
-                    <p className="inline-flex min-h-[3.25rem] items-center gap-2 text-sm text-brown" role="status">
-                      <Check size={16} className="text-rust-deep" aria-hidden="true" />
-                      Added to your cart
-                    </p>
-                    <button
-                      type="button"
-                      className="btn btn-primary"
-                      onClick={() => {
-                        requestClose()
-                        cart.open()
-                      }}
-                    >
-                      View Cart
-                      <ShoppingBag size={16} strokeWidth={1.5} aria-hidden="true" />
-                    </button>
-                  </>
-                ) : (
-                  <button
-                    type="button"
-                    className="btn btn-primary"
-                    disabled={typeof p.price !== 'number'}
-                    onClick={() => {
-                      cart.add(p.id)
-                      setAdded(true)
-                    }}
-                  >
-                    Add to Cart
-                    <ShoppingBag size={16} strokeWidth={1.5} aria-hidden="true" />
-                  </button>
-                )}
-              </div>
-              <div className="mt-4">
-                <WhatsAppButton message={orderMessage(p.name)} label="Ask on WhatsApp" variant="outline" />
-              </div>
             </div>
           </div>
         </div>

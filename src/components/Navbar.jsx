@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Menu, ShoppingBag, X } from 'lucide-react'
 import { aboutPath, brand, sections } from '../config/brand'
 import { useCart } from '../lib/cart'
-import JethaSymbol from './JethaSymbol'
+import BrandMark from './BrandMark'
 
 // Store sections are in-page anchors; on the About page they point back to the store.
 const storeLinks = [
@@ -106,8 +106,8 @@ export default function Navbar({ page = 'home' }) {
             className="-my-1 justify-self-start rounded-sm py-1 transition-opacity duration-300 hover:opacity-80"
             aria-label={page === 'home' ? `${brand.name}, back to top` : `${brand.name}, home`}
           >
-            {/* 40 px tall on phones, 48 px from desktop width: the emblem itself, padding already cropped. */}
-            <JethaSymbol className="h-10 lg:h-12" />
+            {/* Symbol and wordmark as one glossy black mark */}
+            <BrandMark />
           </a>
 
           <ul className="hidden items-center lg:flex">

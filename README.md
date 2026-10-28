@@ -28,6 +28,9 @@ npm run preview  # serve the production build
 | Brand name, wordmark, WhatsApp, Instagram, checkout display rules | `src/config/brand.js` |
 | All site copy, including the About page (`copy.about`) | `src/config/content.js` |
 | The eight perfumes, their collection (`category`) and descriptions (`story`) | `src/data/perfumes.js` |
+| Bottle renders from the Blender models (4:5 WebP, 480 and 960 px) | `src/assets/products/renders/` |
+| Bottle models for the card's hover 3D (Draco GLB) and their decoder | `public/models/`, `public/draco/` |
+| Card bottle: float, pointer tilt and hover 3D (one shared WebGL canvas, loaded on first hover) | `src/components/FloatingBottle.jsx`, `src/lib/bottleStage.js` |
 | Payment QR and bank details | `src/config/payment.js` |
 | Colours, fonts, type scale, motion tokens | `src/styles/index.css` (`@theme`) |
 | Admin colours and type (grey canvas, black, lime) | `src/admin/admin.css` (`@theme`) |

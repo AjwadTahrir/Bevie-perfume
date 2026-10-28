@@ -292,6 +292,113 @@
 }
 
 /* ================================================================
+   BRAND MARK: glossy black symbol and wordmark (BrandMark.jsx,
+   JethaSymbol finish="black"). Near-black lacquer with one soft,
+   fixed highlight; the same palette on both so they read as one mark.
+   Used only on the brand mark, nowhere else.
+   ================================================================ */
+.brand-gloss-text {
+  color: #0b0b0c; /* fallback where background-clip: text is unsupported */
+  background-image: linear-gradient(172deg, #3a3a3f 0%, #0b0b0c 34%, #050506 52%, #2b2b30 70%, #0b0b0c 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.brand-gloss-sheen {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* A narrow diagonal highlight, clipped to the symbol's exact shape */
+  background: linear-gradient(115deg, transparent 32%, rgb(255 255 255 / 0.2) 46%, rgb(255 255 255 / 0.06) 54%, transparent 64%);
+  -webkit-mask: var(--symbol-mask) center / 100% 100% no-repeat;
+  mask: var(--symbol-mask) center / 100% 100% no-repeat;
+}
+
+/* ================================================================
+   FLOATING BOTTLE (product cards, see FloatingBottle.jsx)
+   The bottle floats on a slow cycle, its shadow thinning as it rises;
+   both run only while the card is on screen (.is-onscreen) and not at
+   all under reduced motion. On hover it lifts a little further and, with
+   a mouse, leans towards the pointer (--tilt-x/--tilt-y, set from JS).
+   .is-3d crossfades the render image to the live WebGL bottle.
+   ================================================================ */
+.floating-bottle {
+  --float-dur: 1.8s; /* one way: a 3.6 s cycle up and down */
+}
+.fb-shadow {
+  transform-origin: 50% 50%;
+  transition:
+    transform 600ms var(--ease-batik),
+    opacity 600ms var(--ease-batik);
+}
+.fb-lift {
+  transition: transform 600ms var(--ease-batik);
+}
+.fb-tilt {
+  transform: perspective(900px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+  transform-origin: 50% 70%;
+  transition:
+    transform 450ms var(--ease-batik),
+    opacity 280ms ease;
+}
+.fb-gl {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 280ms ease;
+}
+.bottle-gl-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.floating-bottle.is-3d .fb-gl {
+  opacity: 1;
+}
+.floating-bottle.is-3d .fb-tilt {
+  opacity: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .fb-float {
+    animation: bottle-float var(--float-dur) ease-in-out var(--float-delay, 0s) infinite alternate both;
+    animation-play-state: paused;
+  }
+  .fb-shadow {
+    animation: bottle-float-shadow var(--float-dur) ease-in-out var(--float-delay, 0s) infinite alternate both;
+    animation-play-state: paused;
+  }
+  .floating-bottle.is-onscreen .fb-float,
+  .floating-bottle.is-onscreen .fb-shadow {
+    animation-play-state: running;
+  }
+  .group:hover .fb-lift {
+    transform: translateY(-8px);
+  }
+  .group:hover .fb-shadow {
+    opacity: 0.6;
+    scale: 0.86 0.8;
+  }
+}
+@keyframes bottle-float {
+  from {
+    transform: translateY(0) rotate(-0.6deg);
+  }
+  to {
+    transform: translateY(-8px) rotate(0.6deg);
+  }
+}
+/* Tailwind's -translate-x-1/2 uses the separate `translate` property, so only scale here */
+@keyframes bottle-float-shadow {
+  from {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  to {
+    transform: scaleX(0.86);
+    opacity: 0.7;
+  }
+}
+
+/* ================================================================
    CINEMATIC SCROLL EXPERIENCE
    ScrollExperience adds .is-cinematic only on wide screens without
    reduced motion. Without it, the hero and heritage scenes are two
@@ -306,7 +413,7 @@
   display: none;
 }
 .scroll-exp.is-cinematic {
-  height: 320vh;
+  height: 280vh;
 }
 /* Short laptop windows (display scaling, browser toolbars): tighter type so
    the hero and heritage text fit inside the pinned stage. */
@@ -432,26 +539,26 @@
     animation: none;
   }
 
-  /* Hero entrance (stage 1: calm, restrained) */
+  /* Hero entrance: short and once, so the copy and Shop button are usable within a second */
   .hero-enter {
-    animation: hero-rise 1.1s var(--ease-batik) both;
+    animation: hero-rise 700ms var(--ease-batik) both;
     animation-delay: var(--enter-delay, 0ms);
   }
   .hero-bottle-enter {
-    animation: bottle-in 1.6s var(--ease-batik) both;
-    animation-delay: 350ms;
+    animation: bottle-in 900ms var(--ease-batik) both;
+    animation-delay: 120ms;
   }
   .hero-fade-enter {
-    animation: batik-fade 1.6s var(--ease-batik) both;
+    animation: batik-fade 900ms var(--ease-batik) both;
     animation-delay: var(--enter-delay, 0ms);
   }
 
   /* Modal */
   .modal[open] {
-    animation: modal-in 450ms var(--ease-batik) both;
+    animation: modal-in 340ms var(--ease-batik) both;
   }
   .modal[open]::backdrop {
-    animation: backdrop-in 450ms var(--ease-batik) both;
+    animation: backdrop-in 300ms var(--ease-batik) both;
   }
   .modal.is-closing {
     animation: modal-out 260ms ease-in both;

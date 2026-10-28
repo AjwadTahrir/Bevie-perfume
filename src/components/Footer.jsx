@@ -28,9 +28,9 @@ export default function Footer({ page = 'home' }) {
       <div className="mx-auto flex max-w-[1440px] flex-col gap-8 px-5 py-12 md:px-8 lg:flex-row lg:items-center lg:gap-12 lg:px-12">
         {/* Emblem stacked over the wordmark, so the brand block keeps its width and the links stay on one row. */}
         <a href={page === 'home' ? '#page-top' : '/'} className="inline-flex shrink-0 flex-col items-start gap-2.5" aria-label={`${brand.name}, home`}>
-          <JethaSymbol className="h-10" />
+          <JethaSymbol finish="black" className="h-10" />
           <span className="flex flex-col leading-none">
-            <span className="font-display text-[1.9rem] tracking-[0.3em]">{brand.wordmark}</span>
+            <span className="brand-gloss-text font-display text-[1.9rem] tracking-[0.3em]">{brand.wordmark}</span>
             <span className="mt-1.5 pl-1 text-[0.55rem] font-medium tracking-[0.62em]">PERFUME</span>
           </span>
         </a>

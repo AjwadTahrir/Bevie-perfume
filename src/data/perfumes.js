@@ -34,6 +34,15 @@
  *                 import it at the top of this file and assign it
  *                 here. Leave null to show the illustrated bottle.
  *   imageAlt      describe the photo for screen readers
+ *   render        studio render of the actual JETHA bottle (Blender model,
+ *                 real label, black cap), transparent WebP, 4:5:
+ *                 { src, srcSet }. See `renders` below for which Blender
+ *                 file each one comes from. Shown instead of `image`
+ *                 wherever it is set.
+ *   tone          [base, deep] backdrop tints for the card and detail
+ *                 panel, picked to sit quietly beside the label's own
+ *                 colours. `deep` is the hover/selected shade. Purely
+ *                 visual: says nothing about the scent.
  *   accent        backdrop tint behind the bottle on cards and in the
  *                 modal: 'teal' | 'rust' | 'ochre' | 'cream'
  *   bottle        illustration settings, used only while `image` is null
@@ -76,7 +85,49 @@ import berryTeaseScene640 from '../assets/products/berry-tease-scene-640.webp'
 import berryTeaseScene1060 from '../assets/products/berry-tease-scene-1060.webp'
 import lilyValleyScene640 from '../assets/products/lily-valley-scene-640.webp'
 import lilyValleyScene1060 from '../assets/products/lily-valley-scene-1060.webp'
-import chestnutRushLarge from '../assets/products/chestnut-rush-bottle-1200.webp'
+import bayuRender480 from '../assets/products/renders/bayu-480.webp'
+import bayuRender960 from '../assets/products/renders/bayu-960.webp'
+import nirmalaRender480 from '../assets/products/renders/nirmala-480.webp'
+import nirmalaRender960 from '../assets/products/renders/nirmala-960.webp'
+import senjaRender480 from '../assets/products/renders/senja-480.webp'
+import senjaRender960 from '../assets/products/renders/senja-960.webp'
+import samuderaRender480 from '../assets/products/renders/samudera-480.webp'
+import samuderaRender960 from '../assets/products/renders/samudera-960.webp'
+import purnamaRender480 from '../assets/products/renders/purnama-480.webp'
+import purnamaRender960 from '../assets/products/renders/purnama-960.webp'
+import ranumRender480 from '../assets/products/renders/ranum-480.webp'
+import ranumRender960 from '../assets/products/renders/ranum-960.webp'
+import ratnaRender480 from '../assets/products/renders/ratna-480.webp'
+import ratnaRender960 from '../assets/products/renders/ratna-960.webp'
+import serojaRender480 from '../assets/products/renders/seroja-480.webp'
+import serojaRender960 from '../assets/products/renders/seroja-960.webp'
+
+/**
+ * BOTTLE RENDERS
+ * Product id -> render of the actual Blender bottle. Rendered in Cycles from
+ * a working copy of each file in ~/Downloads/JETHA-3D (the .blend1 originals
+ * are never opened for writing), same camera, lights and crop for all eight:
+ *
+ *   bayu      bayu.blend1      label art: verdius.png
+ *   nirmala   nirmala.blend1   label art: tonvira.png
+ *   senja     senja.blend1     label art: chestnut rushh.png
+ *   samudera  wavekiss.blend   label art: wavekiss.png (no samudera.blend1 exists)
+ *   purnama   purnama.blend1   label art: seductress.png
+ *   ranum     ranum.blend1     label art: berry tease.png
+ *   ratna     ratna.blend1     label art: celestia rose.png
+ *   seroja    seroja.blend1    label art: lily in the valley.png
+ */
+const render = (s480, s960) => ({ src: s480, srcSet: `${s480} 480w, ${s960} 960w` })
+const renders = {
+  bayu: render(bayuRender480, bayuRender960),
+  nirmala: render(nirmalaRender480, nirmalaRender960),
+  senja: render(senjaRender480, senjaRender960),
+  samudera: render(samuderaRender480, samuderaRender960),
+  purnama: render(purnamaRender480, purnamaRender960),
+  ranum: render(ranumRender480, ranumRender960),
+  ratna: render(ratnaRender480, ratnaRender960),
+  seroja: render(serojaRender480, serojaRender960),
+}
 
 export const fragranceFamilies = {
   floral: { label: 'Floral', blurb: 'Built around flowers, from soft petals to heady blooms.' },
@@ -96,16 +147,19 @@ export const accentTints = {
 
 export const tintOf = (perfume) => accentTints[perfume?.accent] ?? accentTints.cream
 
+/** [base, deep] backdrop for a perfume: its own `tone`, else its accent tint for both. */
+export const toneOf = (perfume) => perfume?.tone ?? [tintOf(perfume), tintOf(perfume)]
+
 /**
  * HERO PRODUCT
- * The bottle photographed in the hero and carried through the scroll
- * sequence. Swap the imports above to feature another scent.
+ * The bottle rendered in the hero. Point it at another entry of
+ * `renders` to feature a different scent.
  */
 export const heroProduct = {
   perfumeId: 'senja',
-  src: chestnutRushLarge,
-  srcSet: `${chestnutRushImg} 640w, ${chestnutRushLarge} 1200w`,
-  alt: 'JETHA Senja perfume bottle with a cream label framed by batik-style borders',
+  src: renders.senja.src,
+  srcSet: renders.senja.srcSet,
+  alt: 'JETHA Senja perfume bottle with a black cap and a maroon and cream batik label',
 }
 
 export const perfumes = [
@@ -149,7 +203,9 @@ export const perfumes = [
       base: ['Cedarwood', 'Vetiver', 'White Musk'],
     },
     image: verdiusImg,
-    imageAlt: 'Bayu perfume bottle with a deep green botanical label',
+    render: renders.bayu,
+    tone: ['#ece5d9', '#e0d3bd'],
+    imageAlt: 'Bayu perfume bottle with a black cap and a brown and gold batik label',
     scene: {
       src: verdiusScene1060,
       srcSet: `${verdiusScene640} 640w, ${verdiusScene1060} 1060w`,
@@ -202,7 +258,9 @@ export const perfumes = [
       base: ['Vanilla', 'Amberwood', 'Cedar'],
     },
     image: tonviraImg,
-    imageAlt: 'Nirmala perfume bottle',
+    render: renders.nirmala,
+    tone: ['#eceae4', '#dcdee0'],
+    imageAlt: 'Nirmala perfume bottle with a black cap and a navy and silver batik label',
     scene: {
       src: tonviraScene1060,
       srcSet: `${tonviraScene640} 640w, ${tonviraScene1060} 1060w`,
@@ -256,7 +314,9 @@ export const perfumes = [
       base: ['Vanilla', 'Amber', 'Sandalwood'],
     },
     image: chestnutRushImg,
-    imageAlt: 'Senja perfume bottle',
+    render: renders.senja,
+    tone: ['#f0e0d2', '#e7c9b4'],
+    imageAlt: 'Senja perfume bottle with a black cap and a maroon and cream batik label',
     scene: {
       src: chestnutRushScene1060,
       srcSet: `${chestnutRushScene640} 640w, ${chestnutRushScene1060} 1060w`,
@@ -309,7 +369,9 @@ export const perfumes = [
       base: ['Driftwood', 'White Musk', 'Soft Ambergris'],
     },
     image: wavekissImg,
-    imageAlt: 'Samudera perfume bottle',
+    render: renders.samudera,
+    tone: ['#e8e2e6', '#d9ccd6'],
+    imageAlt: 'Samudera perfume bottle with a black cap and a plum and cream batik label',
     scene: {
       src: wavekissScene1060,
       srcSet: `${wavekissScene640} 640w, ${wavekissScene1060} 1060w`,
@@ -361,7 +423,9 @@ export const perfumes = [
       base: ['Vanilla', 'Patchouli', 'Amber'],
     },
     image: seductressImg,
-    imageAlt: 'Purnama perfume bottle',
+    render: renders.purnama,
+    tone: ['#ebe5de', '#ddd2c4'],
+    imageAlt: 'Purnama perfume bottle with a black cap and a brown and cream paisley label',
     scene: {
       src: seductressScene1060,
       srcSet: `${seductressScene640} 640w, ${seductressScene1060} 1060w`,
@@ -415,7 +479,9 @@ export const perfumes = [
       base: ['Vanilla', 'Patchouli', 'Amber'],
     },
     image: berryTeaseImg,
-    imageAlt: 'Ranum perfume bottle',
+    render: renders.ranum,
+    tone: ['#e4e6ec', '#d2d8e6'],
+    imageAlt: 'Ranum perfume bottle with a black cap and a blue paisley label',
     scene: {
       src: berryTeaseScene1060,
       srcSet: `${berryTeaseScene640} 640w, ${berryTeaseScene1060} 1060w`,
@@ -469,7 +535,9 @@ export const perfumes = [
       base: ['White Musk', 'Pale Woods', 'Clean Amber'],
     },
     image: celestiaRoseImg,
-    imageAlt: 'Ratna perfume bottle',
+    render: renders.ratna,
+    tone: ['#efe1db', '#e4cac0'],
+    imageAlt: 'Ratna perfume bottle with a black cap and a deep red floral batik label',
     scene: {
       src: celestiaRoseScene1060,
       srcSet: `${celestiaRoseScene640} 640w, ${celestiaRoseScene1060} 1060w`,
@@ -522,7 +590,9 @@ export const perfumes = [
       base: ['Vanilla', 'White Musk', 'Sandalwood'],
     },
     image: lilyValleyImg,
-    imageAlt: 'Seroja perfume bottle',
+    render: renders.seroja,
+    tone: ['#e5e7df', '#d3dacb'],
+    imageAlt: 'Seroja perfume bottle with a black cap and a navy label with red and pink flowers',
     scene: {
       src: lilyValleyScene1060,
       srcSet: `${lilyValleyScene640} 640w, ${lilyValleyScene1060} 1060w`,
