@@ -1,7 +1,7 @@
 # JETHA Perfume
 
 Storefront and fundraising console for JETHA Perfume, sold to support **Titian Serantau: Thailand Mobility Programme**
-(KK10, Universiti Malaya × Chulalongkorn University, Bangkok, 30 Nov – 5 Dec 2026).
+(KK10, Universiti Malaya, partner university TBD, Bangkok, 30 Nov – 4 Dec 2026).
 React 19 + Vite + Tailwind CSS v4, Lucide icons, self-hosted fonts, Supabase backend.
 
 ```bash
