@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Menu, ShoppingBag, X } from 'lucide-react'
 import { aboutPath, brand, sections } from '../config/brand'
 import { useCart } from '../lib/cart'
+import JethaSymbol from './JethaSymbol'
 
 // Store sections are in-page anchors; on the About page they point back to the store.
 const storeLinks = [
@@ -17,14 +18,6 @@ function linksFor(page) {
   return [...storeLinks.map((l) => ({ ...l, href: prefix + l.href })), aboutLink]
 }
 
-function Wordmark({ className = '' }) {
-  return (
-    <span className={`flex flex-col leading-none ${className}`}>
-      <span className="font-display text-[1.6rem] font-semibold tracking-[0.34em] lg:text-[1.8rem]">{brand.wordmark}</span>
-      <span className="mt-1.5 pl-[0.15em] text-[0.56rem] font-medium tracking-[0.62em]">PERFUME</span>
-    </span>
-  )
-}
 
 export default function Navbar({ page = 'home' }) {
   const links = linksFor(page)
@@ -108,8 +101,13 @@ export default function Navbar({ page = 'home' }) {
           Skip to content
         </a>
         <nav aria-label="Main" className="mx-auto grid h-[var(--nav-h)] max-w-[1440px] grid-cols-[1fr_auto] items-center px-5 md:px-8 lg:grid-cols-[1fr_auto_1fr] lg:px-12">
-          <a href={home} className="justify-self-start text-brown" aria-label={page === 'home' ? `${brand.name}, back to top` : `${brand.name}, home`}>
-            <Wordmark />
+          <a
+            href={home}
+            className="-my-1 justify-self-start rounded-sm py-1 transition-opacity duration-300 hover:opacity-80"
+            aria-label={page === 'home' ? `${brand.name}, back to top` : `${brand.name}, home`}
+          >
+            {/* 40 px tall on phones, 48 px from desktop width: the emblem itself, padding already cropped. */}
+            <JethaSymbol className="h-10 lg:h-12" />
           </a>
 
           <ul className="hidden items-center lg:flex">

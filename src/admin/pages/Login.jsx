@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { Lock } from 'lucide-react'
 import { useAuth } from '../lib/auth'
+import JethaSymbol from '../../components/JethaSymbol'
 
 export default function Login() {
   const { status, login, notice } = useAuth()
@@ -31,9 +32,7 @@ export default function Login() {
     <main className="flex min-h-dvh items-center justify-center bg-canvas px-4 py-10">
       <div className="w-full max-w-sm">
         <div className="mb-9 flex flex-col items-center text-center">
-          <span className="flex size-12 items-center justify-center rounded-[14px] bg-ink" aria-hidden="true">
-            <span className="size-5 rounded-full border-4 border-lime" />
-          </span>
+          <JethaSymbol className="h-14" />
           <span className="mt-3 text-xl font-bold tracking-tight">JETHA</span>
           <h1 className="display mt-6 text-2xl">Fundraising Console</h1>
           <p className="mt-1.5 text-sm text-ink-2">Sign in to manage orders and campaign sales.</p>

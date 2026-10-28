@@ -5,6 +5,7 @@ import { useAuth } from '../lib/auth'
 import { fetchDashboard } from '../lib/api'
 import { useLiveData, useQuery } from '../lib/data'
 import { fmtTime, n, pct } from '../lib/format'
+import JethaSymbol from '../../components/JethaSymbol'
 
 export const NAV = [
   {
@@ -38,13 +39,11 @@ export const initials = (s) =>
     .map((w) => w[0].toUpperCase())
     .join('') || '?'
 
-/** Logo: black tile with a lime ring, then the JETHA wordmark. */
+/** Logo: the JETHA symbol (same asset as the storefront), then the wordmark. */
 function Logo() {
   return (
     <span className="flex items-center gap-2.5">
-      <span className="flex size-8 items-center justify-center rounded-[9px] bg-ink" aria-hidden="true">
-        <span className="size-3.5 rounded-full border-[3px] border-lime" />
-      </span>
+      <JethaSymbol className="h-8" />
       <span className="text-[1.1875rem] font-bold tracking-tight text-ink">JETHA</span>
     </span>
   )
