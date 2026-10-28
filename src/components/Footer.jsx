@@ -31,7 +31,7 @@ export default function Footer({ page = 'home' }) {
           <JethaSymbol finish="black" className="h-10" />
           <span className="flex flex-col leading-none">
             <span className="brand-gloss-text font-display text-[1.9rem] tracking-[0.3em]">{brand.wordmark}</span>
-            <span className="mt-1.5 pl-1 text-[0.55rem] font-medium tracking-[0.62em]">PERFUME</span>
+            <span className="mt-1.5 pl-1 text-[0.55rem] font-medium tracking-[0.62em]">FRAGRANCE</span>
           </span>
         </a>
         <p className="max-w-[17rem] text-[0.85rem] leading-relaxed text-brown-soft">{copy.footer.statement}</p>

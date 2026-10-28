@@ -7,7 +7,7 @@
  */
 
 export const brand = {
-  name: 'JETHA Perfume',
+  name: 'JETHA Fragrance',
 
   // Temporary typographic wordmark. Replace with the real logo when available.
   wordmark: 'JETHA',

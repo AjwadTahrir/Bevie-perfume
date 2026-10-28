@@ -5,7 +5,7 @@
  * brand information: it makes no claims about founders, history,
  * manufacturing, ingredients or partnerships. Review and edit freely.
  *
- * VERIFIED facts used: the brand name (JETHA Perfume), that the
+ * VERIFIED facts used: the brand name (JETHA Fragrance), that the
  * collection has eight scents (four For Him, four For Her), the
  * creative direction (contemporary perfumery inspired by Malaysian
  * batik) and, in `about`, the programme details supplied by the
@@ -18,7 +18,7 @@ export const copy = {
     eyebrow: 'Malaysian Batik Inspired',
     headline: ['An Art Woven', 'in Fragrance.'],
     intro:
-      'JETHA Perfume blends timeless Malaysian heritage with modern perfumery, creating scents that tell a story — rich in culture, beauty and soul.',
+      'JETHA Fragrance blends timeless Malaysian heritage with modern perfumery, creating scents that tell a story — rich in culture, beauty and soul.',
     cta: 'Shop Fragrances',
   },
 
@@ -26,7 +26,7 @@ export const copy = {
     eyebrow: 'Our Heritage',
     title: ['A Heritage', 'Reimagined.'],
     intro:
-      'Inspired by the intricate artistry of Malaysian batik, JETHA Perfume celebrates tradition through contemporary scent. Each fragrance is a tribute to our rich cultural roots, reimagined for today.',
+      'Inspired by the intricate artistry of Malaysian batik, JETHA Fragrance celebrates tradition through contemporary scent. Each fragrance is a tribute to our rich cultural roots, reimagined for today.',
     link: 'Discover Our Story',
     linkOpen: 'Close Our Story',
     story: [
