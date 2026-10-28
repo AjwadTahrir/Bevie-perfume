@@ -343,7 +343,7 @@ function CartStep({ cart, totals, referral, referralInput, setReferralInput, ref
         {cart.items.map(({ id, quantity, perfume }) => (
           <li key={id} className="flex gap-4 py-4 first:pt-0">
             <span className="relative block size-20 shrink-0 overflow-hidden rounded-lg bg-cream-deep/60">
-              <ProductVisual perfume={perfume} className="absolute inset-[6%] h-[88%] w-[88%]" />
+              <ProductVisual perfume={perfume} sizes="80px" className="absolute inset-[6%] h-[88%] w-[88%]" />
             </span>
             <div className="min-w-0 flex-1">
               <div className="flex items-start justify-between gap-3">

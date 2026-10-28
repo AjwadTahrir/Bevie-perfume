@@ -26,21 +26,21 @@ export default function HeroScene({ onSelect }) {
       {/* On desktop this container is static, so the stage below positions against the full-width hero. */}
       <div className="relative mx-auto grid h-full max-w-[1440px] grid-cols-1 px-5 pt-[calc(var(--nav-h)+2.5rem)] md:px-8 lg:static lg:grid-cols-12 lg:px-12 lg:pt-[var(--nav-h)]">
         <div className="hero-copy relative z-10 lg:col-span-5 lg:self-center lg:pb-10">
-          <p className="type-eyebrow hero-enter" style={{ '--enter-delay': '60ms' }}>
+          <p className="type-eyebrow hero-enter" style={{ '--enter-delay': '0ms' }}>
             {h.eyebrow}
           </p>
           <h1 id="hero-title" className="type-display mt-6 text-brown">
-            <span className="hero-enter block" style={{ '--enter-delay': '160ms' }}>
+            <span className="hero-enter block" style={{ '--enter-delay': '60ms' }}>
               {h.headline[0]}
             </span>
-            <span className="hero-enter block" style={{ '--enter-delay': '280ms' }}>
+            <span className="hero-enter block" style={{ '--enter-delay': '120ms' }}>
               {h.headline[1]}
             </span>
           </h1>
-          <p className="hero-enter type-lead mt-7 max-w-[26rem]" style={{ '--enter-delay': '440ms' }}>
+          <p className="hero-enter type-lead mt-7 max-w-[26rem]" style={{ '--enter-delay': '180ms' }}>
             {h.intro}
           </p>
-          <div className="hero-enter mt-9" style={{ '--enter-delay': '580ms' }}>
+          <div className="hero-enter mt-9" style={{ '--enter-delay': '240ms' }}>
             <a href={`#${sections.collection}`} className="btn btn-primary">
               {h.cta}
               <ArrowRight size={16} strokeWidth={1.5} aria-hidden="true" />

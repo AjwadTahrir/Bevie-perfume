@@ -4,7 +4,7 @@ import ProductVisual from './ProductVisual'
 import Reveal from './Reveal'
 import { brand, sections } from '../config/brand'
 import { copy } from '../config/content'
-import { perfumes, fragranceFamilies, usedFamilies, hasPlaceholderProducts, tintOf } from '../data/perfumes'
+import { perfumes, fragranceFamilies, usedFamilies, hasPlaceholderProducts, toneOf } from '../data/perfumes'
 
 /**
  * FRAGRANCE FINDER
@@ -96,9 +96,9 @@ export default function FragranceFinder({ onSelect }) {
                   >
                     <span
                       className="relative block h-24 w-[4.5rem] shrink-0 overflow-hidden rounded-t-full"
-                      style={{ background: tintOf(p) }}
+                      style={{ background: toneOf(p)[0] }}
                     >
-                      <ProductVisual perfume={p} className="absolute inset-x-[10%] bottom-[4%] h-[80%] w-[80%]" />
+                      <ProductVisual perfume={p} sizes="72px" className="absolute inset-x-[10%] bottom-[4%] h-[80%] w-[80%]" />
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="type-label block text-brown-soft">{fragranceFamilies[p.family]?.label}</span>

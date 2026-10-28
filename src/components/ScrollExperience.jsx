@@ -26,17 +26,21 @@ function boxWithin(el, ancestor) {
 /**
  * SCROLL EXPERIENCE
  * Hero and heritage scenes in one scroll-driven sequence. On wide
- * screens without reduced motion the wrapper becomes a 320vh track
+ * screens without reduced motion the wrapper becomes a 280vh track
  * with a sticky stage (see .is-cinematic in index.css), and GSAP
  * ScrollTrigger scrubs one timeline against native scrolling:
  *
- *   0.00-0.38  the product comes alive: bottle grows and tilts a
- *              little, the botanical bouquet swells and
- *              drifts behind it, the headline lifts away
+ *   0.00-0.38  the product comes alive: bottle grows and turns a
+ *              little, its shadow thins as it lifts, the botanical
+ *              bouquet swells and drifts behind it, the headline lifts away
  *   0.40-0.72  heritage transition: the cloth wipes across the left
- *              half, the bottle comes to rest on it, the story text
- *              rises in on the right
- *   0.72-1.00  hold, then the stage releases into the collection
+ *              half, the bottle drifts over on a slight lean and comes to
+ *              rest on it, its shadow gathering again; the story text
+ *              rises in on the right, one line after another
+ *   0.72-1.00  a short hold, then the stage releases into the collection
+ *
+ * Throughout, the bottle keeps the product cards' gentle float (CSS, inside
+ * .hb-tilt, see HeroBottle), so once it has landed it simply floats there.
  *
  * Phones and tablets get lighter, unpinned effects instead: the hero
  * copy and bouquet drift apart as the hero scrolls away, the batik
@@ -61,6 +65,7 @@ export default function ScrollExperience({ onSelect }) {
       const heritage = root.querySelector('.scene-heritage')
       const bottle = root.querySelector('.hb-move')
       const cloth = root.querySelector('.heritage-textile')
+      const shadow = root.querySelector('.hb-shadow')
       const q = gsap.utils.selector(root)
 
       // Resting place for the bottle: the cloth is the full-height left side, and
@@ -91,6 +96,8 @@ export default function ScrollExperience({ onSelect }) {
         .to(q('.hero-copy, .hero-index'), { y: -90, autoAlpha: 0, ease: 'power1.in', duration: 0.3 }, 0.05)
         // The bottle grows from its base so it stays standing on its shadow.
         .to(q('.hb-tilt'), { scale: 1.06, rotationY: -8, transformPerspective: 1400, transformOrigin: '50% 90%', ease: 'sine.inOut', duration: 0.38 }, 0)
+        // ...and its shadow narrows and softens beneath it, as if it had lifted off the floor
+        .to(shadow, { scaleX: 0.82, autoAlpha: 0.6, ease: 'sine.inOut', duration: 0.38 }, 0)
         .fromTo(q('.layer-back'), { scale: 0.96 }, { yPercent: -8, scale: 1.08, duration: 0.45 }, 0)
 
         // Stage 3: heritage transition
@@ -102,17 +109,21 @@ export default function ScrollExperience({ onSelect }) {
           0.4,
         )
         .to(q('.hb-tilt'), { scale: 1, rotationY: 0, ease: 'sine.inOut', duration: 0.3 }, 0.4)
+        // A slight lean into the drift, upright again as it lands
+        .to(q('.hb-tilt'), { rotation: -3, ease: 'sine.out', duration: 0.14 }, 0.4)
+        .to(q('.hb-tilt'), { rotation: 0, ease: 'sine.inOut', duration: 0.18 }, 0.54)
         .to(bottle, { x: () => target().x, y: () => target().y, ease: 'power2.inOut', duration: 0.32 }, 0.4)
+        .to(shadow, { scaleX: 1, autoAlpha: 1, ease: 'sine.inOut', duration: 0.2 }, 0.52)
         .fromTo(
           q('.heritage-item'),
-          { y: 48, autoAlpha: 0 },
-          { y: 0, autoAlpha: 1, stagger: 0.035, ease: 'power2.out', duration: 0.16 },
+          { y: 36, autoAlpha: 0 },
+          { y: 0, autoAlpha: 1, stagger: 0.045, ease: 'power3.out', duration: 0.18 },
           0.56,
         )
 
-        // Hold the finished composition before releasing
+        // Hold the finished composition briefly before releasing
         .addLabel('settled')
-        .to({}, { duration: 0.22 })
+        .to({}, { duration: 0.12 })
 
       // "Our Story" links land on the finished heritage frame, not the top of the stage.
       const onClick = (e) => {
@@ -151,7 +162,8 @@ export default function ScrollExperience({ onSelect }) {
       // The shadow it casts on the cloth: where its own contact shadow sits once landed
       const shadowBox = () => {
         const h = bottle.offsetHeight
-        return { top: cloth.offsetHeight * 0.53 + h * 0.39, width: body.offsetWidth * 0.58, height: h * 0.06 }
+        // The render's glass base sits 0.43 of its height below its centre and is about 0.42 of its width
+        return { top: cloth.offsetHeight * 0.53 + h * 0.4, width: body.offsetWidth * 0.42, height: h * 0.05 }
       }
       // Touchdown: a small dip and spring back, played once in real time when the
       // bottle arrives, so it never stalls half-squashed if scrolling stops.

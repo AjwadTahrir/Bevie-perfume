@@ -19,7 +19,7 @@ export const copy = {
     headline: ['An Art Woven', 'in Fragrance.'],
     intro:
       'JETHA Perfume blends timeless Malaysian heritage with modern perfumery, creating scents that tell a story — rich in culture, beauty and soul.',
-    cta: 'Explore the Collection',
+    cta: 'Shop Fragrances',
   },
 
   heritage: {
