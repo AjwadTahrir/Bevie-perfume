@@ -27,7 +27,7 @@ export const privacy = {
             'Proof of payment: the screenshot you upload and the transfer reference. A screenshot usually shows your name, your bank and part of your account number. We never see your online banking login, password or card details.',
             'Messages: anything you send us on WhatsApp or Instagram.',
           ],
-          'We do not ask for your email or home address, and we do not use analytics or advertising trackers.',
+          'We do not ask for your email. If you choose delivery, we ask for your address on WhatsApp and use it only to deliver your order. We do not use analytics or advertising trackers.',
         ],
       },
       {
@@ -35,7 +35,7 @@ export const privacy = {
         body: [
           [
             'To confirm your order and check your payment against our bank account.',
-            'To contact you on WhatsApp to arrange collection of your order.',
+            'To contact you on WhatsApp to arrange delivery or collection of your order.',
             'To credit the sale to the committee member whose promo code you used, for the fundraiser\'s sales targets.',
             'To answer your questions and handle refunds or problems with an order.',
             'To prevent fraud, such as one transfer being used for two orders, and to keep the fundraiser\'s accounts.',
@@ -49,7 +49,7 @@ export const privacy = {
         body: [
           [
             'Committee members who manage orders and payments, through a sign-in-only admin console.',
-            'If you use a promo code, the committee member it belongs to is credited with the sale and may contact you to arrange collection.',
+            'If you use a promo code, the committee member it belongs to is credited with the sale and may contact you to arrange delivery or collection.',
             'Our service providers: Supabase, which stores orders and payment screenshots, and Vercel, which hosts the website.',
             'Government or law enforcement bodies, where the law requires it.',
           ],
@@ -129,7 +129,7 @@ export const privacy = {
             'Bukti pembayaran: tangkapan skrin yang anda muat naik dan rujukan pindahan. Tangkapan skrin biasanya menunjukkan nama anda, bank anda dan sebahagian nombor akaun anda. Kami tidak sekali-kali melihat log masuk perbankan dalam talian, kata laluan atau butiran kad anda.',
             'Mesej: apa-apa yang anda hantar kepada kami melalui WhatsApp atau Instagram.',
           ],
-          'Kami tidak meminta alamat e-mel atau alamat rumah anda, dan kami tidak menggunakan alat analitik atau penjejak iklan.',
+          'Kami tidak meminta alamat e-mel anda. Jika anda memilih penghantaran, kami akan meminta alamat anda melalui WhatsApp dan menggunakannya hanya untuk menghantar pesanan anda. Kami tidak menggunakan alat analitik atau penjejak iklan.',
         ],
       },
       {
@@ -137,7 +137,7 @@ export const privacy = {
         body: [
           [
             'Untuk mengesahkan pesanan anda dan menyemak bayaran anda dengan akaun bank kami.',
-            'Untuk menghubungi anda melalui WhatsApp bagi mengatur pengambilan pesanan.',
+            'Untuk menghubungi anda melalui WhatsApp bagi mengatur penghantaran atau pengambilan pesanan.',
             'Untuk mengkreditkan jualan kepada ahli jawatankuasa yang memiliki kod promo yang anda gunakan, bagi sasaran jualan kutipan dana.',
             'Untuk menjawab pertanyaan anda dan mengendalikan bayaran balik atau masalah pesanan.',
             'Untuk mencegah penipuan, contohnya satu pindahan digunakan untuk dua pesanan, dan untuk menyimpan akaun kutipan dana.',
@@ -151,7 +151,7 @@ export const privacy = {
         body: [
           [
             'Ahli jawatankuasa yang menguruskan pesanan dan bayaran, melalui konsol pentadbir yang memerlukan log masuk.',
-            'Jika anda menggunakan kod promo, ahli jawatankuasa pemilik kod itu dikreditkan dengan jualan tersebut dan mungkin menghubungi anda untuk mengatur pengambilan.',
+            'Jika anda menggunakan kod promo, ahli jawatankuasa pemilik kod itu dikreditkan dengan jualan tersebut dan mungkin menghubungi anda untuk mengatur penghantaran atau pengambilan.',
             'Penyedia perkhidmatan kami: Supabase, yang menyimpan pesanan dan tangkapan skrin pembayaran, dan Vercel, yang menjadi hos laman web.',
             'Badan kerajaan atau penguatkuasa undang-undang, apabila dikehendaki oleh undang-undang.',
           ],
