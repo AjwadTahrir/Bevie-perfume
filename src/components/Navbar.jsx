@@ -1,21 +1,20 @@
 import { useEffect, useRef, useState } from 'react'
 import { Menu, ShoppingBag, X } from 'lucide-react'
-import { aboutPath, brand, sections } from '../config/brand'
+import { brand, sections } from '../config/brand'
 import { useCart } from '../lib/cart'
 import BrandMark from './BrandMark'
 
-// Store sections are in-page anchors; on the About page they point back to the store.
+// Store sections are in-page anchors; on other pages (privacy) they point back to the store.
 const storeLinks = [
   { href: `#${sections.story}`, key: 'our-story', label: 'Our Story' },
   { href: `#${sections.forHim}`, key: sections.forHim, label: 'For Him' },
   { href: `#${sections.forHer}`, key: sections.forHer, label: 'For Her' },
   { href: `#${sections.finder}`, key: 'find-your-scent', label: 'Find Your Scent' },
 ]
-const aboutLink = { href: aboutPath, key: 'about', label: 'About' }
 
 function linksFor(page) {
   const prefix = page === 'home' ? '' : '/'
-  return [...storeLinks.map((l) => ({ ...l, href: prefix + l.href })), aboutLink]
+  return storeLinks.map((l) => ({ ...l, href: prefix + l.href }))
 }
 
 
@@ -116,7 +115,7 @@ export default function Navbar({ page = 'home' }) {
                 {i > 0 && <span className="mx-3.5 size-[3px] rounded-full bg-ochre xl:mx-6" aria-hidden="true" />}
                 <a
                   href={l.href}
-                  aria-current={active === l.key ? (l.key === 'about' ? 'page' : 'true') : undefined}
+                  aria-current={active === l.key ? 'true' : undefined}
                   className={`link-underline py-1.5 text-[0.7rem] font-medium uppercase tracking-[0.2em] whitespace-nowrap transition-colors xl:tracking-[0.24em] ${
                     active === l.key ? 'text-rust-deep' : 'text-brown hover:text-rust-deep'
                   }`}

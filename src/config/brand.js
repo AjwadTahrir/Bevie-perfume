@@ -75,8 +75,6 @@ export const shop = {
   maxQuantityPerItem: 10,
 }
 
-/** The About page (the fundraising programme), a separate path from the one-page store. */
-export const aboutPath = '/about'
 
 /** The privacy policy (PDPA notice), linked from the footer and checkout. */
 export const privacyPath = '/privacy'
