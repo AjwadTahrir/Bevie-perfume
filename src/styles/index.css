@@ -303,7 +303,25 @@
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+  /* The gradient paints only inside the box, and with leading-none the
+     tail of Playfair's J drops below it and gets cropped: pad the box so
+     the whole J is painted, and pull the margins back so layout is unchanged */
+  padding-block: 0.22em;
+  margin-block: -0.22em;
+  padding-left: 0.08em;
+  margin-left: -0.08em;
 }
+/* SCHEDULE: the arrow between the two pre-order windows nudges downwards */
+@keyframes schedule-nudge {
+  0%, 100% { transform: translateY(-2px); }
+  50% { transform: translateY(3px); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .schedule-arrow {
+    animation: schedule-nudge 1.8s var(--ease-batik) infinite;
+  }
+}
+
 .brand-gloss-sheen {
   position: absolute;
   inset: 0;
