@@ -38,7 +38,7 @@ export function installAnchorScroll() {
   }
   document.addEventListener('click', onClick)
 
-  // Arriving with a hash (e.g. /#for-her from the About page): land again once
+  // Arriving with a hash (e.g. /#for-her from the privacy page): land again once
   // the pinned hero has laid itself out, since that shifts everything below it.
   let timer
   if (window.location.hash) {

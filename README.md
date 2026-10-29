@@ -6,7 +6,7 @@ React 19 + Vite + Tailwind CSS v4, Lucide icons, self-hosted fonts, Supabase bac
 
 ```bash
 npm install      # install dependencies
-npm run dev      # local development (http://localhost:5173, /about, /admin)
+npm run dev      # local development (http://localhost:5173, /privacy, /admin)
 npm run build    # production build into dist/
 npm run preview  # serve the production build
 ```
@@ -16,17 +16,16 @@ npm run preview  # serve the production build
 | URL | What | Entry |
 | --- | --- | --- |
 | `/` | The store: hero, Our Story, the collection (For Him / For Her), fragrance finder, contact | `src/App.jsx` |
-| `/about` | The fundraising programme and why JETHA is sold | `src/components/AboutPage.jsx` |
 | `/admin` | Fundraising console (Supabase sign-in, admins only) | `src/admin/` |
 
-`vercel.json` rewrites `/about` and `/admin/*` to their HTML entries.
+`vercel.json` rewrites `/privacy` and `/admin/*` to their HTML entries, and redirects the old `/about` to the store.
 
 ## Where things live
 
 | What | File |
 | --- | --- |
 | Brand name, wordmark, WhatsApp, Instagram, checkout display rules | `src/config/brand.js` |
-| All site copy, including the About page (`copy.about`) | `src/config/content.js` |
+| All site copy | `src/config/content.js` |
 | The eight perfumes, their collection (`category`) and descriptions (`story`) | `src/data/perfumes.js` |
 | Bottle renders from the Blender models (4:5 WebP, 480 and 960 px) | `src/assets/products/renders/` |
 | Bottle models for the card's hover 3D (Draco GLB) and their decoder | `public/models/`, `public/draco/` |
@@ -40,7 +39,7 @@ npm run preview  # serve the production build
 
 Each perfume in `src/data/perfumes.js` has a `category`: `'him'` (Bayu, Nirmala, Senja, Samudera) or `'her'`
 (Purnama, Ranum, Ratna, Seroja). The collection section shows both groups with an All / For Him / For Her filter, and
-`#for-him` / `#for-her` link straight to a group (used by the navigation, footer and About page).
+`#for-him` / `#for-her` link straight to a group (used by the navigation and footer).
 
 `story` is the short description shown in each perfume's pop-up under "Why …". The current text is a **draft written
 only from the recorded notes**; confirm or edit it in `perfumes.js`. The `notes` stay in the data as the source for

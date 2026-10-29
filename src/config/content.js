@@ -8,7 +8,7 @@
  * VERIFIED facts used: the brand name (JETHA Fragrance), that the
  * collection has eight scents (four For Him, four For Her), the
  * creative direction (contemporary perfumery inspired by Malaysian
- * batik) and, in `about`, the programme details supplied by the
+ * batik) and the programme details supplied by the
  * committee (Titian Serantau, KK10 Universiti Malaya, partner university
  * to be confirmed, Bangkok, 30 Nov - 4 Dec 2026).
  */
@@ -57,42 +57,6 @@ export const copy = {
     title: 'Let’s Talk Scent.',
     intro:
       'Orders and questions are handled personally over WhatsApp. Tell us which scent caught your eye and we will take it from there.',
-  },
-
-  // The fundraising programme behind the collection (/about).
-  // Wording supplied by the committee; keep claims to what it says.
-  about: {
-    eyebrow: 'Our Fundraising Journey',
-    title: 'Titian Serantau: Thailand Mobility Programme',
-    tagline: 'Connecting cultures, creating meaningful experiences.',
-    facts: [
-      ['Organiser', 'Kolej Kediaman Tun Ahmad Zaidi (KK10), Universiti Malaya'],
-      ['In collaboration with', 'TBD'],
-      ['Dates', '30 November – 4 December 2026'],
-      ['Location', 'Bangkok, Thailand'],
-    ],
-    intro: [
-      'Titian Serantau is an international student mobility programme organised by Kolej Kediaman Tun Ahmad Zaidi (KK10), Universiti Malaya.',
-      'Taking place in Bangkok from 30 November to 4 December 2026, the programme aims to strengthen regional connections through cultural exchange, academic engagement, community involvement, and sports.',
-      'The programme provides students with opportunities to explore different cultures, exchange ideas, and develop meaningful connections beyond borders.',
-    ],
-    support: {
-      eyebrow: 'Every Purchase Makes a Difference',
-      title: 'Your purchase helps support our journey to Thailand.',
-      body: [
-        'We are selling JETHA perfumes as part of our fundraising efforts to support the Titian Serantau: Thailand Mobility Programme.',
-        'Every purchase contributes towards our fundraising goal and helps support students participating in this international learning experience.',
-        'By choosing JETHA, you are supporting more than a fragrance — you are helping create opportunities for cultural exchange, learning, and meaningful connections between Malaysia and Thailand.',
-      ],
-      cta: 'Support Our Journey',
-    },
-    objectivesTitle: 'Our Objectives',
-    objectives: [
-      ['Cultural Exchange', 'Strengthen friendships and mutual understanding between Malaysian and Thai students.'],
-      ['International Learning', 'Discover new perspectives and experience different ways of life.'],
-      ['Community Engagement', 'Encourage students to participate in meaningful community activities.'],
-    ],
-    thanks: 'Thank you for being part of our journey.',
   },
 
   footer: {

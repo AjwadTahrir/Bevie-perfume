@@ -1,4 +1,4 @@
-import { aboutPath, brand, privacyPath, sections } from '../config/brand'
+import { brand, privacyPath, sections } from '../config/brand'
 import { copy } from '../config/content'
 import InstagramIcon from './InstagramIcon'
 import JethaSymbol from './JethaSymbol'
@@ -9,7 +9,6 @@ const linksFor = (page) => {
     { href: page === 'home' ? '#page-top' : '/', label: 'Home' },
     { href: `${p}#${sections.forHim}`, label: 'For Him' },
     { href: `${p}#${sections.forHer}`, label: 'For Her' },
-    { href: aboutPath, label: 'About' },
     { href: `${p}#${sections.contact}`, label: 'Contact' },
   ]
 }
