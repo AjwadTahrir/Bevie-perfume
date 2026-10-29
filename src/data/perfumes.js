@@ -6,7 +6,7 @@
  * the BeavieWeb catalogue (scents.js); the photo files keep their
  * original names. Prices are RM 35 per bottle, matching the Supabase
  * catalogue, which is the authoritative price at checkout. Every bottle
- * is 30 ml.
+ * is 32 ml.
  *
  * FIELDS (one record = one card + its modal)
  *   id            unique, url-safe text; must equal the product id in Supabase
@@ -135,6 +135,8 @@ export const fragranceFamilies = {
   woody: { label: 'Woody', blurb: 'Dry, warm structures with the depth of timber.' },
   fresh: { label: 'Fresh', blurb: 'Bright and airy, leaning citrus, green or marine.' },
   amber: { label: 'Amber', blurb: 'Rounded and warm, with resinous softness.' },
+  mint: { label: 'Mint', blurb: 'Cool and aromatic, with a clean, minty lift.' },
+  wine: { label: 'Wine', blurb: 'Rich and warm, like a deep glass of red.' },
 }
 
 /** Backdrop tints for each accent (see `accent` above). */
@@ -190,13 +192,13 @@ export const perfumes = [
     facts: {
       Family: 'Aromatic Fresh',
       Intensity: 'Bright',
-      Longevity: '6–8 Hours',
+      Longevity: '7–8 Hours',
       Sillage: 'Clean Trail',
       Season: 'Spring / Summer',
       'Time of Day': 'Morning',
     },
     price: 35, // MYR; authoritative checkout price comes from Supabase
-    size: '30 ml',
+    size: '32 ml',
     notes: {
       top: ['Green Apple', 'Bergamot', 'Iced Aldehydes'],
       heart: ['Lavender', 'Aromatic Herbs', 'Rosemary'],
@@ -221,7 +223,7 @@ export const perfumes = [
     id: 'nirmala',
     category: 'him',
     name: 'Nirmala',
-    family: 'woody',
+    family: 'mint',
     description:
       'Precision, composure, command. Cool mint meets warm vanilla and timeless woods, crafted for ambition without compromise.',
     tagline: 'The Peak / CEO',
@@ -243,15 +245,15 @@ export const perfumes = [
       ['Citrus', 26, '#e6d86a'],
     ],
     facts: {
-      Family: 'Aromatic Woody',
+      Family: 'Mint',
       Intensity: 'Controlled',
-      Longevity: '8–10 Hours',
+      Longevity: '5–6 Hours',
       Sillage: 'Confident',
       Season: 'All Season',
       'Time of Day': 'Work / Evening',
     },
     price: 35,
-    size: '30 ml',
+    size: '32 ml',
     notes: {
       top: ['Mint', 'Bergamot', 'Cardamom'],
       heart: ['Lavender', 'Sage', 'Green Tea'],
@@ -276,7 +278,7 @@ export const perfumes = [
     id: 'senja',
     category: 'him',
     name: 'Senja',
-    family: 'amber',
+    family: 'wine',
     description:
       'An evocative blend of warmth and sophistication: rum, spices, rich tobacco, smooth leather, vanilla, and amber.',
     tagline: 'The Gentleman’s Lounge',
@@ -299,15 +301,15 @@ export const perfumes = [
       ['Soft Spice', 26, '#d99977'],
     ],
     facts: {
-      Family: 'Warm Spicy',
+      Family: 'Wine',
       Intensity: 'Rich',
-      Longevity: '9–11 Hours',
+      Longevity: '7–8 Hours',
       Sillage: 'Elegant',
       Season: 'Fall / Winter',
       'Time of Day': 'Evening',
     },
     price: 35,
-    size: '30 ml',
+    size: '32 ml',
     notes: {
       top: ['Rum', 'Chestnut', 'Saffron'],
       heart: ['Tobacco', 'Leather', 'Lavender'],
@@ -356,13 +358,13 @@ export const perfumes = [
     facts: {
       Family: 'Marine Citrus',
       Intensity: 'Sparkling',
-      Longevity: '6–8 Hours',
+      Longevity: '4–5 Hours',
       Sillage: 'Fresh',
       Season: 'Summer',
       'Time of Day': 'Daytime',
     },
     price: 35,
-    size: '30 ml',
+    size: '32 ml',
     notes: {
       top: ['Lemon', 'Bergamot', 'Sea Salt'],
       heart: ['Marine Notes', 'Neroli', 'Aquatic Accord'],
@@ -410,13 +412,13 @@ export const perfumes = [
     facts: {
       Family: 'Fruity Floral',
       Intensity: 'Intense',
-      Longevity: '8–10 Hours',
+      Longevity: '7–8 Hours',
       Sillage: 'Strong',
       Season: 'Fall / Winter',
       'Time of Day': 'Evening / Night',
     },
     price: 35,
-    size: '30 ml',
+    size: '32 ml',
     notes: {
       top: ['Raspberry', 'Black Cherry', 'Pink Pepper'],
       heart: ['Rose', 'Jasmine', 'Peony'],
@@ -466,13 +468,13 @@ export const perfumes = [
     facts: {
       Family: 'Sweet Fruity',
       Intensity: 'Opulent',
-      Longevity: '8–10 Hours',
+      Longevity: '7–8 Hours',
       Sillage: 'Moderate',
       Season: 'Fall',
       'Time of Day': 'Evening',
     },
     price: 35,
-    size: '30 ml',
+    size: '32 ml',
     notes: {
       top: ['Grape', 'Plum', 'Red Berries'],
       heart: ['Violet', 'Heliotrope', 'Fruit Nectar'],
@@ -522,13 +524,13 @@ export const perfumes = [
     facts: {
       Family: 'Floral Aquatic',
       Intensity: 'Luminous',
-      Longevity: '7–9 Hours',
+      Longevity: '5–6 Hours',
       Sillage: 'Refined',
       Season: 'Winter / Spring',
       'Time of Day': 'Day / Evening',
     },
     price: 35,
-    size: '30 ml',
+    size: '32 ml',
     notes: {
       top: ['Frosted Lotus', 'Icy Accord', 'Pink Peony'],
       heart: ['Rose', 'Water Lily', 'Translucent Florals'],
@@ -577,13 +579,13 @@ export const perfumes = [
     facts: {
       Family: 'White Floral Vanilla',
       Intensity: 'Soft Radiance',
-      Longevity: '7–9 Hours',
+      Longevity: '7–8 Hours',
       Sillage: 'Graceful',
       Season: 'Spring',
       'Time of Day': 'Daytime',
     },
     price: 35,
-    size: '30 ml',
+    size: '32 ml',
     notes: {
       top: ['Vanilla Orchid', 'Neroli', 'Soft Pear'],
       heart: ['Lily of the Valley', 'Jasmine Petals', 'White Floral Accord'],
@@ -608,7 +610,7 @@ export const perfumes = [
 
 /** The two collections, in display order. */
 export const categories = [
-  { key: 'him', label: 'For Him', anchor: 'for-him', intro: 'Fresh, woody and warm: breeze, clarity, dusk and ocean.' },
+  { key: 'him', label: 'For Him', anchor: 'for-him', intro: 'Fresh, minty and rich: breeze, clarity, dusk and ocean.' },
   { key: 'her', label: 'For Her', anchor: 'for-her', intro: 'Fruity, floral and luminous: moonlight, ripeness, jewels and lotus.' },
 ]
 
