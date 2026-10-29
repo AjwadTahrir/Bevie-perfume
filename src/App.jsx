@@ -9,13 +9,14 @@ import Footer from './components/Footer'
 import PerfumeModal from './components/PerfumeModal'
 import CartDrawer from './components/CartDrawer'
 import PrivacyPage from './components/PrivacyPage'
+import SchedulePage from './components/SchedulePage'
 import { CartProvider } from './lib/cart'
 import { installAnchorScroll } from './lib/anchorScroll'
-import { privacyPath } from './config/brand'
+import { privacyPath, schedulePath } from './config/brand'
 
-// Two pages share the shell: the one-page store at / and the privacy policy at /privacy.
+// Three pages share the shell: the one-page store at /, the pre-order schedule at /schedule and the privacy policy at /privacy.
 const path = window.location.pathname.replace(/\/+$/, '')
-const page = path === privacyPath ? 'privacy' : 'home'
+const page = path === privacyPath ? 'privacy' : path === schedulePath ? 'schedule' : 'home'
 
 export default function App() {
   const [selected, setSelected] = useState(null)
@@ -28,6 +29,8 @@ export default function App() {
       <main id="main">
         {page === 'privacy' ? (
           <PrivacyPage />
+        ) : page === 'schedule' ? (
+          <SchedulePage />
         ) : (
           <>
             <ScrollExperience onSelect={setSelected} />

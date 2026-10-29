@@ -6,7 +6,7 @@ import { useCart, orderTotals } from '../lib/cart'
 import { checkoutMode, createOrder, submitReceipt, validateReferralCode } from '../lib/orders'
 import { lockScroll, unlockScroll } from '../lib/scrollLock'
 import { normalizeReferralCode } from '../data/referralCodes'
-import { privacyPath, shop } from '../config/brand'
+import { preorder, privacyPath, schedulePath, shop } from '../config/brand'
 import { payment } from '../config/payment'
 import { formatPrice } from '../lib/format'
 import { compressReceipt } from '../lib/compressImage'
@@ -295,6 +295,19 @@ export default function CartDrawer() {
   )
 }
 
+// The pre-order windows in one line, with a link to the full schedule.
+function PreorderNote({ className = '' }) {
+  const [order, receive] = preorder.steps
+  return (
+    <p className={`rounded-lg border border-ochre/60 bg-cream px-3 py-2.5 text-sm text-brown ${className}`}>
+      <strong className="font-medium">Pre-order:</strong> order {order.short}, then receive your items (delivered or collected) {receive.short}.{' '}
+      <a href={schedulePath} target="_blank" rel="noopener" className="whitespace-nowrap underline underline-offset-2 hover:text-rust-deep">
+        See schedule
+      </a>
+    </p>
+  )
+}
+
 function Footer({ children }) {
   return <div className="border-t border-brown/15 bg-cream-light px-5 py-4 md:px-7">{children}</div>
 }
@@ -448,6 +461,7 @@ function CartStep({ cart, totals, referral, referralInput, setReferralInput, ref
       <div className="mt-6">
         <Summary {...totals} referral={referral} count={cart.count} />
       </div>
+      <PreorderNote className="mt-6" />
     </>
   )
 }
@@ -472,8 +486,9 @@ function DetailsStep({ customer, setCustomer, onNext }) {
   return (
     <form id="checkout-details" onSubmit={onSubmit} className="space-y-5">
       <p className="text-sm text-brown-soft">
-        The committee distributes every order, so no address is needed. We'll contact you on WhatsApp to arrange collection.
+        The committee distributes every order, so no address is needed. We'll contact you on WhatsApp to arrange delivery or collection.
       </p>
+      <PreorderNote />
       {FIELDS.map((f) => {
         const id = `${baseId}-${f.key}`
         const Tag = f.multiline ? 'textarea' : 'input'
@@ -620,7 +635,8 @@ function DoneStep({ placed, onClose }) {
       </span>
       <p className="mt-6 font-display text-3xl text-brown">Thank you!</p>
       <p className="mt-3 max-w-xs text-sm text-brown-soft">
-        Order submitted: payment awaiting verification. We'll check your payment and contact you on WhatsApp to arrange collection.
+        Order submitted: payment awaiting verification. We'll check your payment and contact you on WhatsApp to arrange delivery or collection between{' '}
+        {preorder.steps[1].short}.
       </p>
       <p className="mt-6 text-xs uppercase tracking-[0.2em] text-brown-soft">Order reference</p>
       <p className="mt-1 font-medium tracking-[0.18em]">{placed.reference}</p>

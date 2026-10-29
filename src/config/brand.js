@@ -64,7 +64,7 @@ export const shop = {
   committeeDiscountPerBottle: 5,
 
   // The committee distributes orders: no delivery fee, no address needed.
-  distributionNote: 'Free · arranged by the committee',
+  distributionNote: 'Free · delivered or collected, 23 – 29 Nov',
 
   // Proof of payment: images only, as the receipts bucket accepts.
   proof: {
@@ -78,6 +78,31 @@ export const shop = {
 
 /** The privacy policy (PDPA notice), linked from the footer and checkout. */
 export const privacyPath = '/privacy'
+
+/** The pre-order schedule page, linked from the navigation, footer and checkout. */
+export const schedulePath = '/schedule'
+
+/**
+ * PRE-ORDER SCHEDULE
+ * Orders are taken during one window, then every order is handed over
+ * in the next. Shown on /schedule and summarised in checkout.
+ */
+export const preorder = {
+  steps: [
+    {
+      title: 'Pre-order',
+      dates: '1 – 22 November 2026',
+      short: '1 – 22 Nov',
+      body: 'Choose your scents, pay by QR and upload your proof of payment. Every order placed in this window is part of the pre-order.',
+    },
+    {
+      title: 'Receive your items',
+      dates: '23 – 29 November 2026',
+      short: '23 – 29 Nov',
+      body: 'Your order is delivered to you, or you can collect it from the committee. We contact you on WhatsApp to arrange which suits you.',
+    },
+  ],
+}
 
 /** Section anchors used by the navigation and in-page links. */
 export const sections = {

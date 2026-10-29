@@ -3,6 +3,7 @@
   "redirects": [{ "source": "/about", "destination": "/", "permanent": false }],
   "rewrites": [
     { "source": "/privacy", "destination": "/index.html" },
+    { "source": "/schedule", "destination": "/index.html" },
     { "source": "/admin", "destination": "/admin/index.html" },
     { "source": "/admin/:path*", "destination": "/admin/index.html" }
   ],

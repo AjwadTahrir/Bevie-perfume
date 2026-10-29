@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Menu, ShoppingBag, X } from 'lucide-react'
-import { brand, sections } from '../config/brand'
+import { brand, schedulePath, sections } from '../config/brand'
 import { useCart } from '../lib/cart'
 import BrandMark from './BrandMark'
 
@@ -14,7 +14,7 @@ const storeLinks = [
 
 function linksFor(page) {
   const prefix = page === 'home' ? '' : '/'
-  return storeLinks.map((l) => ({ ...l, href: prefix + l.href }))
+  return [...storeLinks.map((l) => ({ ...l, href: prefix + l.href })), { href: schedulePath, key: 'schedule', label: 'Schedule' }]
 }
 
 
