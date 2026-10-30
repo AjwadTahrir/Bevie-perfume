@@ -12,7 +12,7 @@ export default function PaymentQr() {
     return (
       <img
         src={payment.qrImagePath}
-        alt={`${payment.method} code for paying ${payment.recipientName}`}
+        alt={payment.recipientName ? `${payment.method} code for paying ${payment.recipientName}` : `${payment.method} code for paying JETHA`}
         className="h-auto w-60 max-w-full rounded-lg bg-white object-contain"
       />
     )
