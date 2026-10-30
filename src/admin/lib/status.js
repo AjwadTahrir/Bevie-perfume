@@ -26,6 +26,7 @@ export const MEMBER_STATUS = {
 
 export const HISTORY_LABEL = {
   created: 'Order placed',
+  order_updated: 'Details changed by customer',
   payment_submitted: 'Payment submitted',
   payment_verified: 'Payment verified',
   payment_rejected: 'Payment rejected',

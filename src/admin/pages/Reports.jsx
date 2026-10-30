@@ -53,7 +53,8 @@ export default function Reports() {
 
   const days = useMemo(() => fillDays(series.data, r.from, r.to), [series.data, r.from, r.to])
   const targetDist = Object.entries(MEMBER_STATUS).map(([k, s]) => ({ status: s.label, members: (members.data || []).filter((m) => m.status === k).length }))
-  const statusDist = Object.entries(DISPLAY_STATUS).map(([k, s]) => ({ status: s.label, orders: d?.status_counts?.[k] ?? 0 }))
+  // Orders with no receipt aren't reported, so "Awaiting payment" would always be zero.
+  const statusDist = Object.entries(DISPLAY_STATUS).filter(([k]) => k !== 'awaiting_payment').map(([k, s]) => ({ status: s.label, orders: d?.status_counts?.[k] ?? 0 }))
 
   const exportOrders = async () => {
     setExporting(true)

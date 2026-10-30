@@ -7,7 +7,8 @@
 //
 //   POST application/json { action: "validate-code", code }
 //     -> { valid }
-//   POST application/json { action: "create-order", requestId, customer: { name, phone, note, method, address: { line1, line2, postcode, city, state } }, code, items: [{ id, quantity }] }
+//   POST application/json { action: "create-order", requestId, orderId?, guestToken?, customer: { name, phone, note, method, address: { line1, line2, postcode, city, state } }, code, items: [{ id, quantity }] }
+//     (orderId and guestToken update that unpaid order instead of creating another)
 //     -> { orderId, orderNumber, guestToken, subtotalSen, shippingSen, discountSen, totalSen, committeeApplied }
 //   POST multipart/form-data  action=submit-receipt, orderId, guestToken, bankReference?, file
 //     -> { status: "awaiting_verification" }
@@ -115,23 +116,33 @@ async function createOrder(req: Request, body: Record<string, unknown>) {
   // The browser only states what it wants; prices come from the database.
   const cleanItems = items.map((i) => ({ id: String((i as Record<string, unknown>).id ?? ''), quantity: Number((i as Record<string, unknown>).quantity) }))
 
-  const guestToken = randomToken()
-  const { data, error } = await db.rpc('checkout_create_order', {
-    p_request_id: requestId,
-    p_guest_token_hash: await sha256Hex(guestToken),
-    p_customer_name: name,
-    p_customer_phone: phone,
-    p_customer_note: String(customer.note ?? '').slice(0, 1000),
-    p_committee_code: typeof body.code === 'string' ? body.code.slice(0, 40) : null,
-    p_items: cleanItems,
-    p_fulfillment_method: method,
-    // The database checks the other address fields and ignores them for collection.
-    p_address_line1: addressPart('line1'),
-    p_address_line2: addressPart('line2'),
-    p_postcode: addressPart('postcode'),
-    p_city: addressPart('city'),
-    p_state: addressPart('state'),
+  const save = async (guestToken: string, orderId: string | null) => ({
+    guestToken,
+    ...(await db.rpc('checkout_create_order', {
+      p_request_id: requestId,
+      p_guest_token_hash: await sha256Hex(guestToken),
+      p_customer_name: name,
+      p_customer_phone: phone,
+      p_customer_note: String(customer.note ?? '').slice(0, 1000),
+      p_committee_code: typeof body.code === 'string' ? body.code.slice(0, 40) : null,
+      p_items: cleanItems,
+      p_fulfillment_method: method,
+      // The database checks the other address fields and ignores them for collection.
+      p_address_line1: addressPart('line1'),
+      p_address_line2: addressPart('line2'),
+      p_postcode: addressPart('postcode'),
+      p_city: addressPart('city'),
+      p_state: addressPart('state'),
+      p_order_id: orderId,
+    })),
   })
+
+  const priorId = String(body.orderId ?? '')
+  const priorToken = String(body.guestToken ?? '')
+  let result = UUID.test(priorId) && /^[a-f0-9]{64}$/.test(priorToken) ? await save(priorToken, priorId) : await save(randomToken(), null)
+  // That order has expired or can't be changed any more, so start a new one.
+  if (result.error?.code === 'P0003') result = await save(randomToken(), null)
+  const { guestToken, data, error } = result
   if (error) {
     if (error.code === 'P0002') return fail(req, 'That referral code was not recognised. Check it or remove it.', 400, 'invalid_code')
     if (error.code === 'P0001') return fail(req, error.message, 400, 'rejected')

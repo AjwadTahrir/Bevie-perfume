@@ -13,7 +13,8 @@ import { PAYMENT_STATUS } from '../lib/status'
 const TABS = [
   { key: 'submitted', label: 'Needs review', hint: 'Receipt uploaded', match: (o) => o.display_status === 'submitted' },
   { key: 'duplicates', label: 'Duplicate references', hint: 'Same bank reference twice', match: (o) => o.duplicate_transfer_reference && o.order_status !== 'cancelled' },
-  { key: 'awaiting', label: 'Awaiting payment', hint: 'No receipt yet', match: (o) => o.display_status === 'awaiting_payment' },
+  { key: 'awaiting', label: 'Awaiting payment', hint: 'No receipt yet', match: (o) => o.display_status === 'awaiting_payment' && !o.is_expired },
+  { key: 'expired', label: 'Expired', hint: 'No receipt after 48 hours, or cancelled', match: (o) => o.is_unfinished && (o.is_expired || o.display_status === 'cancelled') },
   { key: 'verified', label: 'Verified', hint: 'Counted in sales', match: (o) => o.display_status === 'verified' },
   { key: 'rejected', label: 'Rejected', hint: 'Customer to resubmit', match: (o) => o.display_status === 'rejected' },
 ]
@@ -22,7 +23,7 @@ export default function Payments() {
   const navigate = useNavigate()
   const toast = useToast()
   const { refresh } = useLiveData()
-  const orders = useQuery(() => fetchOrders(), [])
+  const orders = useQuery(() => fetchOrders({ unfinished: true }), [])
   const [tab, setTab] = useState('submitted')
   const [q, setQ] = useState('')
   const [verifying, setVerifying] = useState(null)
@@ -74,7 +75,7 @@ export default function Payments() {
 
       {/* Queues: each tab shows its count, so the workload is visible before opening it */}
       <div className="-mx-4 mb-5 overflow-x-auto px-4 sm:mx-0 sm:px-0">
-        <div className="grid min-w-[44rem] grid-cols-5 gap-2" role="tablist" aria-label="Payment queues">
+        <div className="grid min-w-[52rem] grid-cols-6 gap-2" role="tablist" aria-label="Payment queues">
           {TABS.map((t) => {
             const selected = tab === t.key
             const alert = (t.key === 'submitted' || t.key === 'duplicates') && counts[t.key] > 0

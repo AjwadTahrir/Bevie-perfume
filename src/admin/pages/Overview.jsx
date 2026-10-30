@@ -17,7 +17,7 @@ export const DEFINITIONS = {
   discounts: 'Promo-code discounts granted on verified orders (RM 5 per bottle with a valid AJK code).',
   net: 'Money actually collected for perfume on verified orders: gross sales minus discounts. Postage is not included.',
   profit: 'Campaign profit on verified orders: the profit per bottle set in Settings × verified bottles. Discounts are not subtracted again.',
-  pending: 'Orders awaiting payment or with a payment submitted but not yet verified. Not counted as sales.',
+  pending: 'Orders with a receipt uploaded but not yet verified. Not counted as sales.',
 }
 
 /** Colours for people tiles, picked by name so a person keeps theirs everywhere. */

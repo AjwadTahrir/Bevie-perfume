@@ -42,6 +42,8 @@ export const ORDER_CSV = [
 ]
 
 const opts = (map, all) => [{ value: '', label: all }, ...Object.entries(map).map(([value, s]) => ({ value, label: s.label }))]
+// Orders still awaiting payment aren't listed here, so they aren't offered as a filter.
+const PAYMENT_OPTIONS = opts(PAYMENT_STATUS, 'All payment statuses').filter((o) => o.value !== 'awaiting_payment')
 
 export default function Orders() {
   const navigate = useNavigate()
@@ -85,7 +87,7 @@ export default function Orders() {
       <PageHeader
         eyebrow="Operations"
         title="Orders"
-        description="Every customer order, newest first. Click a row for details and actions."
+        description="Orders with a receipt uploaded, newest first. Click a row for details and actions. Orders with no receipt yet are under Payments."
         actions={
           <button type="button" className="btn btn-secondary" disabled={!filtered.length} onClick={() => downloadCsv(`jetha-orders-${stamp()}.csv`, ORDER_CSV, filtered)}>
             <Download size={15} /> Export CSV
@@ -98,7 +100,7 @@ export default function Orders() {
       </div>
       <Toolbar>
         <SearchInput value={q} onChange={setQ} placeholder="Reference, customer, phone or code" label="Search orders" />
-        <Select label="Payment status" value={pay} onChange={setPay} options={opts(PAYMENT_STATUS, 'All payment statuses')} className="w-full sm:w-48" />
+        <Select label="Payment status" value={pay} onChange={setPay} options={PAYMENT_OPTIONS} className="w-full sm:w-48" />
         <Select label="Order status" value={status} onChange={setStatus} options={opts(ORDER_STATUS, 'All order statuses')} className="w-full sm:w-44" />
         <Select label="AJK member" value={member} onChange={setMember} options={memberOptions} className="w-full sm:w-60" />
         {orders.data && (
@@ -114,7 +116,7 @@ export default function Orders() {
           <TableSkeleton cols={7} />
         ) : !filtered.length ? (
           <EmptyState icon={ShoppingBag} title={orders.data?.length ? 'No orders match these filters' : 'No orders yet'}>
-            {orders.data?.length ? 'Try clearing a filter or widening the date range.' : 'Orders placed on the website will appear here automatically.'}
+            {orders.data?.length ? 'Try clearing a filter or widening the date range.' : 'Orders will appear here automatically once a buyer uploads a receipt.'}
           </EmptyState>
         ) : (
           <>

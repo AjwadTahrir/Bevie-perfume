@@ -86,7 +86,7 @@ RLS is enabled on every shop table. Visitors can read active products only. Ordi
 
 Guest checkout intentionally has no direct order-read policy. Backend endpoints must generate a cryptographically random guest token (at least 32 random bytes), save only its SHA-256 hash, and validate it before returning a safe order summary or authorizing uploads. Never return the hash or use an order number as a credential. Rate-limit guest endpoints.
 
-Status: 1 and 2 are implemented (migration 005 and `functions/checkout`), 3 by the admin dashboard (migration 006). Automatic expiry of unpaid orders (4) is still to build.
+Status: 1 and 2 are implemented (migration 005 and `functions/checkout`), 3 by the admin dashboard (migration 006). Expiry of unpaid orders (4) is in migration 011: an order with no receipt stays out of the order list, reports and leaderboard, and after 48 hours the buyer can no longer upload one. Admins see these under Payments, and can still verify one if the money arrived.
 
 The transactional backend operations:
 

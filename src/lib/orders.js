@@ -62,9 +62,10 @@ const demoReference = () =>
 /**
  * Creates the order before payment, so the QR shows the backend's final total.
  * requestId makes retries safe: the same id always returns the same order.
+ * previous is the order already created in this checkout, updated rather than duplicated.
  * @returns {Promise<{ orderId, reference, guestToken, subtotal, shipping, discount, total, committeeApplied }>}
  */
-export async function createOrder({ requestId, customer, code, items }) {
+export async function createOrder({ requestId, customer, code, items, previous }) {
   if (checkoutMode === 'closed') throw new Error('Online ordering opens soon. Please order through WhatsApp for now.')
   if (checkoutMode === 'demo') {
     await new Promise((r) => setTimeout(r, 400))
@@ -72,11 +73,13 @@ export async function createOrder({ requestId, customer, code, items }) {
     const count = items.reduce((n, l) => n + l.quantity, 0)
     const discount = code ? shop.committeeDiscountPerBottle * count : 0
     const shipping = customer.method === 'delivery' ? shop.deliveryFee : 0
-    return { orderId: null, reference: demoReference(), guestToken: null, subtotal, shipping, discount, total: subtotal + shipping - discount, committeeApplied: !!code }
+    return { orderId: null, reference: previous?.reference ?? demoReference(), guestToken: null, subtotal, shipping, discount, total: subtotal + shipping - discount, committeeApplied: !!code }
   }
   const data = await call({
     action: 'create-order',
     requestId,
+    orderId: previous?.orderId,
+    guestToken: previous?.guestToken,
     code: code || null,
     customer: {
       name: customer.name,

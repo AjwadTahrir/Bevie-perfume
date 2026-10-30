@@ -26,7 +26,7 @@ const rm = (n) => formatPrice(n, 'RM 0')
  *   cart -> details -> payment (scan QR, upload proof) -> done
  * Continuing to payment creates the order on the backend (src/lib/orders.js),
  * so the QR shows the backend's final total. Going back and changing the
- * cart, code or details creates a fresh order the next time.
+ * cart, code or details updates that same order the next time.
  */
 export default function CartDrawer() {
   const cart = useCart()
@@ -48,7 +48,7 @@ export default function CartDrawer() {
 
   const totals = orderTotals(cart.subtotal, cart.count, !!referral)
   const postage = customer.method === 'delivery' ? shop.deliveryFee : 0
-  // What the order was created from; any change means a new order.
+  // What the order was last saved from; any change means saving it again.
   const fingerprint = JSON.stringify([cart.items.map((l) => [l.id, l.quantity]), referral, customer])
 
   // Open / close the native dialog with the cart state.
@@ -120,7 +120,7 @@ export default function CartDrawer() {
     setCreating(true)
     setError('')
     try {
-      const created = await createOrder({ requestId: crypto.randomUUID(), customer, code: referral, items: cart.items })
+      const created = await createOrder({ requestId: crypto.randomUUID(), customer, code: referral, items: cart.items, previous: order })
       setOrder({ ...created, fingerprint })
       setProof(null)
       setPaid(false)

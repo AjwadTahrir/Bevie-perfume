@@ -188,6 +188,7 @@ export default function OrderDetail() {
             <StatusBadge map={PAYMENT_STATUS} value={o.payment_status} />
             <StatusBadge map={ORDER_STATUS} value={o.order_status} />
             {o.is_verified ? <Badge tone="good">Counted in sales</Badge> : o.is_pending ? <Badge tone="info">Pending, not counted</Badge> : <Badge>Not counted</Badge>}
+            {o.is_expired && <Badge tone="warn">Expired, no receipt after 48 hours</Badge>}
           </div>
         </div>
         <div className="flex w-full flex-wrap gap-2 sm:w-auto">

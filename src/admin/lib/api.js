@@ -46,9 +46,11 @@ export const fetchDashboard = (r) => rpc('admin_dashboard', range(r))
 export const fetchMembers = (r) => rpc('admin_member_performance', range(r))
 export const fetchTimeseries = (r, memberId = null) => rpc('admin_sales_timeseries', { ...range(r), p_member_id: memberId })
 
-export function fetchOrders({ from, to, memberId } = {}) {
+/** Leaves out orders with no receipt yet unless asked; only the Payments page wants those. */
+export function fetchOrders({ from, to, memberId, unfinished = false } = {}) {
   return selectAll(() => {
     let q = supabase.from('admin_orders').select('*').order('created_at', { ascending: false })
+    if (!unfinished) q = q.eq('is_unfinished', false)
     if (from) q = q.gte('created_at', from)
     if (to) q = q.lt('created_at', to)
     if (memberId) q = q.eq('ajk_member_id', memberId)
