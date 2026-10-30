@@ -62,7 +62,7 @@ const demoReference = () =>
 /**
  * Creates the order before payment, so the QR shows the backend's final total.
  * requestId makes retries safe: the same id always returns the same order.
- * @returns {Promise<{ orderId, reference, guestToken, subtotal, discount, total, committeeApplied }>}
+ * @returns {Promise<{ orderId, reference, guestToken, subtotal, shipping, discount, total, committeeApplied }>}
  */
 export async function createOrder({ requestId, customer, code, items }) {
   if (checkoutMode === 'closed') throw new Error('Online ordering opens soon. Please order through WhatsApp for now.')
@@ -71,13 +71,14 @@ export async function createOrder({ requestId, customer, code, items }) {
     const subtotal = items.reduce((s, l) => s + (l.perfume.price ?? 0) * l.quantity, 0)
     const count = items.reduce((n, l) => n + l.quantity, 0)
     const discount = code ? shop.committeeDiscountPerBottle * count : 0
-    return { orderId: null, reference: demoReference(), guestToken: null, subtotal, discount, total: subtotal - discount, committeeApplied: !!code }
+    const shipping = customer.method === 'delivery' ? shop.deliveryFee : 0
+    return { orderId: null, reference: demoReference(), guestToken: null, subtotal, shipping, discount, total: subtotal + shipping - discount, committeeApplied: !!code }
   }
   const data = await call({
     action: 'create-order',
     requestId,
     code: code || null,
-    customer: { name: customer.name, phone: customer.phone, note: customer.notes },
+    customer: { name: customer.name, phone: customer.phone, note: customer.notes, method: customer.method, address: customer.address },
     items: items.map((l) => ({ id: l.id, quantity: l.quantity })),
   })
   return {
@@ -85,6 +86,7 @@ export async function createOrder({ requestId, customer, code, items }) {
     reference: `BV-${String(data.orderNumber).padStart(5, '0')}`,
     guestToken: data.guestToken,
     subtotal: data.subtotalSen / 100,
+    shipping: data.shippingSen / 100,
     discount: data.discountSen / 100,
     total: data.totalSen / 100,
     committeeApplied: data.committeeApplied,

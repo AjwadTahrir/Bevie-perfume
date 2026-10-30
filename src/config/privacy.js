@@ -12,7 +12,7 @@ export const privacy = {
   en: {
     label: 'English',
     title: 'Privacy Policy',
-    updated: 'Last updated: 29 October 2026',
+    updated: 'Last updated: 30 October 2026',
     intro: [
       'This notice explains how JETHA Fragrance ("JETHA", "we", "us") collects and uses your personal data on jethafragrance.vercel.app, in line with Malaysia\'s Personal Data Protection Act 2010 (PDPA).',
       'JETHA Fragrance is a student fundraiser run by the organising committee of the Titian Serantau: Thailand Mobility Programme, Kolej Kediaman Tun Ahmad Zaidi (KK10), Universiti Malaya. It is not a registered business. By placing an order, you agree to this notice.',
@@ -22,12 +22,12 @@ export const privacy = {
         h: '1. Personal data we collect',
         body: [
           [
-            'Contact details: your name and phone (WhatsApp) number, and any order notes you add.',
+            'Contact details: your name and phone (WhatsApp) number, your delivery address if you choose delivery, and any order notes you add.',
             'Order details: what you ordered, the total, and any committee promo code you used.',
             'Proof of payment: the screenshot you upload and the transfer reference. A screenshot usually shows your name, your bank and part of your account number. We never see your online banking login, password or card details.',
             'Messages: anything you send us on WhatsApp or Instagram.',
           ],
-          'We do not ask for your email. If you choose delivery, we ask for your address on WhatsApp and use it only to deliver your order. We do not use analytics or advertising trackers.',
+          'We do not ask for your email. If you choose delivery, we ask for your address at checkout and use it only to deliver your order. We do not use analytics or advertising trackers.',
         ],
       },
       {
@@ -35,13 +35,13 @@ export const privacy = {
         body: [
           [
             'To confirm your order and check your payment against our bank account.',
-            'To contact you on WhatsApp to arrange delivery or collection of your order.',
+            'To deliver your order to your address, or to contact you on WhatsApp about delivery or collection.',
             'To credit the sale to the committee member whose promo code you used, for the fundraiser\'s sales targets.',
             'To answer your questions and handle refunds or problems with an order.',
             'To prevent fraud, such as one transfer being used for two orders, and to keep the fundraiser\'s accounts.',
           ],
           'We do not use your data for marketing and we do not send newsletters.',
-          'Your name, phone number and proof of payment are needed to place an order. If you choose not to give them, we cannot process it.',
+          'Your name, phone number and proof of payment are needed to place an order, and your address is needed for delivery. If you choose not to give them, we cannot process it.',
         ],
       },
       {
@@ -50,6 +50,7 @@ export const privacy = {
           [
             'Committee members who manage orders and payments, through a sign-in-only admin console.',
             'If you use a promo code, the committee member it belongs to is credited with the sale and may contact you to arrange delivery or collection.',
+            'If you choose delivery, the courier or postal service that delivers your parcel sees your name, phone number and address.',
             'Our service providers: Supabase, which stores orders and payment screenshots, and Vercel, which hosts the website.',
             'Government or law enforcement bodies, where the law requires it.',
           ],
@@ -114,7 +115,7 @@ export const privacy = {
   ms: {
     label: 'Bahasa Malaysia',
     title: 'Dasar Privasi',
-    updated: 'Dikemas kini: 29 Oktober 2026',
+    updated: 'Dikemas kini: 30 Oktober 2026',
     intro: [
       'Notis ini menerangkan bagaimana JETHA Fragrance ("JETHA", "kami") mengumpul dan menggunakan data peribadi anda di jethafragrance.vercel.app, selaras dengan Akta Perlindungan Data Peribadi 2010 (PDPA) Malaysia.',
       'JETHA Fragrance ialah projek kutipan dana pelajar yang dikendalikan oleh jawatankuasa penganjur Titian Serantau: Thailand Mobility Programme, Kolej Kediaman Tun Ahmad Zaidi (KK10), Universiti Malaya. Ia bukan perniagaan berdaftar. Dengan membuat pesanan, anda bersetuju dengan notis ini.',
@@ -124,12 +125,12 @@ export const privacy = {
         h: '1. Data peribadi yang kami kumpul',
         body: [
           [
-            'Butiran hubungan: nama dan nombor telefon (WhatsApp) anda, serta apa-apa nota pesanan yang anda tambah.',
+            'Butiran hubungan: nama dan nombor telefon (WhatsApp) anda, alamat penghantaran jika anda memilih penghantaran, serta apa-apa nota pesanan yang anda tambah.',
             'Butiran pesanan: barang yang anda pesan, jumlah bayaran dan kod promo jawatankuasa yang anda gunakan.',
             'Bukti pembayaran: tangkapan skrin yang anda muat naik dan rujukan pindahan. Tangkapan skrin biasanya menunjukkan nama anda, bank anda dan sebahagian nombor akaun anda. Kami tidak sekali-kali melihat log masuk perbankan dalam talian, kata laluan atau butiran kad anda.',
             'Mesej: apa-apa yang anda hantar kepada kami melalui WhatsApp atau Instagram.',
           ],
-          'Kami tidak meminta alamat e-mel anda. Jika anda memilih penghantaran, kami akan meminta alamat anda melalui WhatsApp dan menggunakannya hanya untuk menghantar pesanan anda. Kami tidak menggunakan alat analitik atau penjejak iklan.',
+          'Kami tidak meminta alamat e-mel anda. Jika anda memilih penghantaran, kami akan meminta alamat anda semasa pembayaran dan menggunakannya hanya untuk menghantar pesanan anda. Kami tidak menggunakan alat analitik atau penjejak iklan.',
         ],
       },
       {
@@ -137,13 +138,13 @@ export const privacy = {
         body: [
           [
             'Untuk mengesahkan pesanan anda dan menyemak bayaran anda dengan akaun bank kami.',
-            'Untuk menghubungi anda melalui WhatsApp bagi mengatur penghantaran atau pengambilan pesanan.',
+            'Untuk menghantar pesanan ke alamat anda, atau menghubungi anda melalui WhatsApp mengenai penghantaran atau pengambilan.',
             'Untuk mengkreditkan jualan kepada ahli jawatankuasa yang memiliki kod promo yang anda gunakan, bagi sasaran jualan kutipan dana.',
             'Untuk menjawab pertanyaan anda dan mengendalikan bayaran balik atau masalah pesanan.',
             'Untuk mencegah penipuan, contohnya satu pindahan digunakan untuk dua pesanan, dan untuk menyimpan akaun kutipan dana.',
           ],
           'Kami tidak menggunakan data anda untuk pemasaran dan tidak menghantar surat berita.',
-          'Nama, nombor telefon dan bukti pembayaran anda diperlukan untuk membuat pesanan. Jika anda tidak memberikannya, kami tidak dapat memproses pesanan anda.',
+          'Nama, nombor telefon dan bukti pembayaran anda diperlukan untuk membuat pesanan, dan alamat anda diperlukan untuk penghantaran. Jika anda tidak memberikannya, kami tidak dapat memproses pesanan anda.',
         ],
       },
       {
@@ -152,6 +153,7 @@ export const privacy = {
           [
             'Ahli jawatankuasa yang menguruskan pesanan dan bayaran, melalui konsol pentadbir yang memerlukan log masuk.',
             'Jika anda menggunakan kod promo, ahli jawatankuasa pemilik kod itu dikreditkan dengan jualan tersebut dan mungkin menghubungi anda untuk mengatur penghantaran atau pengambilan.',
+            'Jika anda memilih penghantaran, syarikat kurier atau perkhidmatan pos yang menghantar bungkusan anda akan melihat nama, nombor telefon dan alamat anda.',
             'Penyedia perkhidmatan kami: Supabase, yang menyimpan pesanan dan tangkapan skrin pembayaran, dan Vercel, yang menjadi hos laman web.',
             'Badan kerajaan atau penguatkuasa undang-undang, apabila dikehendaki oleh undang-undang.',
           ],

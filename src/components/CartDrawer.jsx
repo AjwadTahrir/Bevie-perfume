@@ -16,7 +16,7 @@ const STEPS = [
   { key: 'details', label: 'Details' },
   { key: 'payment', label: 'Payment' },
 ]
-const EMPTY_CUSTOMER = { name: '', phone: '', notes: '' }
+const EMPTY_CUSTOMER = { name: '', phone: '', method: '', address: '', notes: '' }
 const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
 const rm = (n) => formatPrice(n, 'RM 0')
 
@@ -47,6 +47,7 @@ export default function CartDrawer() {
   const [placed, setPlaced] = useState(null) // { reference, total }
 
   const totals = orderTotals(cart.subtotal, cart.count, !!referral)
+  const postage = customer.method === 'delivery' ? shop.deliveryFee : 0
   // What the order was created from; any change means a new order.
   const fingerprint = JSON.stringify([cart.items.map((l) => [l.id, l.quantity]), referral, customer])
 
@@ -143,7 +144,7 @@ export default function CartDrawer() {
     setError('')
     try {
       await submitReceipt({ order, file: proof.file })
-      setPlaced({ reference: order.reference, total: order.total })
+      setPlaced({ reference: order.reference, total: order.total, method: customer.method, hasCode: order.committeeApplied })
       cart.clear()
       setCustomer(EMPTY_CUSTOMER)
       setReferral('')
@@ -238,9 +239,9 @@ export default function CartDrawer() {
               onClose={requestClose}
             />
           )}
-          {step === 'details' && <DetailsStep customer={customer} setCustomer={setCustomer} onNext={toPayment} />}
+          {step === 'details' && <DetailsStep customer={customer} setCustomer={setCustomer} referral={referral} onNext={toPayment} />}
           {step === 'payment' && order && (
-            <PaymentStep order={order} referral={referral} proof={proof} setProof={setProof} paid={paid} setPaid={setPaid} />
+            <PaymentStep order={order} method={customer.method} referral={referral} proof={proof} setProof={setProof} paid={paid} setPaid={setPaid} />
           )}
           {step === 'done' && placed && <DoneStep placed={placed} onClose={requestClose} />}
         </div>
@@ -249,7 +250,7 @@ export default function CartDrawer() {
         {step === 'cart' && cart.items.length > 0 && (
           <Footer>
             <button type="button" className="btn btn-primary w-full" onClick={() => go('details')}>
-              Checkout · {rm(totals.total)}
+              Checkout
               <ArrowRight size={16} strokeWidth={1.5} aria-hidden="true" />
             </button>
           </Footer>
@@ -262,7 +263,7 @@ export default function CartDrawer() {
               </p>
             )}
             <button type="submit" form="checkout-details" className="btn btn-primary w-full" disabled={creating || checkoutMode === 'closed'}>
-              {creating ? 'Creating your order…' : 'Continue to Payment'}
+              {creating ? 'Creating your order…' : `Continue to Payment · ${rm(totals.total + postage)}`}
               {!creating && <ArrowRight size={16} strokeWidth={1.5} aria-hidden="true" />}
             </button>
             <p className="mt-2 text-center text-xs text-brown-soft">
@@ -312,7 +313,8 @@ function Footer({ children }) {
   return <div className="border-t border-brown/15 bg-cream-light px-5 py-4 md:px-7">{children}</div>
 }
 
-function Summary({ subtotal, discount, total, referral, count }) {
+// Without a method (the cart, before the buyer chooses) the total leaves out postage.
+function Summary({ subtotal, discount, total, referral, count, method, shipping }) {
   return (
     <dl className="space-y-2 text-sm">
       <div className="flex justify-between">
@@ -333,11 +335,11 @@ function Summary({ subtotal, discount, total, referral, count }) {
         </div>
       )}
       <div className="flex justify-between">
-        <dt className="text-brown-soft">Delivery</dt>
-        <dd>{shop.distributionNote}</dd>
+        <dt className="text-brown-soft">{method === 'collection' ? 'Collection' : method === 'delivery' ? 'Postage' : 'Delivery'}</dt>
+        <dd className="text-right tabular-nums">{!method ? shop.distributionNote : shipping ? rm(shipping) : 'Free'}</dd>
       </div>
       <div className="flex justify-between border-t border-brown/15 pt-3 font-display text-xl text-brown">
-        <dt>Total</dt>
+        <dt>{method ? 'Total' : 'Total before postage'}</dt>
         <dd className="tabular-nums">{rm(total)}</dd>
       </div>
     </dl>
@@ -466,67 +468,120 @@ function CartStep({ cart, totals, referral, referralInput, setReferralInput, ref
   )
 }
 
-const FIELDS = [
+const CONTACT_FIELDS = [
   { key: 'name', label: 'Full name', autoComplete: 'name', required: true },
   { key: 'phone', label: 'Phone (WhatsApp)', type: 'tel', autoComplete: 'tel', required: true, placeholder: 'e.g. 012-345 6789' },
-  { key: 'notes', label: 'Order notes (optional)', multiline: true },
 ]
+const ADDRESS_FIELD = {
+  key: 'address',
+  label: 'Delivery address',
+  multiline: true,
+  maxLength: 300,
+  autoComplete: 'street-address',
+  required: true,
+  placeholder: 'House or unit number, street, postcode, city and state',
+}
+const NOTES_FIELD = { key: 'notes', label: 'Order notes (optional)', multiline: true }
 
-function DetailsStep({ customer, setCustomer, onNext }) {
+function DetailsStep({ customer, setCustomer, referral, onNext }) {
   const baseId = useId()
-  const [phoneError, setPhoneError] = useState('')
+  const [errors, setErrors] = useState({})
 
   const onSubmit = (e) => {
     e.preventDefault()
     const digits = customer.phone.replace(/[^\d]/g, '')
-    if (digits.length < 9 || digits.length > 13) return setPhoneError('Enter a valid phone number.')
+    if (digits.length < 9 || digits.length > 13) return setErrors({ phone: 'Enter a valid phone number.' })
+    if (customer.method === 'delivery' && !/\b\d{5}\b/.test(customer.address)) return setErrors({ address: 'Include your 5-digit postcode so the parcel can be delivered.' })
     onNext()
   }
 
+  const renderField = (f) => {
+    const id = `${baseId}-${f.key}`
+    const Tag = f.multiline ? 'textarea' : 'input'
+    const fieldError = errors[f.key]
+    return (
+      <div key={f.key}>
+        <label htmlFor={id} className="type-label text-brown-soft">
+          {f.label}
+        </label>
+        <Tag
+          id={id}
+          type={f.multiline ? undefined : f.type || 'text'}
+          rows={f.multiline ? 3 : undefined}
+          value={customer[f.key]}
+          onChange={(e) => {
+            setCustomer((c) => ({ ...c, [f.key]: e.target.value }))
+            setErrors({})
+          }}
+          required={f.required}
+          maxLength={f.maxLength ?? (f.multiline ? 1000 : 200)}
+          autoComplete={f.autoComplete}
+          placeholder={f.placeholder}
+          aria-invalid={!!fieldError}
+          aria-describedby={fieldError ? `${id}-err` : undefined}
+          className="field mt-2 w-full"
+        />
+        {fieldError && (
+          <p id={`${id}-err`} role="alert" className="mt-2 text-xs text-rust-deep">
+            {fieldError}
+          </p>
+        )}
+      </div>
+    )
+  }
+
+  const methods = [
+    { value: 'delivery', label: 'Delivery', price: `RM ${shop.deliveryFee}`, note: 'Posted to your address, anywhere in Malaysia.' },
+    {
+      value: 'collection',
+      label: 'Collection',
+      price: 'Free',
+      note: referral ? `Collect from the AJK whose code you used (${referral}).` : 'Collect from the committee. We will arrange it with you on WhatsApp.',
+    },
+  ]
+
   return (
     <form id="checkout-details" onSubmit={onSubmit} className="space-y-5">
-      <p className="text-sm text-brown-soft">
-        The committee distributes every order, so no address is needed. We'll contact you on WhatsApp to arrange delivery or collection.
-      </p>
       <PreorderNote />
-      {FIELDS.map((f) => {
-        const id = `${baseId}-${f.key}`
-        const Tag = f.multiline ? 'textarea' : 'input'
-        return (
-          <div key={f.key}>
-            <label htmlFor={id} className="type-label text-brown-soft">
-              {f.label}
+      {CONTACT_FIELDS.map(renderField)}
+      <fieldset>
+        <legend className="type-label text-brown-soft">How would you like to receive it?</legend>
+        <div className="mt-2 space-y-2">
+          {methods.map((m) => (
+            <label
+              key={m.value}
+              className={`flex cursor-pointer items-start gap-3 rounded-lg border px-3 py-2.5 text-sm transition-colors ${customer.method === m.value ? 'border-brown bg-cream' : 'border-brown/25 hover:border-brown/50'}`}
+            >
+              <input
+                type="radio"
+                name={`${baseId}-method`}
+                value={m.value}
+                checked={customer.method === m.value}
+                onChange={() => {
+                  setCustomer((c) => ({ ...c, method: m.value }))
+                  setErrors({})
+                }}
+                required
+                className="mt-0.5 size-4 accent-[var(--color-rust)]"
+              />
+              <span className="min-w-0 flex-1">
+                <span className="flex justify-between gap-3 font-medium text-brown">
+                  {m.label}
+                  <span className="tabular-nums">{m.price}</span>
+                </span>
+                <span className="mt-0.5 block text-xs text-brown-soft">{m.note}</span>
+              </span>
             </label>
-            <Tag
-              id={id}
-              type={f.multiline ? undefined : f.type || 'text'}
-              rows={f.multiline ? 3 : undefined}
-              value={customer[f.key]}
-              onChange={(e) => {
-                setCustomer((c) => ({ ...c, [f.key]: e.target.value }))
-                if (f.key === 'phone') setPhoneError('')
-              }}
-              required={f.required}
-              maxLength={f.multiline ? 1000 : 200}
-              autoComplete={f.autoComplete}
-              placeholder={f.placeholder}
-              aria-invalid={f.key === 'phone' && !!phoneError}
-              aria-describedby={f.key === 'phone' && phoneError ? `${id}-err` : undefined}
-              className="field mt-2 w-full"
-            />
-            {f.key === 'phone' && phoneError && (
-              <p id={`${id}-err`} role="alert" className="mt-2 text-xs text-rust-deep">
-                {phoneError}
-              </p>
-            )}
-          </div>
-        )
-      })}
+          ))}
+        </div>
+      </fieldset>
+      {customer.method === 'delivery' && renderField(ADDRESS_FIELD)}
+      {renderField(NOTES_FIELD)}
     </form>
   )
 }
 
-function PaymentStep({ order, referral, proof, setProof, paid, setPaid }) {
+function PaymentStep({ order, method, referral, proof, setProof, paid, setPaid }) {
   const fileId = useId()
   const [fileError, setFileError] = useState('')
   const count = useCart().count
@@ -621,7 +676,7 @@ function PaymentStep({ order, referral, proof, setProof, paid, setPaid }) {
       </label>
 
       <div className="rounded-xl bg-cream px-4 py-4">
-        <Summary subtotal={order.subtotal} discount={order.discount} total={order.total} referral={order.committeeApplied ? referral : ''} count={count} />
+        <Summary subtotal={order.subtotal} discount={order.discount} total={order.total} referral={order.committeeApplied ? referral : ''} count={count} method={method} shipping={order.shipping} />
       </div>
     </div>
   )
@@ -635,8 +690,13 @@ function DoneStep({ placed, onClose }) {
       </span>
       <p className="mt-6 font-display text-3xl text-brown">Thank you!</p>
       <p className="mt-3 max-w-xs text-sm text-brown-soft">
-        Order submitted: payment awaiting verification. We'll check your payment and contact you on WhatsApp to arrange delivery or collection between{' '}
-        {preorder.steps[1].short}.
+        Order submitted: payment awaiting verification. We'll check your payment, then{' '}
+        {placed.method === 'delivery'
+          ? 'deliver your order to your address'
+          : placed.hasCode
+            ? 'you can collect your order from your AJK'
+            : 'contact you on WhatsApp to arrange collection'}{' '}
+        between {preorder.steps[1].short}.
       </p>
       <p className="mt-6 text-xs uppercase tracking-[0.2em] text-brown-soft">Order reference</p>
       <p className="mt-1 font-medium tracking-[0.18em]">{placed.reference}</p>

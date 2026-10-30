@@ -63,8 +63,11 @@ export const shop = {
   // Matches the backend rule: discount_sen = 500 x total quantity.
   committeeDiscountPerBottle: 5,
 
-  // The committee distributes orders: no delivery fee, no address needed.
-  distributionNote: 'Free · delivered or collected, 23 – 29 Nov',
+  // Flat postage in RM for delivery anywhere in Malaysia; collection is free.
+  // Matches the backend rule: shipping_sen = 700 for delivery.
+  deliveryFee: 7,
+
+  distributionNote: 'RM 7 postage, or collect free · 23 – 29 Nov',
 
   // Proof of payment: images only, as the receipts bucket accepts.
   proof: {
@@ -99,7 +102,7 @@ export const preorder = {
       title: 'Receive your items',
       dates: '23 – 29 November 2026',
       short: '23 – 29 Nov',
-      body: 'Your order is delivered to you, or you can collect it from the committee. We contact you on WhatsApp to arrange which suits you.',
+      body: 'Choose at checkout: delivery to your address anywhere in Malaysia for RM 7 postage, or free collection from the committee member (AJK) you bought from.',
     },
   ],
 }

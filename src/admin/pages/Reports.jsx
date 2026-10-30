@@ -89,7 +89,7 @@ export default function Reports() {
 
       <div className="grid grid-cols-1 gap-3 min-[420px]:grid-cols-2 md:grid-cols-3 xl:grid-cols-5">
         <Kpi accent loading={loading} label="Verified bottles" info={DEFINITIONS.verifiedBottles} value={v && n(v.bottles)} sub={d && `${pct(d.target.completion_pct)} of ${n(d.target.campaign_target)} target`} />
-        <Kpi loading={loading} label="Revenue collected" info={DEFINITIONS.net} value={v && rm(v.net)} sub={v && `Gross ${rm(v.gross)}`} />
+        <Kpi loading={loading} label="Revenue collected" info={DEFINITIONS.net} value={v && rm(v.net)} sub={v && `Gross ${rm(v.gross)} · Postage ${rm(v.postage)} extra`} />
         <Kpi loading={loading} label="Discounts given" info={DEFINITIONS.discounts} value={v && rm(v.discounts)} />
         <Kpi loading={loading} label="Campaign profit" info={DEFINITIONS.profit} value={v && rm(v.profit)} />
         <Kpi loading={loading} label="Pending payments" info={DEFINITIONS.pending} tone="muted" value={d && rm(d.pending.amount)} sub={d && `${n(d.pending.orders)} orders`} />

@@ -7,8 +7,8 @@
 //
 //   POST application/json { action: "validate-code", code }
 //     -> { valid }
-//   POST application/json { action: "create-order", requestId, customer: { name, phone, note }, code, items: [{ id, quantity }] }
-//     -> { orderId, orderNumber, guestToken, subtotalSen, discountSen, totalSen, committeeApplied }
+//   POST application/json { action: "create-order", requestId, customer: { name, phone, note, method, address }, code, items: [{ id, quantity }] }
+//     -> { orderId, orderNumber, guestToken, subtotalSen, shippingSen, discountSen, totalSen, committeeApplied }
 //   POST multipart/form-data  action=submit-receipt, orderId, guestToken, bankReference?, file
 //     -> { status: "awaiting_verification" }
 //
@@ -94,12 +94,17 @@ async function createOrder(req: Request, body: Record<string, unknown>) {
   const name = String(customer.name ?? '').trim()
   const phone = String(customer.phone ?? '').trim()
   const digits = phone.replace(/\D/g, '')
+  const method = String(customer.method ?? '')
+  const address = String(customer.address ?? '').trim()
   const requestId = String(body.requestId ?? '')
   const items = Array.isArray(body.items) ? body.items : []
 
   if (!UUID.test(requestId)) return fail(req, 'Invalid checkout request.')
   if (name.length < 1 || name.length > 200) return fail(req, 'Please enter your name.')
   if (digits.length < 9 || digits.length > 13) return fail(req, 'Please enter a valid phone number.')
+  // A page opened before delivery was added sends no method; postage must not be skipped.
+  if (method !== 'delivery' && method !== 'collection') return fail(req, 'Please refresh the page and choose delivery or collection.')
+  if (method === 'delivery' && (address.length > 300 || !/\b\d{5}\b/.test(address))) return fail(req, 'Please enter your full address, including the 5-digit postcode.')
   if (!items.length || items.length > 20) return fail(req, 'Your cart is empty.')
 
   // The browser only states what it wants; prices come from the database.
@@ -114,6 +119,8 @@ async function createOrder(req: Request, body: Record<string, unknown>) {
     p_customer_note: String(customer.note ?? '').slice(0, 1000),
     p_committee_code: typeof body.code === 'string' ? body.code.slice(0, 40) : null,
     p_items: cleanItems,
+    p_fulfillment_method: method,
+    p_delivery_address: method === 'delivery' ? address : null,
   })
   if (error) {
     if (error.code === 'P0002') return fail(req, 'That referral code was not recognised. Check it or remove it.', 400, 'invalid_code')
@@ -126,6 +133,7 @@ async function createOrder(req: Request, body: Record<string, unknown>) {
     orderNumber: row.order_number,
     guestToken,
     subtotalSen: row.subtotal_sen,
+    shippingSen: row.shipping_sen,
     discountSen: row.discount_sen,
     totalSen: row.total_sen,
     committeeApplied: row.committee_applied,

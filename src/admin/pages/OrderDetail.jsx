@@ -301,6 +301,7 @@ export default function OrderDetail() {
                 <span className="tabular-nums">{rm(o.original_subtotal)}</span>
               </Field>
               <Field label="Promo discount">{Number(o.discount_total) ? <span className="tabular-nums">− {rm(o.discount_total)}</span> : '—'}</Field>
+              <Field label="Postage">{Number(o.shipping_amount) ? <span className="tabular-nums">{rm(o.shipping_amount)}</span> : '—'}</Field>
               <div className="flex items-baseline justify-between gap-4 py-3">
                 <dt className="font-medium text-ink">Final amount</dt>
                 <dd className="display text-2xl">{rm(o.final_amount)}</dd>
@@ -336,6 +337,7 @@ export default function OrderDetail() {
                 </a>
               </Field>
               {o.customer_email && <Field label="Email">{o.customer_email}</Field>}
+              <Field label="Receiving by">{o.fulfillment_method === 'delivery' ? 'Delivery' : o.fulfillment_method === 'collection' ? (o.promo_code ? `Collection from ${displayName(o.member_name || o.ajk_member_name)}` : 'Collection, no AJK: arrange on WhatsApp') : 'Not chosen: arrange on WhatsApp'}</Field>
             </dl>
             {o.delivery_address && (
               <>

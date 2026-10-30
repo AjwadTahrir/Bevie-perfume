@@ -15,7 +15,7 @@ export const DEFINITIONS = {
   verifiedBottles: 'Bottles in orders whose payment an admin has verified. Pending, rejected, cancelled and refunded orders are excluded.',
   gross: 'Verified bottles at the full selling price (quantity × selling price at the time of each order), before promo discounts.',
   discounts: 'Promo-code discounts granted on verified orders (RM 5 per bottle with a valid AJK code).',
-  net: 'Money actually collected on verified orders: gross sales minus discounts.',
+  net: 'Money actually collected for perfume on verified orders: gross sales minus discounts. Postage is not included.',
   profit: 'Campaign profit on verified orders: the profit per bottle set in Settings × verified bottles. Discounts are not subtracted again.',
   pending: 'Orders awaiting payment or with a payment submitted but not yet verified. Not counted as sales.',
 }

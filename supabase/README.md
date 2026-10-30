@@ -21,7 +21,7 @@ This is the backend for guest checkout with bank QR payment and manual receipt r
 4. Copy `.env.example` to `.env` in the project root and fill in the project URL and the **anon** (public) key from **Project Settings -> API**. Rebuild the site (and set the same two variables on your host).
 5. Checkout is now live: the real QR from `src/config/payment.js` appears and orders are saved. Without these variables, local development runs a demo checkout (placeholder QR, nothing saved) and a public build says ordering opens soon.
 
-The function (`functions/checkout/index.ts`) offers three actions: `validate-code`, `create-order` (prices and the RM5-per-bottle discount come from the database; retries with the same request id return the same order) and `submit-receipt` (checks the order token, file size and the image's real type from its bytes, stores it privately at `<order>/<submission>.<ext>`, sets the order to `awaiting_verification`).
+The function (`functions/checkout/index.ts`) offers three actions: `validate-code`, `create-order` (prices, the RM5-per-bottle discount and the RM7 delivery postage come from the database; retries with the same request id return the same order) and `submit-receipt` (checks the order token, file size and the image's real type from its bytes, stores it privately at `<order>/<submission>.<ext>`, sets the order to `awaiting_verification`).
 
 No local CLI, Node.js or Docker installation is needed for this dashboard workflow. These files assume Supabase's existing `auth` schema and roles, not plain PostgreSQL. They have not been applied to a hosted project from this workspace.
 
@@ -37,7 +37,7 @@ The fundraising console at `/admin` (code in `src/admin/`, page `admin/index.htm
 
 What admins can do: review receipts and **Verify** / **Reject** (reason required; the customer can upload again) payments, **Mark fulfilled** (= distributed), **Cancel** unpaid orders, **Refund** paid ones, add internal notes, switch committee codes on or off, see AJK performance, the leaderboard and reports (CSV export), and set the campaign name, profit per bottle, targets and dates. Every change is recorded in `order_events` with the admin's email.
 
-Counting rule: only orders that are **paid and not cancelled** count as sales, towards targets, revenue and profit; awaiting payment and submitted receipts show as pending. Prices are fixed by checkout (RM35, RM5 off per bottle with a code), so the dashboard shows them read-only. Profit per bottle is a campaign setting and applies to every order in reports.
+Counting rule: only orders that are **paid and not cancelled** count as sales, towards targets, revenue and profit; awaiting payment and submitted receipts show as pending. Prices are fixed by checkout (RM35, RM5 off per bottle with a code), so the dashboard shows them read-only. Profit per bottle is a campaign setting and applies to every order in reports. Postage is part of the amount a buyer pays (*Final amount*, which is what to check against the bank) but is left out of revenue, as it pays the courier.
 
 Status names in the dashboard: `awaiting_verification` = *Payment submitted*, `paid` = *Verified*, `proof_rejected` = *Rejected*, `distributed` = *Fulfilled*.
 
@@ -90,7 +90,7 @@ Status: 1 and 2 are implemented (migration 005 and `functions/checkout`), 3 by t
 
 The transactional backend operations:
 
-1. Create orders idempotently using `checkout_request_id`, validate quantities and an optional active committee code, calculate authoritative product totals, snapshot items, and skip inventory checks/reservations for products with `track_stock = false`. Use zero shipping fees for committee distribution. The database does not yet enforce that `subtotal_sen` equals the sum of the items; the checkout transaction must do so.
+1. Create orders idempotently using `checkout_request_id`, validate quantities and an optional active committee code, calculate authoritative product totals, snapshot items, and skip inventory checks/reservations for products with `track_stock = false`. Charge RM7 postage for delivery and nothing for collection. The database does not yet enforce that `subtotal_sen` equals the sum of the items; the checkout transaction must do so.
 2. Record verified receipt uploads and change payment status to `awaiting_verification`. Unlimited-stock orders do not need reservation windows.
 3. Require admin authorization to approve/reject a pending receipt, update order/payment/stock and append audit events in one transaction. Receipt submission is not payment approval.
 4. Do not reserve, decrement or check inventory for unlimited-stock products. Payment deadlines may still expire unpaid orders; stock does not constrain checkout.
@@ -101,11 +101,11 @@ Do not enable checkout until those operations are implemented. Retention/refund 
 ## Committee ordering workflow
 
 1. Buyer selects perfumes and quantities.
-2. Buyer provides name and phone, and optionally enters a committee code.
+2. Buyer provides name and phone, chooses delivery (with an address) or collection, and optionally enters a committee code.
 3. Backend creates an order with the final total. Show the bank QR and accept payment proof.
 4. Show "Order submitted - payment awaiting verification" only after receipt submission succeeds.
 
-Email and delivery address are not required. The committee distributes the perfume. Distribution statuses are `unfulfilled`, `processing`, `ready_for_distribution`, `distributed`, and `cancelled`. Payment still requires manual approval before processing/distribution.
+Email is not required. Delivery is RM7 flat anywhere in Malaysia and needs an address, stored whole in `shipping_address_line1`. Collection is free, from the AJK whose code was used. Distribution statuses are `unfulfilled`, `processing`, `ready_for_distribution`, `distributed`, and `cancelled`. Payment still requires manual approval before processing/distribution.
 
 The discount is **RM5 per bottle** with an active committee code: RM35 normally, RM30 with a code. Three bottles cost RM105 normally or RM90 with a code. The backend must calculate `discount_sen = 500 * total quantity` and save that snapshot with the items. No code means zero discount. The database checks discount bounds, but cross-table quantity validation still requires the checkout transaction. Historical orders retain their previous discount. Before showing the QR, the backend must trim/uppercase the entered code, verify that it exists and is active, and copy its `committee_name` into the order. Invalid/inactive codes should display an error and let the buyer correct or remove the code. Do not silently remove an expected discount.
 
@@ -118,7 +118,7 @@ values ('AISHA01', 'Aisha');
 
 Codes are not publicly listable. A future rate-limited backend endpoint will validate one entered code. Deactivate codes with `is_active = false` rather than deleting them; existing orders keep their original discount and attribution. Active-code validation and name snapshots require backend logic; the foreign key only checks code existence.
 
-For orders without a code, admins arrange committee distribution using the customer's phone. This is independent of the optional discount code. Legacy email/address/courier columns remain for existing data but new checkout will not collect them.
+For collection orders without a code, admins arrange it using the customer's phone. Legacy email and courier columns, and the other shipping address columns, remain for existing data but new checkout will not collect them.
 
 
 ## QR and development fixture
