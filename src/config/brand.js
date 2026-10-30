@@ -69,6 +69,9 @@ export const shop = {
 
   distributionNote: 'RM 7 postage, or collect free · 23 – 29 Nov',
 
+  // The delivery address state list. Must match the backend's list (migration 010).
+  states: ['Johor', 'Kedah', 'Kelantan', 'Kuala Lumpur', 'Labuan', 'Melaka', 'Negeri Sembilan', 'Pahang', 'Perak', 'Perlis', 'Pulau Pinang', 'Putrajaya', 'Sabah', 'Sarawak', 'Selangor', 'Terengganu'],
+
   // Proof of payment: images only, as the receipts bucket accepts.
   proof: {
     maxSizeMB: 5,

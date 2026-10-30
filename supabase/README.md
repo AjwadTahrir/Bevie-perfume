@@ -105,7 +105,7 @@ Do not enable checkout until those operations are implemented. Retention/refund 
 3. Backend creates an order with the final total. Show the bank QR and accept payment proof.
 4. Show "Order submitted - payment awaiting verification" only after receipt submission succeeds.
 
-Email is not required. Delivery is RM7 flat anywhere in Malaysia and needs an address, stored whole in `shipping_address_line1`. Collection is free, from the AJK whose code was used. Distribution statuses are `unfulfilled`, `processing`, `ready_for_distribution`, `distributed`, and `cancelled`. Payment still requires manual approval before processing/distribution.
+Email is not required. Delivery is RM7 flat anywhere in Malaysia and needs an address (line 1, optional line 2, postcode, city, state), stored in the `shipping_*` columns. Collection is free, from the AJK whose code was used. Distribution statuses are `unfulfilled`, `processing`, `ready_for_distribution`, `distributed`, and `cancelled`. Payment still requires manual approval before processing/distribution.
 
 The discount is **RM5 per bottle** with an active committee code: RM35 normally, RM30 with a code. Three bottles cost RM105 normally or RM90 with a code. The backend must calculate `discount_sen = 500 * total quantity` and save that snapshot with the items. No code means zero discount. The database checks discount bounds, but cross-table quantity validation still requires the checkout transaction. Historical orders retain their previous discount. Before showing the QR, the backend must trim/uppercase the entered code, verify that it exists and is active, and copy its `committee_name` into the order. Invalid/inactive codes should display an error and let the buyer correct or remove the code. Do not silently remove an expected discount.
 
@@ -118,7 +118,7 @@ values ('AISHA01', 'Aisha');
 
 Codes are not publicly listable. A future rate-limited backend endpoint will validate one entered code. Deactivate codes with `is_active = false` rather than deleting them; existing orders keep their original discount and attribution. Active-code validation and name snapshots require backend logic; the foreign key only checks code existence.
 
-For collection orders without a code, admins arrange it using the customer's phone. Legacy email and courier columns, and the other shipping address columns, remain for existing data but new checkout will not collect them.
+For collection orders without a code, admins arrange it using the customer's phone. Legacy email and courier columns remain for existing data but new checkout will not collect them.
 
 
 ## QR and development fixture

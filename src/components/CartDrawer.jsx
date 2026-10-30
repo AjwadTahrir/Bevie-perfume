@@ -16,7 +16,7 @@ const STEPS = [
   { key: 'details', label: 'Details' },
   { key: 'payment', label: 'Payment' },
 ]
-const EMPTY_CUSTOMER = { name: '', phone: '', method: '', address: '', notes: '' }
+const EMPTY_CUSTOMER = { name: '', phone: '', method: '', line1: '', line2: '', postcode: '', city: '', state: '', notes: '' }
 const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
 const rm = (n) => formatPrice(n, 'RM 0')
 
@@ -472,15 +472,13 @@ const CONTACT_FIELDS = [
   { key: 'name', label: 'Full name', autoComplete: 'name', required: true },
   { key: 'phone', label: 'Phone (WhatsApp)', type: 'tel', autoComplete: 'tel', required: true, placeholder: 'e.g. 012-345 6789' },
 ]
-const ADDRESS_FIELD = {
-  key: 'address',
-  label: 'Delivery address',
-  multiline: true,
-  maxLength: 300,
-  autoComplete: 'street-address',
-  required: true,
-  placeholder: 'House or unit number, street, postcode, city and state',
-}
+const LINE_FIELDS = [
+  { key: 'line1', label: 'Address line 1', autoComplete: 'address-line1', required: true, placeholder: 'House or unit number, street' },
+  { key: 'line2', label: 'Address line 2 (optional)', autoComplete: 'address-line2', placeholder: 'Area, building or college' },
+]
+const POSTCODE_FIELD = { key: 'postcode', label: 'Postcode', autoComplete: 'postal-code', inputMode: 'numeric', maxLength: 5, required: true, placeholder: 'e.g. 50450' }
+const CITY_FIELD = { key: 'city', label: 'City', autoComplete: 'address-level2', maxLength: 100, required: true }
+const STATE_FIELD = { key: 'state', label: 'State', autoComplete: 'address-level1', required: true, options: shop.states }
 const NOTES_FIELD = { key: 'notes', label: 'Order notes (optional)', multiline: true }
 
 function DetailsStep({ customer, setCustomer, referral, onNext }) {
@@ -491,13 +489,13 @@ function DetailsStep({ customer, setCustomer, referral, onNext }) {
     e.preventDefault()
     const digits = customer.phone.replace(/[^\d]/g, '')
     if (digits.length < 9 || digits.length > 13) return setErrors({ phone: 'Enter a valid phone number.' })
-    if (customer.method === 'delivery' && !/\b\d{5}\b/.test(customer.address)) return setErrors({ address: 'Include your 5-digit postcode so the parcel can be delivered.' })
+    if (customer.method === 'delivery' && !/^\d{5}$/.test(customer.postcode.trim())) return setErrors({ postcode: 'Enter your 5-digit postcode.' })
     onNext()
   }
 
   const renderField = (f) => {
     const id = `${baseId}-${f.key}`
-    const Tag = f.multiline ? 'textarea' : 'input'
+    const Tag = f.options ? 'select' : f.multiline ? 'textarea' : 'input'
     const fieldError = errors[f.key]
     return (
       <div key={f.key}>
@@ -506,21 +504,33 @@ function DetailsStep({ customer, setCustomer, referral, onNext }) {
         </label>
         <Tag
           id={id}
-          type={f.multiline ? undefined : f.type || 'text'}
+          type={f.multiline || f.options ? undefined : f.type || 'text'}
           rows={f.multiline ? 3 : undefined}
+          inputMode={f.inputMode}
           value={customer[f.key]}
           onChange={(e) => {
             setCustomer((c) => ({ ...c, [f.key]: e.target.value }))
             setErrors({})
           }}
           required={f.required}
-          maxLength={f.maxLength ?? (f.multiline ? 1000 : 200)}
+          maxLength={f.options ? undefined : f.maxLength ?? (f.multiline ? 1000 : 200)}
           autoComplete={f.autoComplete}
           placeholder={f.placeholder}
           aria-invalid={!!fieldError}
           aria-describedby={fieldError ? `${id}-err` : undefined}
           className="field mt-2 w-full"
-        />
+        >
+          {f.options && (
+            <>
+              <option value="">Choose a state</option>
+              {f.options.map((o) => (
+                <option key={o} value={o}>
+                  {o}
+                </option>
+              ))}
+            </>
+          )}
+        </Tag>
         {fieldError && (
           <p id={`${id}-err`} role="alert" className="mt-2 text-xs text-rust-deep">
             {fieldError}
@@ -575,7 +585,16 @@ function DetailsStep({ customer, setCustomer, referral, onNext }) {
           ))}
         </div>
       </fieldset>
-      {customer.method === 'delivery' && renderField(ADDRESS_FIELD)}
+      {customer.method === 'delivery' && (
+        <>
+          {LINE_FIELDS.map(renderField)}
+          <div className="grid grid-cols-[2fr_3fr] gap-3">
+            {renderField(POSTCODE_FIELD)}
+            {renderField(CITY_FIELD)}
+          </div>
+          {renderField(STATE_FIELD)}
+        </>
+      )}
       {renderField(NOTES_FIELD)}
     </form>
   )

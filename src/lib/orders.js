@@ -78,7 +78,13 @@ export async function createOrder({ requestId, customer, code, items }) {
     action: 'create-order',
     requestId,
     code: code || null,
-    customer: { name: customer.name, phone: customer.phone, note: customer.notes, method: customer.method, address: customer.address },
+    customer: {
+      name: customer.name,
+      phone: customer.phone,
+      note: customer.notes,
+      method: customer.method,
+      address: { line1: customer.line1, line2: customer.line2, postcode: customer.postcode, city: customer.city, state: customer.state },
+    },
     items: items.map((l) => ({ id: l.id, quantity: l.quantity })),
   })
   return {

@@ -7,7 +7,7 @@
 //
 //   POST application/json { action: "validate-code", code }
 //     -> { valid }
-//   POST application/json { action: "create-order", requestId, customer: { name, phone, note, method, address }, code, items: [{ id, quantity }] }
+//   POST application/json { action: "create-order", requestId, customer: { name, phone, note, method, address: { line1, line2, postcode, city, state } }, code, items: [{ id, quantity }] }
 //     -> { orderId, orderNumber, guestToken, subtotalSen, shippingSen, discountSen, totalSen, committeeApplied }
 //   POST multipart/form-data  action=submit-receipt, orderId, guestToken, bankReference?, file
 //     -> { status: "awaiting_verification" }
@@ -95,7 +95,8 @@ async function createOrder(req: Request, body: Record<string, unknown>) {
   const phone = String(customer.phone ?? '').trim()
   const digits = phone.replace(/\D/g, '')
   const method = String(customer.method ?? '')
-  const address = String(customer.address ?? '').trim()
+  const address = (customer.address ?? {}) as Record<string, unknown>
+  const addressPart = (key: string) => String(address[key] ?? '').trim()
   const requestId = String(body.requestId ?? '')
   const items = Array.isArray(body.items) ? body.items : []
 
@@ -104,7 +105,11 @@ async function createOrder(req: Request, body: Record<string, unknown>) {
   if (digits.length < 9 || digits.length > 13) return fail(req, 'Please enter a valid phone number.')
   // A page opened before delivery was added sends no method; postage must not be skipped.
   if (method !== 'delivery' && method !== 'collection') return fail(req, 'Please refresh the page and choose delivery or collection.')
-  if (method === 'delivery' && (address.length > 300 || !/\b\d{5}\b/.test(address))) return fail(req, 'Please enter your full address, including the 5-digit postcode.')
+  if (method === 'delivery') {
+    // A page opened before the address was split sends it as one string.
+    if (typeof customer.address === 'string') return fail(req, 'Please refresh the page and enter your address again.')
+    if (!/^\d{5}$/.test(addressPart('postcode'))) return fail(req, 'Please enter your 5-digit postcode.')
+  }
   if (!items.length || items.length > 20) return fail(req, 'Your cart is empty.')
 
   // The browser only states what it wants; prices come from the database.
@@ -120,7 +125,12 @@ async function createOrder(req: Request, body: Record<string, unknown>) {
     p_committee_code: typeof body.code === 'string' ? body.code.slice(0, 40) : null,
     p_items: cleanItems,
     p_fulfillment_method: method,
-    p_delivery_address: method === 'delivery' ? address : null,
+    // The database checks the other address fields and ignores them for collection.
+    p_address_line1: addressPart('line1'),
+    p_address_line2: addressPart('line2'),
+    p_postcode: addressPart('postcode'),
+    p_city: addressPart('city'),
+    p_state: addressPart('state'),
   })
   if (error) {
     if (error.code === 'P0002') return fail(req, 'That referral code was not recognised. Check it or remove it.', 400, 'invalid_code')
