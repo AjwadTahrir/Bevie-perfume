@@ -629,7 +629,7 @@ function PaymentStep({ order, method, referral, proof, setProof, paid, setPaid }
         <div className="mt-4 flex flex-col items-center rounded-xl border border-ochre/50 bg-cream px-5 py-6 text-center">
           <PaymentQr />
           <p className="mt-4 text-xs uppercase tracking-[0.2em] text-brown-soft">{payment.method}</p>
-          {checkoutMode === 'live' && <p className="mt-1 text-sm text-brown">Pay to {payment.recipientName}</p>}
+          {checkoutMode === 'live' && payment.recipientName && <p className="mt-1 text-sm text-brown">Pay to {payment.recipientName}</p>}
           <p className="mt-4 font-display text-3xl text-brown tabular-nums">{rm(order.total)}</p>
         </div>
         <p className="mt-4 text-sm">
