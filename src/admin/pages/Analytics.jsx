@@ -4,6 +4,7 @@ import { Trophy } from 'lucide-react'
 import { EmptyState, ErrorState, Skeleton } from '../components/ui'
 import { DonutChart, PillBarChart } from '../components/charts'
 import { fetchDashboard, fetchMembers, fetchTimeseries } from '../lib/api'
+import { bureauOf } from '../lib/bureaus'
 import { useQuery } from '../lib/data'
 import { displayName, n, rm, rmShort } from '../lib/format'
 import { BUCKETS, PERIODS, foldDays, periodRange, recentBuckets } from '../lib/periods'
@@ -21,7 +22,10 @@ const RANK_FILL = ['bg-ink', 'bg-[#9d8cf4]', 'bg-[#c6e84a]']
  */
 function bureauSlices(members, totalNet) {
   const by = new Map()
-  for (const m of members || []) by.set(m.committee_role, (by.get(m.committee_role) || 0) + Number(m.revenue))
+  for (const m of members || []) {
+    const bureau = bureauOf(m.committee_role)
+    by.set(bureau, (by.get(bureau) || 0) + Number(m.revenue))
+  }
   const attributed = [...by.values()].reduce((a, b) => a + b, 0)
   const rows = [...by].map(([label, value]) => ({ label, value })).filter((r) => r.value > 0)
   const direct = Math.max(0, (Number(totalNet) || 0) - attributed)

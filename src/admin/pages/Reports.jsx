@@ -4,6 +4,7 @@ import { Card, ErrorState, Kpi, PageHeader, Skeleton } from '../components/ui'
 import { ColumnChart, RankChart, TwoLineChart, fillDays } from '../components/charts'
 import DateRangeFilter from '../components/DateRangeFilter'
 import { fetchDashboard, fetchMembers, fetchOrders, fetchTimeseries } from '../lib/api'
+import { bureauOf } from '../lib/bureaus'
 import { useQuery } from '../lib/data'
 import { DEFAULT_RANGE, resolveRange } from '../lib/dateRange'
 import { fmtDate, fmtDay, n, pct, rm, rmShort } from '../lib/format'
@@ -39,14 +40,15 @@ export default function Reports() {
   const bureaus = useMemo(() => {
     const map = new Map()
     for (const m of members.data || []) {
-      const b = map.get(m.committee_role) || { bureau: m.committee_role, members: 0, reached: 0, bottles: 0, pending: 0, revenue: 0, profit: 0 }
+      const bureau = bureauOf(m.committee_role)
+      const b = map.get(bureau) || { bureau, members: 0, reached: 0, bottles: 0, pending: 0, revenue: 0, profit: 0 }
       b.members += 1
       b.reached += m.status === 'target_reached' ? 1 : 0
       b.bottles += m.verified_bottles
       b.pending += m.pending_bottles
       b.revenue += Number(m.revenue)
       b.profit += Number(m.profit)
-      map.set(m.committee_role, b)
+      map.set(bureau, b)
     }
     return [...map.values()].sort((a, b) => b.bottles - a.bottles)
   }, [members.data])

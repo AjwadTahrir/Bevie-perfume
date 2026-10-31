@@ -12,6 +12,7 @@ import OrderDetail from './pages/OrderDetail'
 import Members from './pages/Members'
 import MemberDetail from './pages/MemberDetail'
 import Leaderboard from './pages/Leaderboard'
+import Bottles from './pages/Bottles'
 import PromoCodes from './pages/PromoCodes'
 import Payments from './pages/Payments'
 import Reports from './pages/Reports'
@@ -69,6 +70,7 @@ export default function App() {
               <Route path="members" element={<Members />} />
               <Route path="members/:id" element={<MemberDetail />} />
               <Route path="leaderboard" element={<Leaderboard />} />
+              <Route path="bottles" element={<Bottles />} />
               <Route path="promo-codes" element={<PromoCodes />} />
               <Route path="payments" element={<Payments />} />
               <Route path="reports" element={<Reports />} />

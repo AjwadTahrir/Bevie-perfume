@@ -13,7 +13,7 @@
  */
 export const payment = {
   qrImagePath: '/payment/bank-qr.png',
-  recipientName: '',
+  recipientName: 'MUHAMMAD AKIF ZAFRAN BIN MOHD ZULKIFLY',
   method: 'DuitNow QR',
   isConfigured: true,
 }
