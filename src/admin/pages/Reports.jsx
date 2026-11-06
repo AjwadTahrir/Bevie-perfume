@@ -3,7 +3,7 @@ import { Download } from 'lucide-react'
 import { Card, ErrorState, Kpi, PageHeader, Skeleton } from '../components/ui'
 import { ColumnChart, RankChart, TwoLineChart, fillDays } from '../components/charts'
 import DateRangeFilter from '../components/DateRangeFilter'
-import { fetchDashboard, fetchMembers, fetchOrders, fetchTimeseries } from '../lib/api'
+import { fetchDashboard, fetchMembers, fetchOrders, fetchSettings, fetchTimeseries } from '../lib/api'
 import { bureauOf } from '../lib/bureaus'
 import { useQuery } from '../lib/data'
 import { DEFAULT_RANGE, resolveRange } from '../lib/dateRange'
@@ -21,6 +21,10 @@ export default function Reports() {
   const dash = useQuery(() => fetchDashboard(r), deps)
   const members = useQuery(() => fetchMembers(r), deps)
   const series = useQuery(() => fetchTimeseries(r), deps)
+  // Expected profit is a whole-campaign projection, so it ignores the date filter.
+  const allDash = useQuery(() => fetchDashboard({}), [])
+  const allMembers = useQuery(() => fetchMembers({}), [])
+  const settings = useQuery(() => fetchSettings(), [])
   const [exporting, setExporting] = useState(false)
 
   const d = dash.data
@@ -52,6 +56,18 @@ export default function Reports() {
     }
     return [...map.values()].sort((a, b) => b.bottles - a.bottles)
   }, [members.data])
+
+  // Every AJK counts as at least their target; bottles past it (and sales with no AJK) are added on top.
+  const expected = useMemo(() => {
+    const ppb = Number(settings.data?.profit_per_bottle)
+    const ms = allMembers.data
+    const actual = allDash.data?.verified?.profit
+    if (!ms || actual == null || Number.isNaN(ppb)) return null
+    const base = ms.reduce((t, m) => t + m.target, 0) * ppb
+    const shortfall = ms.reduce((t, m) => t + Math.max(0, m.target - m.verified_bottles), 0) * ppb
+    const total = Number(actual) + shortfall
+    return { total, base, extra: total - base }
+  }, [settings.data, allMembers.data, allDash.data])
 
   const days = useMemo(() => fillDays(series.data, r.from, r.to), [series.data, r.from, r.to])
   const targetDist = Object.entries(MEMBER_STATUS).map(([k, s]) => ({ status: s.label, members: (members.data || []).filter((m) => m.status === k).length }))
@@ -97,7 +113,12 @@ export default function Reports() {
         <Kpi loading={loading} label="Campaign profit" info={DEFINITIONS.profit} value={v && rm(v.profit)} />
         <Kpi loading={loading} label="Pending payments" info={DEFINITIONS.pending} tone="muted" value={d && rm(d.pending.amount)} sub={d && `${n(d.pending.orders)} orders`} />
         <Kpi loading={loading} label="Paid orders" value={v && n(v.orders)} />
-        <Kpi loading={loading} label="Avg bottles / paid order" value={v && (v.orders ? (v.bottles / v.orders).toFixed(2) : '—')} />
+        <Kpi
+          loading={!expected && !(allDash.error || allMembers.error || settings.error)}
+          label="Expected profit"
+          value={expected ? rm(expected.total) : '—'}
+          sub={expected && `${rm(expected.base)} if every AJK hits target + ${rm(expected.extra)} extra`}
+        />
         <Kpi loading={loading} label="Average order value" value={v && (v.orders ? rm(v.net / v.orders) : '—')} sub="Collected per paid order" />
         <Kpi loading={loading} label="AJK at target" value={d && `${d.members.reached} / ${d.members.total}`} sub={d && pct((d.members.reached / d.members.total) * 100)} />
         <Kpi loading={loading} label="Remaining to target" value={d && `${n(d.target.remaining)} bottles`} />
