@@ -112,10 +112,10 @@ function Ring({ r, value, gradient, blur, glow, tipRing }) {
   const [tx, ty] = point(r, v)
   return (
     <g>
-      <path d={arc(r)} fill="none" stroke="#efeff3" strokeWidth={STROKE} strokeLinecap="round" />
+      <path d={arc(r)} fill="none" stroke="#ebebef" strokeWidth={STROKE} strokeLinecap="round" />
       {v > 0.2 && (
         <>
-          <path d={arc(r)} pathLength={100} fill="none" stroke={glow} strokeOpacity={0.28} strokeWidth={STROKE + 8} strokeLinecap="round" strokeDasharray={`${v} 200`} filter={`url(#${blur})`} />
+          <path d={arc(r)} pathLength={100} fill="none" stroke={glow} strokeOpacity={0.14} strokeWidth={STROKE + 8} strokeLinecap="round" strokeDasharray={`${v} 200`} filter={`url(#${blur})`} />
           <path d={arc(r)} pathLength={100} fill="none" stroke={`url(#${gradient})`} strokeWidth={STROKE} strokeLinecap="round" strokeDasharray={`${v} 200`} />
           <circle cx={tx} cy={ty} r={5.5} fill="#fff" stroke={tipRing} strokeWidth={2.5} />
         </>
@@ -127,7 +127,7 @@ function Ring({ r, value, gradient, blur, glow, tipRing }) {
 /** Hairline ticks outside the outer ring, longer every quarter. */
 function Ticks() {
   return (
-    <g stroke="#c9c9d1" strokeLinecap="round">
+    <g stroke="#dcdce2" strokeLinecap="round">
       {Array.from({ length: 21 }, (_, i) => {
         const major = i % 5 === 0
         const [x1, y1] = point(R_OUT + STROKE / 2 + 4, i * 5)
@@ -159,28 +159,28 @@ export function FundGauge({ data }) {
         <svg viewBox={`0 0 ${W} ${CY + STROKE / 2 + 4}`} className="block w-full" role="img" aria-label={label}>
           <defs>
             <linearGradient id={ids.red} x1="0" x2="1" y1="0" y2="0">
-              <stop offset="0" stopColor="#ff8f6b" />
-              <stop offset="0.55" stopColor="#f5554a" />
-              <stop offset="1" stopColor="#e0303f" />
+              <stop offset="0" stopColor="#52525c" />
+              <stop offset="0.55" stopColor="#26262b" />
+              <stop offset="1" stopColor="#111114" />
             </linearGradient>
             <linearGradient id={ids.green} x1="0" x2="1" y1="0" y2="0">
-              <stop offset="0" stopColor="#7be3a4" />
-              <stop offset="0.5" stopColor="#22c56b" />
-              <stop offset="1" stopColor="#0d9a52" />
+              <stop offset="0" stopColor="#e8f8a8" />
+              <stop offset="0.5" stopColor="#d7f26b" />
+              <stop offset="1" stopColor="#b9dc34" />
             </linearGradient>
             <filter id={ids.blur} x="-20%" y="-20%" width="140%" height="140%">
               <feGaussianBlur stdDeviation="4" />
             </filter>
           </defs>
           <Ticks />
-          <Ring r={R_OUT} value={green} gradient={ids.green} blur={ids.blur} glow="#22c56b" tipRing="#0d9a52" />
-          <Ring r={R_IN} value={red} gradient={ids.red} blur={ids.blur} glow="#f5554a" tipRing="#e0303f" />
+          <Ring r={R_OUT} value={green} gradient={ids.green} blur={ids.blur} glow="#b9dc34" tipRing="#b9dc34" />
+          <Ring r={R_IN} value={red} gradient={ids.red} blur={ids.blur} glow="#111114" tipRing="#111114" />
         </svg>
 
         {/* Centre readout, sitting on the baseline inside the inner ring */}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col items-center text-center" aria-hidden="true">
           {secured ? (
-            <span className="mb-1.5 inline-flex items-center gap-1 rounded-full bg-good-soft px-2 py-0.5 text-[0.6875rem] font-semibold text-good">
+            <span className="mb-1.5 inline-flex items-center gap-1 rounded-full bg-lime-soft px-2 py-0.5 text-[0.6875rem] font-semibold text-[#3f5200] ring-1 ring-lime-deep/40 ring-inset">
               <Check size={12} strokeWidth={3} /> Target reached
             </span>
           ) : (
@@ -193,7 +193,7 @@ export function FundGauge({ data }) {
         </div>
       </div>
       <p className="mt-3 flex justify-center" aria-hidden="true">
-        <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold ${data.extra > 0 ? 'bg-[#0d9a52] text-white shadow-[0_4px_14px_rgba(13,154,82,0.35)]' : 'bg-tint text-ink-3'}`}>
+        <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold ${data.extra > 0 ? 'bg-lime text-ink ring-1 ring-lime-deep/50 ring-inset' : 'bg-tint text-ink-3'}`}>
           <Sparkles size={12} /> {data.extra > 0 ? `+${whole(data.extraSales)} from ${n(data.extra)} extra bottles` : 'No extra bottles yet'}
         </span>
       </p>
@@ -207,15 +207,15 @@ export function FundLegend({ data }) {
   const extraPct = data.target ? (data.extraSales / data.target) * 100 : 0
   const rows = [
     {
-      swatch: 'bg-[linear-gradient(90deg,#ff8f6b,#e0303f)]',
+      swatch: 'bg-[linear-gradient(90deg,#52525c,#111114)]',
       name: 'Confirmed sales',
       value: `${rm(data.sales)} / ${rm(data.target)}`,
       note: `Profit on bottles up to each AJK's target · ${pct(salesPct)}`,
     },
     {
-      swatch: 'bg-[linear-gradient(90deg,#7be3a4,#0d9a52)]',
+      swatch: 'bg-[linear-gradient(90deg,#d7f26b,#b9dc34)]',
       name: 'Extra bottle sales',
-      value: `${rm(data.extraSales)} / ${rm(data.target)}`,
+      value: rm(data.extraSales),
       note: `${n(data.extra)} extra ${data.extra === 1 ? 'bottle' : 'bottles'}${data.other ? ` (${n(data.other)} from fellows or no code)` : ''} × ${whole(data.price)} profit · ${pct(extraPct)}`,
     },
   ]
@@ -260,12 +260,12 @@ export function ExtraBoard({ data, onSelect }) {
                 <span className="text-xs text-ink-3 tabular-nums">{i + 1}</span>
                 <span className="min-w-0">
                   <span className="block truncate text-[0.8125rem] font-medium">{displayName(c.name)}</span>
-                  <span className="mt-1 block h-1.5 overflow-hidden rounded-full bg-[#efeff3]">
-                    <span className="block h-full rounded-full bg-[linear-gradient(90deg,#7be3a4,#0d9a52)]" style={{ width: `${Math.max(6, (c.extra / max) * 100)}%` }} />
+                  <span className="mt-1 block h-1.5 overflow-hidden rounded-full bg-[#ebebef]">
+                    <span className="block h-full rounded-full bg-[linear-gradient(90deg,#d7f26b,#b9dc34)]" style={{ width: `${Math.max(6, (c.extra / max) * 100)}%` }} />
                   </span>
                 </span>
                 <span className="text-right leading-tight">
-                  <span className="block text-[0.8125rem] font-semibold text-good tabular-nums">+{n(c.extra)}</span>
+                  <span className="block text-[0.8125rem] font-semibold text-ink tabular-nums">+{n(c.extra)}</span>
                   <span className="block text-[0.6875rem] text-ink-3 tabular-nums">{whole(c.extra * data.price)}</span>
                 </span>
               </button>

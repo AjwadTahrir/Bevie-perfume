@@ -183,10 +183,10 @@ export default function Overview() {
           </div>
           <p className="flex items-center gap-4 text-[0.8125rem] text-ink-2">
             <span className="flex items-center gap-1.5">
-              <span className="size-2 rounded-full bg-[#f5554a]" aria-hidden="true" /> Confirmed (up to target)
+              <span className="size-2 rounded-full bg-espresso" aria-hidden="true" /> Confirmed (up to target)
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="size-2 rounded-full bg-[#22c56b]" aria-hidden="true" /> Extra bottle sales
+              <span className="size-2 rounded-full bg-lime-deep" aria-hidden="true" /> Extra bottle sales
             </span>
           </p>
         </div>
