@@ -1,25 +1,31 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { Check, Sparkles } from 'lucide-react'
+import { bureauOf } from '../lib/bureaus'
 import { displayName, n, pct, rm } from '../lib/format'
 
+/** The fund the AJK committed to raise, in RM: the 35 AJK selling their target each. */
+export const FUND_TARGET = 1700
+
+/** College fellows have promo codes but no target; everything they sell is extra. */
+const NOT_AJK = 'Pengurusan Kolej'
+
 /**
- * The fund gauge on Overview: two concentric half rings, both out of the fund
- * target, which is every AJK selling exactly their target × the profit per
- * bottle (Settings).
+ * The fund gauge on Overview: two concentric half rings, both out of
+ * FUND_TARGET.
  *
  * Inner, red: confirmed. Each AJK's verified bottles, capped at their target,
- * × profit per bottle. Fills to 100% when every AJK has hit their target.
+ * × profit per bottle (Settings).
  *
- * Outer, green: extra. Verified bottles past each AJK's target, plus verified
- * bottles sold with no AJK code, × profit per bottle. Never counted in red.
+ * Outer, green: extra. Verified bottles past each AJK's target, plus bottles
+ * sold through a college fellow's code or with no code, × profit per bottle.
+ * Never counted in red.
  *
- * Expected profit (Reports) is target + extraSales: everyone assumed to reach
- * their target, extras on top.
+ * Expected profit (Reports) is FUND_TARGET + extraSales: every AJK assumed to
+ * reach their target, extras on top.
  */
 export function fundProgress(members, dash) {
   const price = Number(dash.settings?.profit_per_bottle) || 0
   let capped = 0
-  let targetBottles = 0
   let ajkBottles = 0
   let ajkExtra = 0
   let reached = 0
@@ -28,11 +34,12 @@ export function fundProgress(members, dash) {
   for (const m of members) {
     const t = Number(m.target) || 0
     const v = Number(m.verified_bottles) || 0
+    // Fellows have no target, so their bottles fall through to "other" below.
+    if (bureauOf(m.committee_role) === NOT_AJK) continue
     ajkBottles += v
     // Every active AJK counts towards the target; an inactive one only if they sold.
     if (!m.is_active && v === 0) continue
     counted++
-    targetBottles += t
     capped += Math.min(v, t)
     if (v >= t) reached++
     if (v > t) {
@@ -41,18 +48,18 @@ export function fundProgress(members, dash) {
     }
   }
   contributors.sort((a, b) => b.extra - a.extra)
-  // Verified bottles sold without any AJK code.
-  const noCode = Math.max(0, (Number(dash.verified?.bottles) || 0) - ajkBottles)
-  const extra = ajkExtra + noCode
+  // Verified bottles not sold by an AJK: college fellows' codes and no code.
+  const other = Math.max(0, (Number(dash.verified?.bottles) || 0) - ajkBottles)
+  const extra = ajkExtra + other
   return {
-    target: targetBottles * price,
+    target: FUND_TARGET,
     sales: capped * price,
     extra,
     ajkExtra,
-    noCode,
+    other,
     price,
     extraSales: extra * price,
-    expected: (targetBottles + extra) * price,
+    expected: FUND_TARGET + extra * price,
     members: counted,
     reached,
     contributors,
@@ -209,7 +216,7 @@ export function FundLegend({ data }) {
       swatch: 'bg-[linear-gradient(90deg,#7be3a4,#0d9a52)]',
       name: 'Extra bottle sales',
       value: `${rm(data.extraSales)} / ${rm(data.target)}`,
-      note: `${n(data.extra)} extra ${data.extra === 1 ? 'bottle' : 'bottles'}${data.noCode ? ` (${n(data.noCode)} with no code)` : ''} × ${whole(data.price)} profit · ${pct(extraPct)}`,
+      note: `${n(data.extra)} extra ${data.extra === 1 ? 'bottle' : 'bottles'}${data.other ? ` (${n(data.other)} from fellows or no code)` : ''} × ${whole(data.price)} profit · ${pct(extraPct)}`,
     },
   ]
   return (

@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { ArrowDownRight, ArrowRight, ArrowUpRight, CheckCheck, FileText, MoreHorizontal, ShoppingBag, Trophy } from 'lucide-react'
 import { EmptyState, ErrorState, InfoTip, Skeleton, StatusBadge } from '../components/ui'
 import { MiniBars, Sparkline, TrendChart, fillDays } from '../components/charts'
-import { ExtraBoard, FundGauge, FundLegend, fundProgress } from '../components/FundGauge'
+import { ExtraBoard, FUND_TARGET, FundGauge, FundLegend, fundProgress } from '../components/FundGauge'
 import { fetchDashboard, fetchMembers, fetchOrders, fetchTimeseries } from '../lib/api'
 import { useAuth } from '../lib/auth'
 import { useQuery } from '../lib/data'
@@ -20,7 +20,7 @@ export const DEFINITIONS = {
   profit: 'Campaign profit on verified orders: the profit per bottle set in Settings × verified bottles. Discounts are not subtracted again.',
   pending: 'Orders with a receipt uploaded but not yet verified. Not counted as sales.',
   fundGauge:
-    'Both rings are out of the fund target: every AJK selling exactly their target × the profit per bottle. Red: verified bottles, counted up to each AJK\'s target. Green: verified bottles past each AJK\'s target plus bottles sold with no code, so extras are never counted twice.',
+    `Both rings are out of the ${rm(FUND_TARGET).replace(/\.00$/, '')} fund target. Red: each AJK's verified bottles, counted up to their target, × profit per bottle. Green: bottles past each AJK's target plus bottles sold by college fellows or with no code, so extras are never counted twice.`,
 }
 
 /** Colours for people tiles, picked by name so a person keeps theirs everywhere. */
