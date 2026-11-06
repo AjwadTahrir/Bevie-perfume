@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { ArrowDownRight, ArrowRight, ArrowUpRight, CheckCheck, FileText, MoreHorizontal, ShoppingBag, Trophy } from 'lucide-react'
 import { EmptyState, ErrorState, InfoTip, Skeleton, StatusBadge } from '../components/ui'
 import { MiniBars, Sparkline, TrendChart, fillDays } from '../components/charts'
+import { ExtraBoard, FUND_TARGET, FundGauge, FundLegend, fundProgress } from '../components/FundGauge'
 import { fetchDashboard, fetchMembers, fetchOrders, fetchTimeseries } from '../lib/api'
 import { useAuth } from '../lib/auth'
 import { useQuery } from '../lib/data'
@@ -18,6 +19,8 @@ export const DEFINITIONS = {
   net: 'Money actually collected for perfume on verified orders: gross sales minus discounts. Postage is not included.',
   profit: 'Campaign profit on verified orders: the profit per bottle set in Settings × verified bottles. Discounts are not subtracted again.',
   pending: 'Orders with a receipt uploaded but not yet verified. Not counted as sales.',
+  fundGauge:
+    `Both rings are out of the ${rm(FUND_TARGET).replace(/\.00$/, '')} fund target. Red: confirmed sales, money collected on verified orders without postage (the Campaign fund figure). Green: bottles each AJK sold beyond their own target × the price with a code.`,
 }
 
 /** Colours for people tiles, picked by name so a person keeps theirs everywhere. */
@@ -84,7 +87,8 @@ export default function Overview() {
   const sparkValues = kind === 'quarter' ? trend.map((t) => t.verified_bottles) : daily.map((t) => t.verified_bottles)
   const top = (members.data || []).filter((m) => m.verified_bottles > 0).slice(0, 3)
   const recent = (orders.data || []).slice(0, 6)
-  const filled = d ? Math.min(12, Math.round((d.target.completion_pct / 100) * 12)) : 0
+  const fund = d && members.data ? fundProgress(members.data, d) : null
+  const filled = d ?Math.min(12, Math.round((d.target.completion_pct / 100) * 12)) : 0
 
   return (
     <>
@@ -167,6 +171,46 @@ export default function Overview() {
           </div>
         </section>
       </div>
+
+      <section className="card mt-4 min-w-0 p-5" aria-labelledby="fund-gauge-h">
+        <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h2 id="fund-gauge-h" className="flex items-center gap-1.5 text-[0.9375rem] font-semibold">
+              Fund progress
+              <InfoTip text={DEFINITIONS.fundGauge} />
+            </h2>
+            <p className="text-xs text-ink-3">All time · verified payments only</p>
+          </div>
+          <p className="flex items-center gap-4 text-[0.8125rem] text-ink-2">
+            <span className="flex items-center gap-1.5">
+              <span className="size-2 rounded-full bg-[#f5554a]" aria-hidden="true" /> Confirmed sales
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="size-2 rounded-full bg-[#22c56b]" aria-hidden="true" /> Extra bottle sales
+            </span>
+          </p>
+        </div>
+        {(loading || (members.loading && !members.data)) ? (
+          <div className="grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
+            <Skeleton className="mx-auto aspect-[2/1] w-full max-w-[420px] rounded-t-full" />
+            <Skeleton className="h-56 w-full" />
+          </div>
+        ) : members.error && !members.data ? (
+          <ErrorState error={members.error} />
+        ) : (
+          fund && (
+            <div className="grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:gap-8">
+              <div>
+                <FundGauge data={fund} />
+                <FundLegend data={fund} />
+              </div>
+              <div className="border-line lg:border-l lg:pl-8">
+                <ExtraBoard data={fund} onSelect={(id) => navigate(`/members/${id}`)} />
+              </div>
+            </div>
+          )
+        )}
+      </section>
 
       <div className="mt-4 grid gap-4 xl:grid-cols-[1.7fr_1fr]">
         <section className="card min-w-0 p-5" aria-labelledby="trend-h">
