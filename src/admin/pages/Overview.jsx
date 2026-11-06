@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { ArrowDownRight, ArrowRight, ArrowUpRight, CheckCheck, FileText, MoreHorizontal, ShoppingBag, Trophy } from 'lucide-react'
 import { EmptyState, ErrorState, InfoTip, Skeleton, StatusBadge } from '../components/ui'
 import { MiniBars, Sparkline, TrendChart, fillDays } from '../components/charts'
-import { ExtraBoard, FUND_TARGET, FundGauge, FundLegend, fundProgress } from '../components/FundGauge'
+import { ExtraBoard, FundGauge, FundLegend, fundProgress } from '../components/FundGauge'
 import { fetchDashboard, fetchMembers, fetchOrders, fetchTimeseries } from '../lib/api'
 import { useAuth } from '../lib/auth'
 import { useQuery } from '../lib/data'
@@ -20,7 +20,7 @@ export const DEFINITIONS = {
   profit: 'Campaign profit on verified orders: the profit per bottle set in Settings × verified bottles. Discounts are not subtracted again.',
   pending: 'Orders with a receipt uploaded but not yet verified. Not counted as sales.',
   fundGauge:
-    `Both rings are out of the ${rm(FUND_TARGET).replace(/\.00$/, '')} fund target. Red: confirmed sales, money collected on verified orders without postage (the Campaign fund figure). Green: bottles each AJK sold beyond their own target × the price with a code.`,
+    'Both rings are out of the fund target: every AJK selling exactly their target × the profit per bottle. Red: verified bottles, counted up to each AJK\'s target. Green: verified bottles past each AJK\'s target plus bottles sold with no code, so extras are never counted twice.',
 }
 
 /** Colours for people tiles, picked by name so a person keeps theirs everywhere. */
@@ -88,7 +88,7 @@ export default function Overview() {
   const top = (members.data || []).filter((m) => m.verified_bottles > 0).slice(0, 3)
   const recent = (orders.data || []).slice(0, 6)
   const fund = d && members.data ? fundProgress(members.data, d) : null
-  const filled = d ?Math.min(12, Math.round((d.target.completion_pct / 100) * 12)) : 0
+  const filled = d ? Math.min(12, Math.round((d.target.completion_pct / 100) * 12)) : 0
 
   return (
     <>
@@ -183,7 +183,7 @@ export default function Overview() {
           </div>
           <p className="flex items-center gap-4 text-[0.8125rem] text-ink-2">
             <span className="flex items-center gap-1.5">
-              <span className="size-2 rounded-full bg-[#f5554a]" aria-hidden="true" /> Confirmed sales
+              <span className="size-2 rounded-full bg-[#f5554a]" aria-hidden="true" /> Confirmed (up to target)
             </span>
             <span className="flex items-center gap-1.5">
               <span className="size-2 rounded-full bg-[#22c56b]" aria-hidden="true" /> Extra bottle sales

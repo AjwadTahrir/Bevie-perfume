@@ -2,44 +2,57 @@ import { useEffect, useId, useRef, useState } from 'react'
 import { Check, Sparkles } from 'lucide-react'
 import { displayName, n, pct, rm } from '../lib/format'
 
-/** The amount the campaign has committed to raise, in RM. Both rings fill towards it. */
-export const FUND_TARGET = 1700
-
 /**
- * The fund gauge on Overview: two concentric half rings, both out of
- * FUND_TARGET.
+ * The fund gauge on Overview: two concentric half rings, both out of the fund
+ * target, which is every AJK selling exactly their target × the profit per
+ * bottle (Settings).
  *
- * Inner, red: confirmed sales, the money collected for perfume on verified
- * orders (the Campaign fund figure; postage left out).
+ * Inner, red: confirmed. Each AJK's verified bottles, capped at their target,
+ * × profit per bottle. Fills to 100% when every AJK has hit their target.
  *
- * Outer, green: extra bottle sales, the bottles each AJK sold beyond their
- * own target (Settings → target per AJK), added up, × the price with a code
- * (Settings → discounted price, RM 30).
+ * Outer, green: extra. Verified bottles past each AJK's target, plus verified
+ * bottles sold with no AJK code, × profit per bottle. Never counted in red.
+ *
+ * Expected profit (Reports) is target + extraSales: everyone assumed to reach
+ * their target, extras on top.
  */
 export function fundProgress(members, dash) {
-  const price = Number(dash.settings.discounted_price) || 0
-  let extra = 0
+  const price = Number(dash.settings?.profit_per_bottle) || 0
+  let capped = 0
+  let targetBottles = 0
+  let ajkBottles = 0
+  let ajkExtra = 0
   let reached = 0
   let counted = 0
   const contributors = []
   for (const m of members) {
     const t = Number(m.target) || 0
     const v = Number(m.verified_bottles) || 0
-    // Every active AJK counts towards "at target"; an inactive one only if they sold.
-    if (m.is_active || v > 0) counted++
-    if (v >= t && (m.is_active || v > 0)) reached++
+    ajkBottles += v
+    // Every active AJK counts towards the target; an inactive one only if they sold.
+    if (!m.is_active && v === 0) continue
+    counted++
+    targetBottles += t
+    capped += Math.min(v, t)
+    if (v >= t) reached++
     if (v > t) {
-      extra += v - t
+      ajkExtra += v - t
       contributors.push({ id: m.member_id, name: m.full_name, extra: v - t })
     }
   }
   contributors.sort((a, b) => b.extra - a.extra)
+  // Verified bottles sold without any AJK code.
+  const noCode = Math.max(0, (Number(dash.verified?.bottles) || 0) - ajkBottles)
+  const extra = ajkExtra + noCode
   return {
-    target: FUND_TARGET,
-    sales: Number(dash.verified.net) || 0,
+    target: targetBottles * price,
+    sales: capped * price,
     extra,
+    ajkExtra,
+    noCode,
     price,
     extraSales: extra * price,
+    expected: (targetBottles + extra) * price,
     members: counted,
     reached,
     contributors,
@@ -122,8 +135,8 @@ const whole = (v) => rm(v).replace(/\.00$/, '')
 
 export function FundGauge({ data }) {
   const uid = useId().replace(/:/g, '')
-  const salesPct = (data.sales / data.target) * 100
-  const extraPct = (data.extraSales / data.target) * 100
+  const salesPct = data.target ? (data.sales / data.target) * 100 : 0
+  const extraPct = data.target ? (data.extraSales / data.target) * 100 : 0
   const red = useTween(salesPct)
   const green = useTween(extraPct)
   const shown = useTween(data.sales)
@@ -183,20 +196,20 @@ export function FundGauge({ data }) {
 
 /** Key under the gauge: what each ring counts, with exact figures. */
 export function FundLegend({ data }) {
-  const salesPct = (data.sales / data.target) * 100
-  const extraPct = (data.extraSales / data.target) * 100
+  const salesPct = data.target ? (data.sales / data.target) * 100 : 0
+  const extraPct = data.target ? (data.extraSales / data.target) * 100 : 0
   const rows = [
     {
       swatch: 'bg-[linear-gradient(90deg,#ff8f6b,#e0303f)]',
       name: 'Confirmed sales',
       value: `${rm(data.sales)} / ${rm(data.target)}`,
-      note: `Verified payments, postage left out · ${pct(salesPct)}`,
+      note: `Profit on bottles up to each AJK's target · ${pct(salesPct)}`,
     },
     {
       swatch: 'bg-[linear-gradient(90deg,#7be3a4,#0d9a52)]',
       name: 'Extra bottle sales',
       value: `${rm(data.extraSales)} / ${rm(data.target)}`,
-      note: `${n(data.extra)} extra ${data.extra === 1 ? 'bottle' : 'bottles'} × ${whole(data.price)} · ${pct(extraPct)}`,
+      note: `${n(data.extra)} extra ${data.extra === 1 ? 'bottle' : 'bottles'}${data.noCode ? ` (${n(data.noCode)} with no code)` : ''} × ${whole(data.price)} profit · ${pct(extraPct)}`,
     },
   ]
   return (
