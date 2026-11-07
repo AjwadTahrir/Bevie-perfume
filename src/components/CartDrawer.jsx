@@ -3,7 +3,7 @@ import { ArrowLeft, ArrowRight, Check, Minus, Plus, Trash2, Upload, X } from 'lu
 import ProductVisual from './ProductVisual'
 import PaymentQr from './PaymentQr'
 import { useCart, orderTotals } from '../lib/cart'
-import { checkoutMode, createOrder, submitReceipt, validateReferralCode } from '../lib/orders'
+import { checkoutMode, createOrder, loadCheckout, saveCheckout, submitReceipt, validateReferralCode } from '../lib/orders'
 import { lockScroll, unlockScroll } from '../lib/scrollLock'
 import { normalizeReferralCode } from '../data/referralCodes'
 import { preorder, privacyPath, schedulePath, shop } from '../config/brand'
@@ -19,6 +19,7 @@ const STEPS = [
 const EMPTY_CUSTOMER = { name: '', phone: '', method: '', line1: '', line2: '', postcode: '', city: '', state: '', notes: '' }
 const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
 const rm = (n) => formatPrice(n, 'RM 0')
+const fingerprintOf = (items, referral, customer) => JSON.stringify([items.map((l) => [l.id, l.quantity]), referral, customer])
 
 /**
  * CART AND CHECKOUT
@@ -26,19 +27,29 @@ const rm = (n) => formatPrice(n, 'RM 0')
  *   cart -> details -> payment (scan QR, upload proof) -> done
  * Continuing to payment creates the order on the backend (src/lib/orders.js),
  * so the QR shows the backend's final total. Going back and changing the
- * cart, code or details updates that same order the next time.
+ * cart, code or details updates that same order the next time. The order is
+ * also kept in this browser, so a page reload returns to the same reference.
  */
 export default function CartDrawer() {
   const cart = useCart()
   const dialogRef = useRef(null)
   const scrollRef = useRef(null)
-  const [step, setStep] = useState('cart')
-  const [customer, setCustomer] = useState(EMPTY_CUSTOMER)
-  const [referralInput, setReferralInput] = useState('')
-  const [referral, setReferral] = useState('') // applied, valid code
+  const [restored] = useState(() => {
+    const saved = loadCheckout()
+    return saved && cart.items.length ? saved : null
+  })
+  const [step, setStep] = useState(() => {
+    if (!restored) return 'cart'
+    const { fingerprint, referral, customer } = restored.order
+    // The cart changed since the order was saved: confirm the details, which updates that order.
+    return fingerprint === fingerprintOf(cart.items, referral, customer) ? 'payment' : 'details'
+  })
+  const [customer, setCustomer] = useState(restored?.order.customer ?? EMPTY_CUSTOMER)
+  const [referralInput, setReferralInput] = useState(restored?.order.referral ?? '')
+  const [referral, setReferral] = useState(restored?.order.referral ?? '') // applied, valid code
   const [referralError, setReferralError] = useState('')
   const [checkingCode, setCheckingCode] = useState(false)
-  const [order, setOrder] = useState(null) // created on the backend: { ..., fingerprint }
+  const [order, setOrder] = useState(restored?.order ?? null) // created on the backend: { ..., fingerprint, customer, referral, savedAt }
   const [creating, setCreating] = useState(false)
   const [proof, setProof] = useState(null) // { file, url }
   const [paid, setPaid] = useState(false)
@@ -49,7 +60,14 @@ export default function CartDrawer() {
   const totals = orderTotals(cart.subtotal, cart.count, !!referral)
   const postage = customer.method === 'delivery' ? shop.deliveryFee : 0
   // What the order was last saved from; any change means saving it again.
-  const fingerprint = JSON.stringify([cart.items.map((l) => [l.id, l.quantity]), referral, customer])
+  const fingerprint = fingerprintOf(cart.items, referral, customer)
+
+  // Back from a reload mid-checkout: reopen the panel unless the buyer had closed it.
+  useEffect(() => {
+    if (restored?.open) cart.open()
+  }, [])
+
+  useEffect(() => saveCheckout(order && cart.count ? { order, open: cart.isOpen } : null), [order, cart.isOpen, cart.count])
 
   // Open / close the native dialog with the cart state.
   useEffect(() => {
@@ -121,7 +139,7 @@ export default function CartDrawer() {
     setError('')
     try {
       const created = await createOrder({ requestId: crypto.randomUUID(), customer, code: referral, items: cart.items, previous: order })
-      setOrder({ ...created, fingerprint })
+      setOrder({ ...created, fingerprint, customer, referral, savedAt: Date.now() })
       setProof(null)
       setPaid(false)
       go('payment')

@@ -12,7 +12,7 @@ export const privacy = {
   en: {
     label: 'English',
     title: 'Privacy Policy',
-    updated: 'Last updated: 30 October 2026',
+    updated: 'Last updated: 31 October 2026',
     intro: [
       'This notice explains how JETHA Fragrance ("JETHA", "we", "us") collects and uses your personal data on jethafragrance.vercel.app, in line with Malaysia\'s Personal Data Protection Act 2010 (PDPA).',
       'JETHA Fragrance is a student fundraiser run by the organising committee of the Titian Serantau: Thailand Mobility Programme, Kolej Kediaman Tun Ahmad Zaidi (KK10), Universiti Malaya. It is not a registered business. By placing an order, you agree to this notice.',
@@ -61,6 +61,7 @@ export const privacy = {
         h: '4. Cookies and browser storage',
         body: [
           'The website does not use tracking cookies, analytics or ads. Your cart is saved in your own browser\'s local storage, so it is still there when you come back. It stays on your device until you place an order. You can remove it by emptying the cart or clearing this site\'s data in your browser.',
+          'When you continue to payment, your order reference and the details you entered are saved there too, so your order is not lost if you switch to your banking app. They are removed when you place the order or empty the cart, and are no longer used after 48 hours.',
         ],
       },
       {
@@ -115,7 +116,7 @@ export const privacy = {
   ms: {
     label: 'Bahasa Malaysia',
     title: 'Dasar Privasi',
-    updated: 'Dikemas kini: 30 Oktober 2026',
+    updated: 'Dikemas kini: 31 Oktober 2026',
     intro: [
       'Notis ini menerangkan bagaimana JETHA Fragrance ("JETHA", "kami") mengumpul dan menggunakan data peribadi anda di jethafragrance.vercel.app, selaras dengan Akta Perlindungan Data Peribadi 2010 (PDPA) Malaysia.',
       'JETHA Fragrance ialah projek kutipan dana pelajar yang dikendalikan oleh jawatankuasa penganjur Titian Serantau: Thailand Mobility Programme, Kolej Kediaman Tun Ahmad Zaidi (KK10), Universiti Malaya. Ia bukan perniagaan berdaftar. Dengan membuat pesanan, anda bersetuju dengan notis ini.',
@@ -164,6 +165,7 @@ export const privacy = {
         h: '4. Kuki dan storan pelayar',
         body: [
           'Laman web ini tidak menggunakan kuki penjejak, analitik atau iklan. Troli anda disimpan dalam storan tempatan pelayar anda sendiri supaya ia masih ada apabila anda kembali. Ia kekal pada peranti anda sehingga anda membuat pesanan. Anda boleh membuangnya dengan mengosongkan troli atau memadam data laman ini dalam pelayar anda.',
+          'Apabila anda meneruskan ke pembayaran, rujukan pesanan dan butiran yang anda masukkan turut disimpan di situ, supaya pesanan anda tidak hilang jika anda beralih ke aplikasi perbankan anda. Ia dibuang apabila anda membuat pesanan atau mengosongkan troli, dan tidak lagi digunakan selepas 48 jam.',
         ],
       },
       {

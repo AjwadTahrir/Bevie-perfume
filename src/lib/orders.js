@@ -102,6 +102,33 @@ export async function createOrder({ requestId, customer, code, items, previous }
   }
 }
 
+const CHECKOUT_KEY = 'beavie-checkout-v1'
+const CHECKOUT_MAX_AGE_MS = 47 * 60 * 60 * 1000 // just inside the backend's 48-hour payment deadline
+
+/**
+ * The order being paid for, kept in this browser. Phones often reload the page
+ * while the buyer is away in their banking app; without this, they would come
+ * back to an empty checkout and create a second order with a new reference.
+ */
+export function loadCheckout() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(CHECKOUT_KEY))
+    return saved?.order && Date.now() - saved.order.savedAt < CHECKOUT_MAX_AGE_MS ? saved : null
+  } catch {
+    return null
+  }
+}
+
+/** Saves the checkout in progress; null removes it. */
+export function saveCheckout(checkout) {
+  try {
+    if (checkout) localStorage.setItem(CHECKOUT_KEY, JSON.stringify(checkout))
+    else localStorage.removeItem(CHECKOUT_KEY)
+  } catch {
+    // Storage can be unavailable (private mode); checkout still works for this visit.
+  }
+}
+
 /** Uploads the proof of payment for an order created by createOrder. */
 export async function submitReceipt({ order, file, bankReference }) {
   if (checkoutMode !== 'live') {
