@@ -164,7 +164,7 @@ export default function PerfumeModal({ perfume, onClose, onNavigate }) {
               <dl className="mt-8 grid grid-cols-2 gap-6 border-y border-ochre/60 py-5">
                 <div>
                   <dt className="type-label text-brown-soft">Price</dt>
-                  <dd className="mt-1.5 font-display text-2xl text-brown">{formatPrice(p.price, 'To be announced')}</dd>
+                  <dd className="mt-1.5 font-display text-2xl text-brown">{p.comingSoon ? 'Coming soon' : formatPrice(p.price, 'To be announced')}</dd>
                 </div>
                 <div>
                   <dt className="type-label text-brown-soft">Size</dt>
@@ -195,13 +195,13 @@ export default function PerfumeModal({ perfume, onClose, onNavigate }) {
                   <button
                     type="button"
                     className="btn btn-primary"
-                    disabled={typeof p.price !== 'number'}
+                    disabled={p.comingSoon || typeof p.price !== 'number'}
                     onClick={() => {
                       cart.add(p.id)
                       setAdded(true)
                     }}
                   >
-                    Add to Cart
+                    {p.comingSoon ? 'Coming Soon' : 'Add to Cart'}
                     <ShoppingBag size={16} strokeWidth={1.5} aria-hidden="true" />
                   </button>
                 )}

@@ -53,6 +53,15 @@ export default function PerfumeCard({ perfume, onSelect }) {
         <div className="absolute bottom-[6%] left-1/2 aspect-square w-[78%] -translate-x-1/2">
           <FloatingBottle perfume={perfume} index={perfumes.indexOf(perfume)} />
         </div>
+
+        {/* Not on sale yet: shade the frame and say so */}
+        {perfume.comingSoon && (
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-brown-deep/55 backdrop-blur-[2px]">
+            <span className="rounded-full border border-cream/70 px-4 py-2 text-[0.64rem] font-medium uppercase tracking-[0.28em] text-cream">
+              Coming soon
+            </span>
+          </div>
+        )}
       </div>
 
       <div className="flex flex-1 flex-col pt-5">
@@ -60,7 +69,7 @@ export default function PerfumeCard({ perfume, onSelect }) {
         {perfume.tagline && <p className="mt-1 font-display text-[0.95rem] italic leading-snug text-rust-deep">{perfume.tagline}</p>}
         <p className="mt-2 text-[0.8rem] text-brown-soft">
           {family}
-          {typeof perfume.price === 'number' && <> · {formatPrice(perfume.price)}</>}
+          {perfume.comingSoon ? <> · Coming soon</> : priced && <> · {formatPrice(perfume.price)}</>}
         </p>
         <div className="mt-auto flex flex-wrap items-center justify-between gap-x-3 pt-3">
           <button

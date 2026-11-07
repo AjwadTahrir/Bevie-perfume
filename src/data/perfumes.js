@@ -11,7 +11,7 @@
  * FIELDS (one record = one card + its modal)
  *   id            unique, url-safe text; must equal the product id in Supabase
  *   name          the perfume's name as it should appear on the site
- *   category      'him' | 'her': which collection it belongs to
+ *   category      'unisex' | 'him' | 'her': which collection it belongs to
  *                 (see `categories` below)
  *   family        one key from `fragranceFamilies` below
  *   description   one or two short sentences for the card and modal
@@ -58,6 +58,8 @@
  *                 pop-up's shape), ingredients in the lower right.
  *                 position is a CSS object-position for narrow crops
  *                 (phones). Without it the pop-up shows the batik bouquet.
+ *   comingSoon    true for scents not on sale yet: the card is shaded with
+ *                 a "Coming soon" frame and nothing can be added to the cart
  *   isPlaceholder  true only for stand-in records
  */
 
@@ -101,6 +103,8 @@ import ratnaRender480 from '../assets/products/renders/ratna-480.webp'
 import ratnaRender960 from '../assets/products/renders/ratna-960.webp'
 import serojaRender480 from '../assets/products/renders/seroja-480.webp'
 import serojaRender960 from '../assets/products/renders/seroja-960.webp'
+import plainRender480 from '../assets/products/renders/plain-480.webp'
+import plainRender960 from '../assets/products/renders/plain-960.webp'
 
 /**
  * BOTTLE RENDERS
@@ -116,6 +120,9 @@ import serojaRender960 from '../assets/products/renders/seroja-960.webp'
  *   ranum     ranum.blend1     label art: berry tease.png
  *   ratna     ratna.blend1     label art: celestia rose.png
  *   seroja    seroja.blend1    label art: lily in the valley.png
+ *   plain     bayu.blend with the label hidden (no label yet): the coming-soon
+ *             unisex scents. Their 3D models, public/models/unisex-1.glb and
+ *             unisex-2.glb, are the same label-free bottle.
  */
 const render = (s480, s960) => ({ src: s480, srcSet: `${s480} 480w, ${s960} 960w` })
 const renders = {
@@ -127,6 +134,7 @@ const renders = {
   ranum: render(ranumRender480, ranumRender960),
   ratna: render(ratnaRender480, ratnaRender960),
   seroja: render(serojaRender480, serojaRender960),
+  plain: render(plainRender480, plainRender960),
 }
 
 export const fragranceFamilies = {
@@ -606,10 +614,121 @@ export const perfumes = [
     motif: 'sprig',
     motifPlacement: 'bottom-right',
   },
+  /*
+   * UNISEX: COMING SOON
+   * Shown under a shaded "Coming soon" frame and cannot be added to the
+   * cart (price null, comingSoon true). The names stay hidden ('???')
+   * until launch. The bottle is the plain render without a label;
+   * there's no still life yet. Brief for the still life, when it's made:
+   *
+   *   unisex-1 Sunset ocean shoreline, golden-orange sky, wet sand, bleached
+   *            driftwood. Ripe sliced mangoes (fresh and juicy, never mushy
+   *            or overripe), halved pink guavas, red hibiscus, a Mai Tai
+   *            glass with ice, sea spray splash.
+   *   unisex-2 Champagne-cream silk draped over warm beige travertine, soft
+   *            golden light. Whole ripe peaches with natural fuzz (never
+   *            cut, bruised or dripping), mandarin slices, tuberose and
+   *            orange blossom petals, vanilla pods.
+   */
+  {
+    id: 'unisex-1',
+    category: 'unisex',
+    comingSoon: true,
+    name: '???',
+    family: 'fruity',
+    description:
+      'A unisex island escape: juicy mango, pink guava and hibiscus over a Mai Tai and sea breeze, settling on warm sandalwood and musk.',
+    tagline: 'Tropical Sunset / Mango Tide',
+    story:
+      'Golden hour at a beach bar: juicy mango, guava and hibiscus, a Mai Tai with salty sea air and driftwood, then ylang-ylang, sandalwood and creamy musk as the sun goes down.',
+    mood: 'Unisex island escape, golden-hour beach bar, warm sea breeze.',
+    accords: [
+      ['Tropical', 96, '#f2a33a'],
+      ['Sweet', 88, '#e26377'],
+      ['Fruity', 82, '#ea6a3f'],
+      ['Marine', 74, '#4fcaf0'],
+      ['Woody', 66, '#a56c43'],
+      ['Aromatic', 60, '#66c1b1'],
+      ['Rum', 54, '#bb652e'],
+      ['Warm Spicy', 48, '#d94f2d'],
+      ['Salty', 42, '#c8e0ea'],
+      ['Terpenic', 36, '#9caf72'],
+      ['Juicy Mango', 32, '#f5b83d'],
+      ['Creamy Musk', 28, '#e6d6c4'],
+    ],
+    facts: {
+      Family: 'Tropical Fruity',
+      Season: 'Summer',
+      'Time of Day': 'Golden Hour',
+    },
+    price: null,
+    size: '32 ml',
+    notes: {
+      top: ['Mango', 'Guava', 'Hibiscus'],
+      heart: ['Mai Tai Cocktail', 'Sea Notes', 'Driftwood'],
+      base: ['Ylang-Ylang', 'Sandalwood', 'Musk'],
+    },
+    image: null,
+    render: renders.plain,
+    imageAlt: 'Unlabelled perfume bottle with a black cap, coming soon',
+    tone: ['#f3e4d2', '#ebd0b0'],
+    accent: 'ochre',
+    bottle: { shape: 'flask', liquid: 'amber', cap: 'gold' },
+    motif: 'tendril',
+    motifPlacement: 'top-right',
+  },
+  {
+    id: 'unisex-2',
+    category: 'unisex',
+    comingSoon: true,
+    name: '???',
+    family: 'floral',
+    description:
+      'Soft unisex luxury: velvety peach and mandarin over creamy tuberose and orange blossom, wrapped in vanilla bean and tonka.',
+    tagline: 'Peach Silk / Creamy White Floral',
+    story:
+      'It wears like silk: whole ripe peach and mandarin melt into tuberose, ylang-ylang and orange blossom, then settle on vanilla bean, tonka, sandalwood and cedar. Warm, creamy and quietly elegant.',
+    mood: 'Unisex soft luxury, warm and creamy, elegant evening glow.',
+    accords: [
+      ['White Floral', 96, '#efe2d2'],
+      ['Tuberose', 88, '#f1d6dc'],
+      ['Sweet', 80, '#e26377'],
+      ['Vanilla', 74, '#f0dfbd'],
+      ['Woody', 66, '#a56c43'],
+      ['Powdery', 60, '#ceb9c6'],
+      ['Yellow Floral', 54, '#f0d36a'],
+      ['Citrus', 48, '#f1dc61'],
+      ['Animalic', 42, '#9f784e'],
+      ['Fruity', 36, '#ea8a5f'],
+      ['Velvety Peach', 32, '#f3b38f'],
+      ['Creamy Tonka', 28, '#d9b48a'],
+    ],
+    facts: {
+      Family: 'Creamy White Floral',
+      Season: 'All Season',
+      'Time of Day': 'Evening',
+    },
+    price: null,
+    size: '32 ml',
+    notes: {
+      top: ['Peach', 'Mandarin'],
+      heart: ['Tuberose', 'Ylang Ylang', 'Orange Blossom'],
+      base: ['Vanilla Bean', 'Musk', 'Sandalwood', 'Tonka Bean', 'Cedarwood'],
+    },
+    image: null,
+    render: renders.plain,
+    imageAlt: 'Unlabelled perfume bottle with a black cap, coming soon',
+    tone: ['#f2e6dd', '#e8d2c3'],
+    accent: 'rust',
+    bottle: { shape: 'arch', liquid: 'amber', cap: 'gold' },
+    motif: 'bloom',
+    motifPlacement: 'bottom-left',
+  },
 ]
 
-/** The two collections, in display order. */
+/** The collections, in display order. Unisex (coming soon) leads. */
 export const categories = [
+  { key: 'unisex', label: 'Unisex', anchor: 'unisex', intro: 'Coming soon: a tropical sunset and a peach-silk floral, made for everyone.' },
   { key: 'him', label: 'For Him', anchor: 'for-him', intro: 'Fresh, minty and rich: breeze, clarity, dusk and ocean.' },
   { key: 'her', label: 'For Her', anchor: 'for-her', intro: 'Fruity, floral and luminous: moonlight, ripeness, jewels and lotus.' },
 ]

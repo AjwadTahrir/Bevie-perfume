@@ -25,7 +25,7 @@ export default function Collection({ onSelect }) {
   useEffect(() => {
     // Capture phase: runs before the smooth-scroll handler looks for the section.
     const onClick = (e) => {
-      const key = anchorOf(e.target.closest?.('a[href*="#for-"]')?.getAttribute('href'))
+      const key = anchorOf(e.target.closest?.('a[href*="#"]')?.getAttribute('href'))
       if (key) flushSync(() => setFilter(key))
     }
     const onHash = () => {

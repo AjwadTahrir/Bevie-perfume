@@ -75,7 +75,7 @@ export default function HeroScene({ onSelect }) {
       {/* Scent index: every scent one tap from the first screen (desktop) */}
       <nav aria-label="The eight scents" className="hero-index absolute inset-x-0 bottom-7 z-10">
         <ul className="mx-auto flex max-w-[1440px] flex-wrap gap-x-7 gap-y-2 border-t border-brown/15 px-12 pr-28 pt-4">
-          {perfumes.map((p, i) => (
+          {perfumes.filter((p) => !p.comingSoon).map((p, i) => (
             <li key={p.id}>
               <button
                 type="button"
