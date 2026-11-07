@@ -857,6 +857,32 @@
 .drawer::backdrop {
   background: rgb(58 36 32 / 0.55);
 }
+/* Printing the order-received screen prints only its invoice */
+@media print {
+  body:has(.drawer[open] .invoice) * {
+    visibility: hidden;
+  }
+  body:has(.drawer[open] .invoice) .invoice,
+  body:has(.drawer[open] .invoice) .invoice * {
+    visibility: visible;
+  }
+  .drawer[open]:has(.invoice) {
+    position: static;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+    box-shadow: none;
+    animation: none;
+  }
+  .drawer[open]:has(.invoice)::backdrop {
+    background: none;
+  }
+  .invoice {
+    position: absolute;
+    inset: 0 0 auto;
+    border: 0;
+  }
+}
 @media (min-width: 640px) {
   .drawer {
     width: min(30rem, 100%);

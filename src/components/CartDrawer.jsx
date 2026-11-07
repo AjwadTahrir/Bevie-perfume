@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
-import { ArrowLeft, ArrowRight, Check, Minus, Plus, Trash2, Upload, X } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Check, Minus, Plus, Printer, Trash2, Upload, X } from 'lucide-react'
 import ProductVisual from './ProductVisual'
 import PaymentQr from './PaymentQr'
 import { useCart, orderTotals } from '../lib/cart'
 import { checkoutMode, createOrder, loadCheckout, saveCheckout, submitReceipt, validateReferralCode } from '../lib/orders'
 import { lockScroll, unlockScroll } from '../lib/scrollLock'
 import { normalizeReferralCode } from '../data/referralCodes'
-import { preorder, privacyPath, schedulePath, shop } from '../config/brand'
+import { brand, preorder, privacyPath, schedulePath, shop } from '../config/brand'
 import { payment } from '../config/payment'
 import { formatPrice } from '../lib/format'
 import { compressReceipt } from '../lib/compressImage'
@@ -162,7 +162,21 @@ export default function CartDrawer() {
     setError('')
     try {
       await submitReceipt({ order, file: proof.file })
-      setPlaced({ reference: order.reference, total: order.total, method: customer.method, hasCode: order.committeeApplied })
+      // Snapshot what was bought for the invoice: the cart and form are cleared next.
+      setPlaced({
+        reference: order.reference,
+        date: new Date(),
+        items: cart.items.map(({ id, quantity, perfume }) => ({ id, quantity, name: perfume.name, size: perfume.size, price: perfume.price ?? 0 })),
+        count: cart.count,
+        customer,
+        referral: order.committeeApplied ? referral : '',
+        subtotal: order.subtotal,
+        shipping: order.shipping,
+        discount: order.discount,
+        total: order.total,
+        method: customer.method,
+        hasCode: order.committeeApplied,
+      })
       cart.clear()
       setCustomer(EMPTY_CUSTOMER)
       setReferral('')
@@ -735,12 +749,112 @@ function DoneStep({ placed, onClose }) {
             : 'contact you on WhatsApp to arrange collection'}{' '}
         between {preorder.steps[1].short}.
       </p>
-      <p className="mt-6 text-xs uppercase tracking-[0.2em] text-brown-soft">Order reference</p>
-      <p className="mt-1 font-medium tracking-[0.18em]">{placed.reference}</p>
-      <p className="mt-1 text-sm text-brown-soft">Total {rm(placed.total)}</p>
-      <button type="button" className="btn btn-outline mt-8" onClick={onClose}>
-        Continue Browsing
-      </button>
+      <Invoice placed={placed} />
+      <div className="mt-6 flex flex-wrap justify-center gap-3 print:hidden">
+        <button type="button" className="btn btn-primary btn-small" onClick={() => window.print()}>
+          <Printer size={14} strokeWidth={1.5} aria-hidden="true" />
+          Print or Save PDF
+        </button>
+        <button type="button" className="btn btn-outline btn-small" onClick={onClose}>
+          Continue Browsing
+        </button>
+      </div>
     </div>
+  )
+}
+
+const invoiceDate = new Intl.DateTimeFormat(brand.locale, { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit' })
+
+// The buyer's copy of what they bought. Printing the page prints only this (see .invoice in index.css).
+function Invoice({ placed }) {
+  const { customer } = placed
+  const address = [customer.line1, customer.line2, `${customer.postcode} ${customer.city}`.trim(), customer.state].filter(Boolean)
+  return (
+    <section aria-labelledby="invoice-title" className="invoice mt-8 w-full rounded-xl border border-brown/15 bg-cream px-5 py-6 text-left text-sm text-brown">
+      <div className="flex items-start justify-between gap-4 border-b border-brown/15 pb-4">
+        <div>
+          <h3 id="invoice-title" className="font-display text-2xl">
+            Invoice
+          </h3>
+          <p className="mt-1 text-xs text-brown-soft">{brand.name}</p>
+        </div>
+        <div className="text-right text-xs">
+          <p className="font-medium tracking-[0.18em]">{placed.reference}</p>
+          <p className="mt-1 text-brown-soft">{invoiceDate.format(placed.date)}</p>
+        </div>
+      </div>
+
+      <dl className="grid grid-cols-2 gap-4 border-b border-brown/15 py-4 text-xs">
+        <div>
+          <dt className="uppercase tracking-[0.2em] text-brown-soft">Billed to</dt>
+          <dd className="mt-1.5 text-sm">
+            {customer.name}
+            <span className="block text-brown-soft">{customer.phone}</span>
+          </dd>
+        </div>
+        <div>
+          <dt className="uppercase tracking-[0.2em] text-brown-soft">{placed.method === 'delivery' ? 'Deliver to' : 'Collection'}</dt>
+          <dd className="mt-1.5 text-sm">
+            {placed.method === 'delivery'
+              ? address.map((line) => (
+                  <span key={line} className="block">
+                    {line}
+                  </span>
+                ))
+              : placed.referral
+                ? `From AJK ${placed.referral}`
+                : 'Arranged on WhatsApp'}
+          </dd>
+        </div>
+      </dl>
+
+      <table className="w-full border-b border-brown/15">
+        <caption className="sr-only">Items</caption>
+        <thead>
+          <tr className="text-xs uppercase tracking-[0.2em] text-brown-soft">
+            <th scope="col" className="pt-4 pb-2 text-left font-normal">
+              Item
+            </th>
+            <th scope="col" className="pt-4 pb-2 text-center font-normal">
+              Qty
+            </th>
+            <th scope="col" className="pt-4 pb-2 text-right font-normal">
+              Amount
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {placed.items.map((l) => (
+            <tr key={l.id} className="align-top">
+              <td className="py-2 pr-3">
+                {l.name}
+                <span className="block text-xs text-brown-soft">
+                  {l.size ? `${l.size} · ` : ''}
+                  {rm(l.price)} each
+                </span>
+              </td>
+              <td className="py-2 text-center tabular-nums">{l.quantity}</td>
+              <td className="py-2 text-right tabular-nums">{rm(l.price * l.quantity)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <div className="pt-4">
+        <Summary
+          subtotal={placed.subtotal}
+          discount={placed.discount}
+          total={placed.total}
+          referral={placed.referral}
+          count={placed.count}
+          method={placed.method}
+          shipping={placed.shipping}
+        />
+      </div>
+
+      <p className="mt-4 rounded-lg border border-ochre/60 px-3 py-2 text-xs">
+        <strong className="font-medium">Payment:</strong> paid by {payment.method}, awaiting verification.
+      </p>
+    </section>
   )
 }

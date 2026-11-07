@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
-import { Bell, CalendarDays, CheckCheck, CreditCard, FileText, LayoutDashboard, LogOut, Menu, PieChart, Search, Settings, ShoppingBag, Ticket, Trophy, Users, X } from 'lucide-react'
+import { Bell, CalendarDays, CheckCheck, CreditCard, Droplets, FileText, LayoutDashboard, LogOut, Menu, PieChart, Search, Settings, ShoppingBag, Ticket, Trophy, Users, X } from 'lucide-react'
 import { useAuth } from '../lib/auth'
 import { fetchDashboard } from '../lib/api'
 import { useLiveData, useQuery } from '../lib/data'
@@ -17,6 +17,7 @@ export const NAV = [
       { to: '/payments', label: 'Payments', icon: CreditCard, badge: 'review' },
       { to: '/members', label: 'AJK Performance', icon: Users },
       { to: '/leaderboard', label: 'Leaderboard', icon: Trophy },
+      { to: '/bottles', label: 'Bottles & Litres', icon: Droplets },
     ],
   },
   {

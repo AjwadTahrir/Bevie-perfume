@@ -5,6 +5,7 @@ import { Card, EmptyState, ErrorState, PageHeader, Pagination, ProgressBar, Sear
 import { fetchMembers } from '../lib/api'
 import { useQuery } from '../lib/data'
 import { displayName, fmtDateTime, rm } from '../lib/format'
+import { bureauOf } from '../lib/bureaus'
 import { MEMBER_STATUS } from '../lib/status'
 import { downloadCsv, stamp } from '../lib/csv'
 
@@ -12,6 +13,7 @@ export const MEMBER_CSV = [
   { label: 'Rank', value: (m) => m.rank },
   { label: 'Name', value: (m) => m.full_name },
   { label: 'Jawatan / Biro', value: (m) => m.committee_role },
+  { label: 'Group', value: (m) => bureauOf(m.committee_role) },
   { label: 'Promo code', value: (m) => m.promo_code },
   { label: 'Verified bottles', value: (m) => m.verified_bottles },
   { label: 'Pending bottles', value: (m) => m.pending_bottles },
@@ -26,7 +28,7 @@ export const MEMBER_CSV = [
   { label: 'Last order', value: (m) => m.last_order_at },
 ]
 
-export const bureaus = (members) => [...new Set((members || []).map((m) => m.committee_role))]
+export const bureaus = (members) => [...new Set((members || []).map((m) => bureauOf(m.committee_role)))]
 
 export default function Members() {
   const navigate = useNavigate()
@@ -39,7 +41,7 @@ export default function Members() {
   const filtered = useMemo(() => {
     const term = q.trim().toLowerCase()
     const rows = (members.data || []).filter(
-      (m) => (!term || m.full_name.toLowerCase().includes(term) || m.promo_code.toLowerCase().includes(term)) && (!bureau || m.committee_role === bureau) && (!status || m.status === status),
+      (m) => (!term || m.full_name.toLowerCase().includes(term) || m.promo_code.toLowerCase().includes(term)) && (!bureau || bureauOf(m.committee_role) === bureau) && (!status || m.status === status),
     )
     return sortRows(rows, sort, { full_name: (m) => m.full_name, revenue: (m) => Number(m.revenue), profit: (m) => Number(m.profit) })
   }, [members.data, q, bureau, status, sort])

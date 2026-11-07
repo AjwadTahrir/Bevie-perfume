@@ -58,6 +58,15 @@ export function fetchOrders({ from, to, memberId, unfinished = false } = {}) {
   })
 }
 
+/** Orders in the range (receipt received) with their line items, for the bottles page. */
+export async function fetchBottleSales(r) {
+  const [orders, items] = await Promise.all([
+    fetchOrders(r),
+    selectAll(() => supabase.from('admin_order_items').select('order_id, perfume_id, perfume_name, quantity').order('id')),
+  ])
+  return { orders, items }
+}
+
 export async function fetchOrder(id) {
   const one = async (q) => {
     const { data, error } = await q

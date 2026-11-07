@@ -2,8 +2,10 @@ import { useMemo, useState } from 'react'
 import { Download } from 'lucide-react'
 import { Card, ErrorState, Kpi, PageHeader, Skeleton } from '../components/ui'
 import { ColumnChart, RankChart, TwoLineChart, fillDays } from '../components/charts'
+import { fundProgress } from '../components/FundGauge'
 import DateRangeFilter from '../components/DateRangeFilter'
 import { fetchDashboard, fetchMembers, fetchOrders, fetchTimeseries } from '../lib/api'
+import { bureauOf } from '../lib/bureaus'
 import { useQuery } from '../lib/data'
 import { DEFAULT_RANGE, resolveRange } from '../lib/dateRange'
 import { fmtDate, fmtDay, n, pct, rm, rmShort } from '../lib/format'
@@ -20,6 +22,9 @@ export default function Reports() {
   const dash = useQuery(() => fetchDashboard(r), deps)
   const members = useQuery(() => fetchMembers(r), deps)
   const series = useQuery(() => fetchTimeseries(r), deps)
+  // Expected profit is a whole-campaign projection, so it ignores the date filter.
+  const allDash = useQuery(() => fetchDashboard({}), [])
+  const allMembers = useQuery(() => fetchMembers({}), [])
   const [exporting, setExporting] = useState(false)
 
   const d = dash.data
@@ -39,17 +44,21 @@ export default function Reports() {
   const bureaus = useMemo(() => {
     const map = new Map()
     for (const m of members.data || []) {
-      const b = map.get(m.committee_role) || { bureau: m.committee_role, members: 0, reached: 0, bottles: 0, pending: 0, revenue: 0, profit: 0 }
+      const bureau = bureauOf(m.committee_role)
+      const b = map.get(bureau) || { bureau, members: 0, reached: 0, bottles: 0, pending: 0, revenue: 0, profit: 0 }
       b.members += 1
       b.reached += m.status === 'target_reached' ? 1 : 0
       b.bottles += m.verified_bottles
       b.pending += m.pending_bottles
       b.revenue += Number(m.revenue)
       b.profit += Number(m.profit)
-      map.set(m.committee_role, b)
+      map.set(bureau, b)
     }
     return [...map.values()].sort((a, b) => b.bottles - a.bottles)
   }, [members.data])
+
+  // Same rule as the Overview fund gauge: everyone assumed to reach their target, extras on top.
+  const expected = useMemo(() => (allDash.data && allMembers.data ? fundProgress(allMembers.data, allDash.data) : null), [allDash.data, allMembers.data])
 
   const days = useMemo(() => fillDays(series.data, r.from, r.to), [series.data, r.from, r.to])
   const targetDist = Object.entries(MEMBER_STATUS).map(([k, s]) => ({ status: s.label, members: (members.data || []).filter((m) => m.status === k).length }))
@@ -95,7 +104,12 @@ export default function Reports() {
         <Kpi loading={loading} label="Campaign profit" info={DEFINITIONS.profit} value={v && rm(v.profit)} />
         <Kpi loading={loading} label="Pending payments" info={DEFINITIONS.pending} tone="muted" value={d && rm(d.pending.amount)} sub={d && `${n(d.pending.orders)} orders`} />
         <Kpi loading={loading} label="Paid orders" value={v && n(v.orders)} />
-        <Kpi loading={loading} label="Avg bottles / paid order" value={v && (v.orders ? (v.bottles / v.orders).toFixed(2) : '—')} />
+        <Kpi
+          loading={!expected && !(allDash.error || allMembers.error )}
+          label="Expected profit"
+          value={expected ? rm(expected.expected) : '—'}
+          sub={expected && `${rm(expected.target)} if every AJK hits target + ${rm(expected.extraSales)} extra`}
+        />
         <Kpi loading={loading} label="Average order value" value={v && (v.orders ? rm(v.net / v.orders) : '—')} sub="Collected per paid order" />
         <Kpi loading={loading} label="AJK at target" value={d && `${d.members.reached} / ${d.members.total}`} sub={d && pct((d.members.reached / d.members.total) * 100)} />
         <Kpi loading={loading} label="Remaining to target" value={d && `${n(d.target.remaining)} bottles`} />
