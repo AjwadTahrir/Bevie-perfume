@@ -87,6 +87,10 @@ import berryTeaseScene640 from '../assets/products/berry-tease-scene-640.webp'
 import berryTeaseScene1060 from '../assets/products/berry-tease-scene-1060.webp'
 import lilyValleyScene640 from '../assets/products/lily-valley-scene-640.webp'
 import lilyValleyScene1060 from '../assets/products/lily-valley-scene-1060.webp'
+import unisex1Scene640 from '../assets/products/unisex-1-scene-640.webp'
+import unisex1Scene1060 from '../assets/products/unisex-1-scene-1060.webp'
+import unisex2Scene640 from '../assets/products/unisex-2-scene-640.webp'
+import unisex2Scene1060 from '../assets/products/unisex-2-scene-1060.webp'
 import bayuRender480 from '../assets/products/renders/bayu-480.webp'
 import bayuRender960 from '../assets/products/renders/bayu-960.webp'
 import nirmalaRender480 from '../assets/products/renders/nirmala-480.webp'
@@ -618,8 +622,8 @@ export const perfumes = [
    * UNISEX: COMING SOON
    * Shown under a shaded "Coming soon" frame and cannot be added to the
    * cart (price null, comingSoon true). The names stay hidden ('???')
-   * until launch. The bottle is the plain render without a label;
-   * there's no still life yet. Brief for the still life, when it's made:
+   * until launch. The bottle is the plain render without a label.
+   * The still lifes were made from these briefs:
    *
    *   unisex-1 Sunset ocean shoreline, golden-orange sky, wet sand, bleached
    *            driftwood. Ripe sliced mangoes (fresh and juicy, never mushy
@@ -672,6 +676,12 @@ export const perfumes = [
     render: renders.plain,
     imageAlt: 'Unlabelled perfume bottle with a black cap, coming soon',
     tone: ['#f3e4d2', '#ebd0b0'],
+    scene: {
+      src: unisex1Scene1060,
+      srcSet: `${unisex1Scene640} 640w, ${unisex1Scene1060} 1060w`,
+      position: '60% 82%',
+      alt: 'Mango, pink guava, hibiscus and an iced Mai Tai on driftwood at the shoreline',
+    },
     accent: 'ochre',
     bottle: { shape: 'flask', liquid: 'amber', cap: 'gold' },
     motif: 'tendril',
@@ -719,6 +729,12 @@ export const perfumes = [
     render: renders.plain,
     imageAlt: 'Unlabelled perfume bottle with a black cap, coming soon',
     tone: ['#f2e6dd', '#e8d2c3'],
+    scene: {
+      src: unisex2Scene1060,
+      srcSet: `${unisex2Scene640} 640w, ${unisex2Scene1060} 1060w`,
+      position: '60% 82%',
+      alt: 'Peach, white lilies, ylang-ylang and vanilla pods on sandalwood in warm golden light',
+    },
     accent: 'rust',
     bottle: { shape: 'arch', liquid: 'amber', cap: 'gold' },
     motif: 'bloom',
