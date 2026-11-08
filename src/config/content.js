@@ -38,7 +38,7 @@ export const copy = {
   collection: {
     eyebrow: 'The Collection',
     title: 'Eight Scents. Eight Expressions.',
-    intro: 'Four scents For Him and four For Her. Discover a fragrance for every mood, moment and memory.',
+    intro: 'Four scents For Him and four For Her, with two Unisex scents coming soon. Discover a fragrance for every mood, moment and memory.',
   },
 
   cta: {

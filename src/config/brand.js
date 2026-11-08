@@ -114,6 +114,7 @@ export const preorder = {
 export const sections = {
   story: 'our-story',
   collection: 'collection',
+  unisex: 'unisex',
   forHim: 'for-him',
   forHer: 'for-her',
   finder: 'find-your-scent',

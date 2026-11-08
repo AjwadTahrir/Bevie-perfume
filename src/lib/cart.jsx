@@ -12,7 +12,7 @@ import { shop } from '../config/brand'
  */
 
 const STORAGE_KEY = 'beavie-cart-v1'
-const byId = new Map(perfumes.map((p) => [p.id, p]))
+const byId = new Map(perfumes.filter((p) => !p.comingSoon).map((p) => [p.id, p]))
 const clampQty = (n) => Math.max(1, Math.min(shop.maxQuantityPerItem, Math.round(n) || 1))
 
 function load() {
