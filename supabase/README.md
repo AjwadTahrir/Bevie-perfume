@@ -27,6 +27,10 @@ No local CLI, Node.js or Docker installation is needed for this dashboard workfl
 
 If later adopting the Supabase CLI, reconcile migrations already run in SQL Editor with CLI migration history before pushing; do not replay these migrations against existing tables.
 
+## Unisex scents (migration 012)
+
+Run `migrations/20261113001200_unisex_mango_dolce_velvet_peach.sql` in SQL Editor (safe to re-run). It adds Mango Dolce (`unisex-1`) and Velvet Peach (`unisex-2`) at RM35, purchasable, unlimited stock. Until it runs, checkout refuses them with "product unisex-1 is not available". The RM5-per-bottle code discount applies to them with no further change.
+
 ## Admin dashboard (/admin)
 
 The fundraising console at `/admin` (code in `src/admin/`, page `admin/index.html`) runs on the tables above through migration **006**:

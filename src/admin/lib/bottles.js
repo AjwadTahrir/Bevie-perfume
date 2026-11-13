@@ -1,4 +1,4 @@
-/** The eight scents, so one with no sales yet still shows in the buying list. */
+/** The ten scents, so one with no sales yet still shows in the buying list. */
 export const SCENTS = [
   { id: 'bayu', name: 'Bayu', category: 'For Him' },
   { id: 'nirmala', name: 'Nirmala', category: 'For Him' },
@@ -8,6 +8,8 @@ export const SCENTS = [
   { id: 'ranum', name: 'Ranum', category: 'For Her' },
   { id: 'ratna', name: 'Ratna', category: 'For Her' },
   { id: 'seroja', name: 'Seroja', category: 'For Her' },
+  { id: 'unisex-1', name: 'Mango Dolce', category: 'Unisex' },
+  { id: 'unisex-2', name: 'Velvet Peach', category: 'Unisex' },
 ]
 
 /**

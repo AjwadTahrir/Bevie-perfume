@@ -126,8 +126,8 @@ import velvetPeachRender960 from '../assets/products/renders/velvet-peach-960.we
  *   ranum     ranum.blend1     label art: berry tease.png
  *   ratna     ratna.blend1     label art: celestia rose.png
  *   seroja    seroja.blend1    label art: lily in the valley.png
- *   unisex-1  mango-dolce.blend   label art: Mango Dolce.pdf
- *   unisex-2  velvet-peach.blend  label art: Velvet Peach.pdf
+ *   unisex-1  mango-dolce.blend   label art: Mango Dolce (latest).pdf
+ *   unisex-2  velvet-peach.blend  label art: Velvet Peach (latest final).pdf
  *             (both are bayu.blend with the sticker art swapped: same 6 x 4 cm
  *             sticker and placement; the 1.5:1 art fills it with no trim)
  */
@@ -624,10 +624,8 @@ export const perfumes = [
   },
   /*
    * UNISEX
-   * No price yet (price null): the card shows no price, the pop-up says
-   * "To be announced" and Add to Cart stays off until a price is set here
-   * and the product exists in Supabase. The still lifes were made from
-   * these briefs:
+   * On sale at RM35 like the others; the Supabase rows come from
+   * migration 20261113001200. The still lifes were made from these briefs:
    *
    *   unisex-1 Sunset ocean shoreline, golden-orange sky, wet sand, bleached
    *            driftwood. Ripe sliced mangoes (fresh and juicy, never mushy
@@ -668,7 +666,7 @@ export const perfumes = [
       Season: 'Summer',
       'Time of Day': 'Golden Hour',
     },
-    price: null,
+    price: 35,
     size: '32 ml',
     notes: {
       top: ['Mango', 'Guava', 'Hibiscus'],
@@ -720,7 +718,7 @@ export const perfumes = [
       Season: 'All Season',
       'Time of Day': 'Evening',
     },
-    price: null,
+    price: 35,
     size: '32 ml',
     notes: {
       top: ['Peach', 'Mandarin'],
