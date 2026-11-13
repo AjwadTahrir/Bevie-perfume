@@ -87,10 +87,10 @@ import berryTeaseScene640 from '../assets/products/berry-tease-scene-640.webp'
 import berryTeaseScene1060 from '../assets/products/berry-tease-scene-1060.webp'
 import lilyValleyScene640 from '../assets/products/lily-valley-scene-640.webp'
 import lilyValleyScene1060 from '../assets/products/lily-valley-scene-1060.webp'
-import unisex1Scene640 from '../assets/products/unisex-1-scene-640.webp'
-import unisex1Scene1060 from '../assets/products/unisex-1-scene-1060.webp'
-import unisex2Scene640 from '../assets/products/unisex-2-scene-640.webp'
-import unisex2Scene1060 from '../assets/products/unisex-2-scene-1060.webp'
+import mangoDolceScene640 from '../assets/products/mango-dolce-scene-640.webp'
+import mangoDolceScene1060 from '../assets/products/mango-dolce-scene-1060.webp'
+import velvetPeachScene640 from '../assets/products/velvet-peach-scene-640.webp'
+import velvetPeachScene1060 from '../assets/products/velvet-peach-scene-1060.webp'
 import bayuRender480 from '../assets/products/renders/bayu-480.webp'
 import bayuRender960 from '../assets/products/renders/bayu-960.webp'
 import nirmalaRender480 from '../assets/products/renders/nirmala-480.webp'
@@ -126,8 +126,8 @@ import velvetPeachRender960 from '../assets/products/renders/velvet-peach-960.we
  *   ranum     ranum.blend1     label art: berry tease.png
  *   ratna     ratna.blend1     label art: celestia rose.png
  *   seroja    seroja.blend1    label art: lily in the valley.png
- *   unisex-1  mango-dolce.blend   label art: Mango Dolce (latest).pdf
- *   unisex-2  velvet-peach.blend  label art: Velvet Peach (latest final).pdf
+ *   mango-dolce   mango-dolce.blend   label art: Mango Dolce (latest).pdf
+ *   velvet-peach  velvet-peach.blend  label art: Velvet Peach (latest final).pdf
  *             (both are bayu.blend with the sticker art swapped: same 6 x 4 cm
  *             sticker and placement; the 1.5:1 art fills it with no trim)
  */
@@ -627,17 +627,17 @@ export const perfumes = [
    * On sale at RM35 like the others; the Supabase rows come from
    * migration 20261113001200. The still lifes were made from these briefs:
    *
-   *   unisex-1 Sunset ocean shoreline, golden-orange sky, wet sand, bleached
+   *   mango-dolce  Sunset ocean shoreline, golden-orange sky, wet sand, bleached
    *            driftwood. Ripe sliced mangoes (fresh and juicy, never mushy
    *            or overripe), halved pink guavas, red hibiscus, a Mai Tai
    *            glass with ice, sea spray splash.
-   *   unisex-2 Champagne-cream silk draped over warm beige travertine, soft
+   *   velvet-peach Champagne-cream silk draped over warm beige travertine, soft
    *            golden light. Whole ripe peaches with natural fuzz (never
    *            cut, bruised or dripping), mandarin slices, tuberose and
    *            orange blossom petals, vanilla pods.
    */
   {
-    id: 'unisex-1',
+    id: 'mango-dolce',
     category: 'unisex',
     name: 'Mango Dolce',
     family: 'fruity',
@@ -678,8 +678,8 @@ export const perfumes = [
     imageAlt: 'Mango Dolce perfume bottle with a pink and cream striped label and a black cap',
     tone: ['#f3e4d2', '#ebd0b0'],
     scene: {
-      src: unisex1Scene1060,
-      srcSet: `${unisex1Scene640} 640w, ${unisex1Scene1060} 1060w`,
+      src: mangoDolceScene1060,
+      srcSet: `${mangoDolceScene640} 640w, ${mangoDolceScene1060} 1060w`,
       position: '60% 82%',
       alt: 'Mango, pink guava, hibiscus and an iced Mai Tai on driftwood at the shoreline',
     },
@@ -689,7 +689,7 @@ export const perfumes = [
     motifPlacement: 'top-right',
   },
   {
-    id: 'unisex-2',
+    id: 'velvet-peach',
     category: 'unisex',
     name: 'Velvet Peach',
     family: 'floral',
@@ -730,8 +730,8 @@ export const perfumes = [
     imageAlt: 'Velvet Peach perfume bottle with a peach and cream striped label and a black cap',
     tone: ['#f2e6dd', '#e8d2c3'],
     scene: {
-      src: unisex2Scene1060,
-      srcSet: `${unisex2Scene640} 640w, ${unisex2Scene1060} 1060w`,
+      src: velvetPeachScene1060,
+      srcSet: `${velvetPeachScene640} 640w, ${velvetPeachScene1060} 1060w`,
       position: '60% 82%',
       alt: 'Peach, white lilies, ylang-ylang and vanilla pods on sandalwood in warm golden light',
     },

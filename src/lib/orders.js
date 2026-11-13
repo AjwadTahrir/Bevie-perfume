@@ -1,6 +1,7 @@
 import { isValidReferralCode, normalizeReferralCode } from '../data/referralCodes'
 import { payment } from '../config/payment'
 import { shop } from '../config/brand'
+import { perfumes } from '../data/perfumes'
 
 /**
  * ORDERS
@@ -40,7 +41,10 @@ async function call(body) {
   }
   const data = await res.json().catch(() => ({}))
   if (!res.ok) {
-    const err = new Error(data.error || 'Something went wrong. Please try again.')
+    // The database names a refused product by its id; show the scent's name instead.
+    const message = (data.error || 'Something went wrong. Please try again.').replace(/product (\S+) is not available/, (_, id) =>
+      `${perfumes.find((p) => p.id === id)?.name ?? 'One of the scents in your cart'} can't be ordered online right now. Please remove it or try again later.`)
+    const err = new Error(message)
     err.code = data.code
     throw err
   }

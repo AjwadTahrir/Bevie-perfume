@@ -13,12 +13,16 @@ import { shop } from '../config/brand'
 
 const STORAGE_KEY = 'beavie-cart-v1'
 const byId = new Map(perfumes.filter((p) => !p.comingSoon).map((p) => [p.id, p]))
+// IDs the Unisex scents had before they were named; carts saved then still load.
+const RENAMED = { 'unisex-1': 'mango-dolce', 'unisex-2': 'velvet-peach' }
 const clampQty = (n) => Math.max(1, Math.min(shop.maxQuantityPerItem, Math.round(n) || 1))
 
 function load() {
   try {
     const raw = JSON.parse(localStorage.getItem(STORAGE_KEY))
-    return Array.isArray(raw) ? raw.filter((l) => byId.has(l?.id)).map((l) => ({ id: l.id, quantity: clampQty(l.quantity) })) : []
+    return Array.isArray(raw)
+      ? raw.map((l) => ({ ...l, id: RENAMED[l?.id] ?? l?.id })).filter((l) => byId.has(l.id)).map((l) => ({ id: l.id, quantity: clampQty(l.quantity) }))
+      : []
   } catch {
     return []
   }
