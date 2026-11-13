@@ -107,8 +107,10 @@ import ratnaRender480 from '../assets/products/renders/ratna-480.webp'
 import ratnaRender960 from '../assets/products/renders/ratna-960.webp'
 import serojaRender480 from '../assets/products/renders/seroja-480.webp'
 import serojaRender960 from '../assets/products/renders/seroja-960.webp'
-import plainRender480 from '../assets/products/renders/plain-480.webp'
-import plainRender960 from '../assets/products/renders/plain-960.webp'
+import mangoDolceRender480 from '../assets/products/renders/mango-dolce-480.webp'
+import mangoDolceRender960 from '../assets/products/renders/mango-dolce-960.webp'
+import velvetPeachRender480 from '../assets/products/renders/velvet-peach-480.webp'
+import velvetPeachRender960 from '../assets/products/renders/velvet-peach-960.webp'
 
 /**
  * BOTTLE RENDERS
@@ -124,9 +126,10 @@ import plainRender960 from '../assets/products/renders/plain-960.webp'
  *   ranum     ranum.blend1     label art: berry tease.png
  *   ratna     ratna.blend1     label art: celestia rose.png
  *   seroja    seroja.blend1    label art: lily in the valley.png
- *   plain     bayu.blend with the label hidden (no label yet): the coming-soon
- *             unisex scents. Their 3D models, public/models/unisex-1.glb and
- *             unisex-2.glb, are the same label-free bottle.
+ *   unisex-1  mango-dolce.blend   label art: Mango Dolce.pdf
+ *   unisex-2  velvet-peach.blend  label art: Velvet Peach.pdf
+ *             (both are bayu.blend with the sticker art swapped: same 6 x 4 cm
+ *             sticker and placement; the 1.5:1 art fills it with no trim)
  */
 const render = (s480, s960) => ({ src: s480, srcSet: `${s480} 480w, ${s960} 960w` })
 const renders = {
@@ -138,7 +141,8 @@ const renders = {
   ranum: render(ranumRender480, ranumRender960),
   ratna: render(ratnaRender480, ratnaRender960),
   seroja: render(serojaRender480, serojaRender960),
-  plain: render(plainRender480, plainRender960),
+  mangoDolce: render(mangoDolceRender480, mangoDolceRender960),
+  velvetPeach: render(velvetPeachRender480, velvetPeachRender960),
 }
 
 export const fragranceFamilies = {
@@ -619,11 +623,11 @@ export const perfumes = [
     motifPlacement: 'bottom-right',
   },
   /*
-   * UNISEX: COMING SOON
-   * Shown under a shaded "Coming soon" frame and cannot be added to the
-   * cart (price null, comingSoon true). The names stay hidden ('???')
-   * until launch. The bottle is the plain render without a label.
-   * The still lifes were made from these briefs:
+   * UNISEX
+   * No price yet (price null): the card shows no price, the pop-up says
+   * "To be announced" and Add to Cart stays off until a price is set here
+   * and the product exists in Supabase. The still lifes were made from
+   * these briefs:
    *
    *   unisex-1 Sunset ocean shoreline, golden-orange sky, wet sand, bleached
    *            driftwood. Ripe sliced mangoes (fresh and juicy, never mushy
@@ -637,8 +641,7 @@ export const perfumes = [
   {
     id: 'unisex-1',
     category: 'unisex',
-    comingSoon: true,
-    name: '???',
+    name: 'Mango Dolce',
     family: 'fruity',
     description:
       'A unisex island escape: juicy mango, pink guava and hibiscus over a Mai Tai and sea breeze, settling on warm sandalwood and musk.',
@@ -673,8 +676,8 @@ export const perfumes = [
       base: ['Ylang-Ylang', 'Sandalwood', 'Musk'],
     },
     image: null,
-    render: renders.plain,
-    imageAlt: 'Unlabelled perfume bottle with a black cap, coming soon',
+    render: renders.mangoDolce,
+    imageAlt: 'Mango Dolce perfume bottle with a pink and cream striped label and a black cap',
     tone: ['#f3e4d2', '#ebd0b0'],
     scene: {
       src: unisex1Scene1060,
@@ -690,8 +693,7 @@ export const perfumes = [
   {
     id: 'unisex-2',
     category: 'unisex',
-    comingSoon: true,
-    name: '???',
+    name: 'Velvet Peach',
     family: 'floral',
     description:
       'Soft unisex luxury: velvety peach and mandarin over creamy tuberose and orange blossom, wrapped in vanilla bean and tonka.',
@@ -726,8 +728,8 @@ export const perfumes = [
       base: ['Vanilla Bean', 'Musk', 'Sandalwood', 'Tonka Bean', 'Cedarwood'],
     },
     image: null,
-    render: renders.plain,
-    imageAlt: 'Unlabelled perfume bottle with a black cap, coming soon',
+    render: renders.velvetPeach,
+    imageAlt: 'Velvet Peach perfume bottle with a peach and cream striped label and a black cap',
     tone: ['#f2e6dd', '#e8d2c3'],
     scene: {
       src: unisex2Scene1060,
@@ -742,9 +744,9 @@ export const perfumes = [
   },
 ]
 
-/** The collections, in display order. Unisex (coming soon) leads. */
+/** The collections, in display order. Unisex leads. */
 export const categories = [
-  { key: 'unisex', label: 'Unisex', anchor: 'unisex', intro: 'Coming soon: a tropical sunset and a peach-silk floral, made for everyone.' },
+  { key: 'unisex', label: 'Unisex', anchor: 'unisex', intro: 'Mango Dolce and Velvet Peach: a tropical sunset and a peach-silk floral, made for everyone.' },
   { key: 'him', label: 'For Him', anchor: 'for-him', intro: 'Fresh, minty and rich: breeze, clarity, dusk and ocean.' },
   { key: 'her', label: 'For Her', anchor: 'for-her', intro: 'Fruity, floral and luminous: moonlight, ripeness, jewels and lotus.' },
 ]
