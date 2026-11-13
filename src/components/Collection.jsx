@@ -12,8 +12,8 @@ const anchorOf = (href) => byAnchor.get(String(href || '').split('#')[1])
 
 /**
  * COLLECTION
- * The eight scents in two collections, For Him and For Her, each with
- * its own anchor (#for-him, #for-her) so the navigation can link
+ * The ten scents in three collections, Unisex, For Him and For Her, each with
+ * its own anchor (#unisex, #for-him, #for-her) so the navigation can link
  * straight to it. The filter shows both or one. A link to a collection
  * switches the filter to it before the page scrolls, so the target is
  * always on screen.

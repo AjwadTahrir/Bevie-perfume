@@ -7,6 +7,7 @@ const linksFor = (page) => {
   const p = page === 'home' ? '' : '/'
   return [
     { href: page === 'home' ? '#page-top' : '/', label: 'Home' },
+    { href: `${p}#${sections.unisex}`, label: 'Unisex' },
     { href: `${p}#${sections.forHim}`, label: 'For Him' },
     { href: `${p}#${sections.forHer}`, label: 'For Her' },
     { href: schedulePath, label: 'Schedule' },

@@ -7,6 +7,7 @@ import BrandMark from './BrandMark'
 // Store sections are in-page anchors; on other pages (privacy) they point back to the store.
 const storeLinks = [
   { href: `#${sections.story}`, key: 'our-story', label: 'Our Story' },
+  { href: `#${sections.unisex}`, key: sections.unisex, label: 'Unisex' },
   { href: `#${sections.forHim}`, key: sections.forHim, label: 'For Him' },
   { href: `#${sections.forHer}`, key: sections.forHer, label: 'For Her' },
   { href: `#${sections.finder}`, key: 'find-your-scent', label: 'Find Your Scent' },
